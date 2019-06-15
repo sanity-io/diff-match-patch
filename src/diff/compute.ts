@@ -1,0 +1,75 @@
+/**
+ * Find the differences between two texts.  Assumes that the texts do not
+ * have any common prefix or suffix.
+ * @param {string} text1 Old string to be diffed.
+ * @param {string} text2 New string to be diffed.
+ * @param {boolean} checklines Speedup flag.  If false, then don't run a
+ *     line-level diff first to identify the changed areas.
+ *     If true, then run a faster, slightly less optimal diff.
+ * @param {number} deadline Time when the diff should be complete by.
+ * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+ * @private
+ */
+import { bisect_ } from './bisect'
+import { diff, DiffType } from './diff'
+import { halfMatch_ } from './halfMatch'
+import { lineMode_ } from './lineMode'
+
+export function compute_(text1: string, text2: string, checklines) {
+  let diffs
+
+  if (!text1) {
+    // Just add some text (speedup).
+    return [[DiffType.INSERT, text2]]
+  }
+
+  if (!text2) {
+    // Just delete some text (speedup).
+    return [[DiffType.DELETE, text1]]
+  }
+
+  const longtext = text1.length > text2.length ? text1 : text2
+  const shorttext = text1.length > text2.length ? text2 : text1
+  const i = longtext.indexOf(shorttext)
+  if (i !== -1) {
+    // Shorter text is inside the longer text (speedup).
+    diffs = [
+      [DiffType.INSERT, longtext.substring(0, i)],
+      [DiffType.EQUAL, shorttext],
+      [DiffType.INSERT, longtext.substring(i + shorttext.length)],
+    ]
+    // Swap insertions for deletions if diff is reversed.
+    if (text1.length > text2.length) {
+      diffs[0][0] = diffs[2][0] = DiffType.DELETE
+    }
+    return diffs
+  }
+
+  if (shorttext.length === 1) {
+    // Single character string.
+    // After the previous speedup, the character can't be an equality.
+    return [[DiffType.DELETE, text1], [DiffType.INSERT, text2]]
+  }
+
+  // Check to see if the problem can be split in two.
+  const halfMatch = halfMatch_(text1, text2)
+  if (halfMatch) {
+    // A half-match was found, sort out the return data.
+    const text1A = halfMatch[0]
+    const text1B = halfMatch[1]
+    const text2A = halfMatch[2]
+    const text2B = halfMatch[3]
+    const midCommon = halfMatch[4]
+    // Send both pairs off for separate processing.
+    const diffsA = diff(text1A, text2A, checklines)
+    const diffsB = diff(text1B, text2B, checklines)
+    // Merge the results.
+    return diffsA.concat([[DiffType.EQUAL, midCommon]], diffsB)
+  }
+
+  if (checklines && text1.length > 100 && text2.length > 100) {
+    return lineMode_(text1, text2)
+  }
+
+  return bisect_(text1, text2)
+}
