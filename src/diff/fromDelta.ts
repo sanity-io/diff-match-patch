@@ -8,7 +8,7 @@
  */
 import { DiffType } from './diff'
 
-function fromDelta(text1: string, delta: string) {
+export function fromDelta(text1: string, delta: string) {
   const diffs = []
   let diffsLength = 0 // Keeping our own length var is faster in JS.
   let pointer = 0 // Cursor in text1

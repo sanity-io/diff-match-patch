@@ -1,7 +1,7 @@
 import { cleanupSemanticLossless } from '../diff/cleanup'
 import { diff, DiffType } from '../diff/diff'
 import { levenshtein } from '../diff/levenshtein'
-import { diff_text1 } from '../diff/text1'
+import { diffText1, diffText2 } from '../diff/diffText'
 import { xIndex } from '../diff/xIndex'
 import { match } from '../match/match'
 import { MAX_BITS } from './constants'
@@ -44,7 +44,7 @@ export function apply(patches: Patch[], text): PatchResult {
   const results = []
   for (let x = 0; x < patches.length; x++) {
     const expectedLoc = patches[x].start2 + delta
-    const text1 = diff_text1(patches[x].diffs)
+    const text1 = diffText1(patches[x].diffs)
     let startLoc
     let endLoc = -1
     if (text1.length > MAX_BITS) {
@@ -85,7 +85,7 @@ export function apply(patches: Patch[], text): PatchResult {
         // Perfect match, just shove the replacement text in.
         text =
           text.substring(0, startLoc) +
-          diff_text2(patches[x].diffs) +
+          diffText2(patches[x].diffs) +
           text.substring(startLoc + text1.length)
       } else {
         // Imperfect match.  Run a diff to get a framework of equivalent
@@ -162,7 +162,7 @@ function deepCopy(patches: Patch[]): Patch[] {
  * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
  * @return {string} The padding string added to each side.
  */
-function addPadding(patches: Patch[]) {
+export function addPadding(patches: Patch[]) {
   const paddingLength = PATCH_MARGIN
   let nullPadding = ''
   for (let x = 1; x <= paddingLength; x++) {
@@ -221,7 +221,7 @@ function addPadding(patches: Patch[]) {
  * Intended to be called only from within patch_apply.
  * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
  */
-function splitMax(patches) {
+export function splitMax(patches) {
   const patchSize = MAX_BITS
   for (let x = 0; x < patches.length; x++) {
     if (patches[x].length1 <= patchSize) {
@@ -292,10 +292,10 @@ function splitMax(patches) {
         }
       }
       // Compute the head context for the next patch.
-      precontext = diff_text2(patch.diffs)
+      precontext = diffText2(patch.diffs)
       precontext = precontext.substring(precontext.length - PATCH_MARGIN)
       // Append the end context for this patch.
-      const postcontext = diff_text1(bigpatch.diffs).substring(0, PATCH_MARGIN)
+      const postcontext = diffText1(bigpatch.diffs).substring(0, PATCH_MARGIN)
       if (postcontext !== '') {
         patch.length1 += postcontext.length
         patch.length2 += postcontext.length
@@ -313,19 +313,4 @@ function splitMax(patches) {
       }
     }
   }
-}
-
-/**
- * Compute and return the destination text (all equalities and insertions).
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
- * @return {string} Destination text.
- */
-function diff_text2(diffs) {
-  const text = []
-  for (let x = 0; x < diffs.length; x++) {
-    if (diffs[x][0] !== DiffType.DELETE) {
-      text[x] = diffs[x][1]
-    }
-  }
-  return text.join('')
 }

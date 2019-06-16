@@ -1,5 +1,5 @@
 import { _cleanupSemantic } from './cleanup'
-import { Diff, diff, DiffType } from './diff'
+import { _diff, Diff, diff, DiffType, InternalDiffOptions } from './diff'
 import { linesToChars_ } from './linesToChars'
 
 /**
@@ -12,14 +12,21 @@ import { linesToChars_ } from './linesToChars'
  * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  * @private
  */
-export function lineMode_(text1: string, text2: string): Diff[] {
+export function lineMode_(
+  text1: string,
+  text2: string,
+  opts: InternalDiffOptions,
+): Diff[] {
   // Scan the text on a line-by-line basis first.
   const a = linesToChars_(text1, text2)
   text1 = a.chars1
   text2 = a.chars2
   const linearray = a.lineArray
 
-  const diffs = diff(text1, text2, false)
+  const diffs = _diff(text1, text2, {
+    checkLines: false,
+    deadline: opts.deadline,
+  })
 
   // Convert the diff back to original text.
   charsToLines_(diffs, linearray)
@@ -53,7 +60,10 @@ export function lineMode_(text1: string, text2: string): Diff[] {
             countDelete + countInsert,
           )
           pointer = pointer - countDelete - countInsert
-          const aa = diff(textDelete, textInsert, false)
+          const aa = _diff(textDelete, textInsert, {
+            checkLines: false,
+            deadline: opts.deadline,
+          })
           for (let j = aa.length - 1; j >= 0; j--) {
             diffs.splice(pointer, 0, aa[j])
           }
@@ -79,7 +89,7 @@ export function lineMode_(text1: string, text2: string): Diff[] {
  * @param {!Array.<string>} lineArray Array of unique strings.
  * @private
  */
-function charsToLines_(diffs: Diff[], lineArray: string[]): void {
+export function charsToLines_(diffs: Diff[], lineArray: string[]): void {
   // tslint:disable-next-line:prefer-for-of
   for (let x = 0; x < diffs.length; x++) {
     const chars = diffs[x][1]

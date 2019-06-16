@@ -1,4 +1,4 @@
-import { Diff, diff, DiffType } from './diff'
+import { _diff, Diff, diff, DiffType } from './diff'
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
@@ -6,12 +6,10 @@ import { Diff, diff, DiffType } from './diff'
  * See Myers 1986 paper: An O(ND) Difference Algorithm and Its Variations.
  * @param {string} text1 Old string to be diffed.
  * @param {string} text2 New string to be diffed.
- * @param {number} deadline Time at which to bail if not yet complete.
- * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  * @private
  */
 
-export function bisect_(text1, text2): Diff[] {
+export function bisect_(text1: string, text2: string, deadline: number): Diff[] {
   // Cache the text lengths to prevent multiple calls.
   const text1Length = text1.length
   const text2Length = text2.length
@@ -39,6 +37,10 @@ export function bisect_(text1, text2): Diff[] {
   let k2start = 0
   let k2end = 0
   for (let d = 0; d < maxD; d++) {
+    // Bail out if deadline is reached.
+    if (Date.now() > deadline) {
+      break
+    }
     // Walk the front path one step.
     for (let k1 = -d + k1start; k1 <= d - k1end; k1 += 2) {
       const k1Offset = vOffset + k1
@@ -72,7 +74,7 @@ export function bisect_(text1, text2): Diff[] {
           const x2 = text1Length - v2[k2Offset]
           if (x1 >= x2) {
             // Overlap detected.
-            return bisectSplit_(text1, text2, x1, y1)
+            return bisectSplit_(text1, text2, x1, y1, deadline)
           }
         }
       }
@@ -114,14 +116,13 @@ export function bisect_(text1, text2): Diff[] {
           x2 = text1Length - x2
           if (x1 >= x2) {
             // Overlap detected.
-            return bisectSplit_(text1, text2, x1, y1)
+            return bisectSplit_(text1, text2, x1, y1, deadline)
           }
         }
       }
     }
   }
-  // Diff took too long and hit the deadline or
-  // number of diffs equals number of characters, no commonality at all.
+  // Number of diffs equals number of characters, no commonality at all.
   return [[DiffType.DELETE, text1], [DiffType.INSERT, text2]]
 }
 
@@ -136,15 +137,15 @@ export function bisect_(text1, text2): Diff[] {
  * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  * @private
  */
-function bisectSplit_(text1, text2, x, y) {
+function bisectSplit_(text1, text2, x, y, deadline: number) {
   const text1a = text1.substring(0, x)
   const text2a = text2.substring(0, y)
   const text1b = text1.substring(x)
   const text2b = text2.substring(y)
 
   // Compute both diffs serially.
-  const diffs = diff(text1a, text2a, false)
-  const diffsb = diff(text1b, text2b, false)
+  const diffs = _diff(text1a, text2a, { checkLines: false, deadline })
+  const diffsb = _diff(text1b, text2b, { checkLines: false, deadline })
 
   return diffs.concat(diffsb)
 }

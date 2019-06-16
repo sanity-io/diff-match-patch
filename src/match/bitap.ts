@@ -134,7 +134,7 @@ export function bitap_(text, pattern, loc) {
  * @return {!Object} Hash of character locations.
  * @private
  */
-function alphabet_(pattern) {
+export function alphabet_(pattern) {
   const s = {}
   for (let i = 0; i < pattern.length; i++) {
     s[pattern.charAt(i)] = 0

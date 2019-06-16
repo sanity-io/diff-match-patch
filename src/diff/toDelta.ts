@@ -8,7 +8,7 @@
  */
 import { Diff, DiffType } from './diff'
 
-function toDelta(diffs: Diff[]): string {
+export function toDelta(diffs: Diff[]): string {
   const text = []
   for (let x = 0; x < diffs.length; x++) {
     switch (diffs[x][0]) {

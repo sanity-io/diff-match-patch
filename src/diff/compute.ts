@@ -11,11 +11,15 @@
  * @private
  */
 import { bisect_ } from './bisect'
-import { diff, DiffType } from './diff'
+import { diff, DiffType, InternalDiffOptions } from './diff'
 import { halfMatch_ } from './halfMatch'
 import { lineMode_ } from './lineMode'
 
-export function compute_(text1: string, text2: string, checklines) {
+export function compute_(
+  text1: string,
+  text2: string,
+  opts: InternalDiffOptions,
+) {
   let diffs
 
   if (!text1) {
@@ -61,15 +65,15 @@ export function compute_(text1: string, text2: string, checklines) {
     const text2B = halfMatch[3]
     const midCommon = halfMatch[4]
     // Send both pairs off for separate processing.
-    const diffsA = diff(text1A, text2A, checklines)
-    const diffsB = diff(text1B, text2B, checklines)
+    const diffsA = diff(text1A, text2A, opts)
+    const diffsB = diff(text1B, text2B, opts)
     // Merge the results.
     return diffsA.concat([[DiffType.EQUAL, midCommon]], diffsB)
   }
 
-  if (checklines && text1.length > 100 && text2.length > 100) {
-    return lineMode_(text1, text2)
+  if (opts.checkLines && text1.length > 100 && text2.length > 100) {
+    return lineMode_(text1, text2, opts)
   }
 
-  return bisect_(text1, text2)
+  return bisect_(text1, text2, opts.deadline)
 }

@@ -16,34 +16,57 @@ export enum DiffType {
 
 export type Diff = [DiffType, string]
 
+export interface DiffOptions {
+  checkLines: boolean
+  timeout: number
+}
+export interface InternalDiffOptions {
+  checkLines: boolean
+  deadline: number
+}
+const DEFAULT_OPTIONS: DiffOptions = {
+  checkLines: true,
+  timeout: 1.0,
+}
+function createDeadLine(timeout: undefined | number): number {
+  const t =
+    typeof timeout === 'undefined'
+      ? 1
+      : timeout <= 0
+      ? Number.MAX_VALUE
+      : timeout
+  return Date.now() + t * 1000
+}
+function createInternalOpts(opts: Partial<DiffOptions>): InternalDiffOptions {
+  return { deadline: createDeadLine(opts.timeout), checkLines: opts.checkLines }
+}
+export function diff(
+  text1: null | string,
+  text2: null | string,
+  opts?: Partial<DiffOptions>,
+) {
+  // Check for null inputs.
+  if (text1 === null || text2 === null) {
+    throw new Error('Null input. (diff)')
+  }
+
+  return _diff(text1, text2, createInternalOpts(opts || DEFAULT_OPTIONS))
+}
 /**
  * Find the differences between two texts.  Simplifies the problem by stripping
  * any common prefix or suffix off the texts before diffing.
  * @param {string} text1 Old string to be diffed.
  * @param {string} text2 New string to be diffed.
- * @param {boolean=} opt_checklines Optional speedup flag. If present and false,
- *     then don't run a line-level diff first to identify the changed areas.
- *     Defaults to true, which does a faster, slightly less optimal diff.
- * @param {number} opt_deadline Optional time when the diff should be complete
- *     by.  Used internally for recursive calls.  Users should set DiffTimeout
- *     instead.
  * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  */
-export function diff(
+export function _diff(
   text1: string,
   text2: string,
-  checkLines: boolean = true,
+  options: InternalDiffOptions,
 ): Diff[] {
-  // Check for null inputs.
-  if (text1 == null || text2 == null) {
-    throw new Error('Null input. (diff)')
-  }
-
   // Check for equality (speedup).
   if (text1 === text2) {
-    if (text1) {
-      return text1 ? [[DiffType.EQUAL, text1]] : []
-    }
+    return text1 ? [[DiffType.EQUAL, text1]] : []
   }
 
   // Trim off common prefix (speedup).
@@ -59,7 +82,7 @@ export function diff(
   text2 = text2.substring(0, text2.length - commonlength)
 
   // Compute the diff on the middle block.
-  const diffs = compute_(text1, text2, checkLines)
+  const diffs = compute_(text1, text2, options)
 
   // Restore the prefix and suffix.
   if (commonprefix) {
