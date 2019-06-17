@@ -49,7 +49,7 @@ function assertEquivalent(expected: any, actual: any) {
   expect(expected).toEqual(actual)
 }
 
-function diff_rebuildtexts(diffs) {
+function diff_rebuildtexts(diffs: Diff[]) {
   // Construct the two texts which made up the diff originally.
   let text1 = ''
   let text2 = ''
@@ -1207,9 +1207,7 @@ test('MatchMain', () => {
 //
 test('PatchObj', () => {
   // Patch Object.
-  const p = createPatchObject()
-  p.start1 = 20
-  p.start2 = 21
+  const p = createPatchObject(20, 21)
   p.length1 = 18
   p.length2 = 17
   p.diffs = [

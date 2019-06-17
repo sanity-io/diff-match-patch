@@ -6,9 +6,9 @@
  * @param {number} loc Location within text1.
  * @return {number} Location within text2.
  */
-import { DiffType } from './diff'
+import { Diff, DiffType } from './diff'
 
-export function xIndex(diffs, loc) {
+export function xIndex(diffs: Diff[], loc: number) {
   let chars1 = 0
   let chars2 = 0
   let lastChars1 = 0

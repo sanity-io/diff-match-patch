@@ -9,7 +9,11 @@ import { _diff, Diff, diff, DiffType } from './diff'
  * @private
  */
 
-export function bisect_(text1: string, text2: string, deadline: number): Diff[] {
+export function bisect_(
+  text1: string,
+  text2: string,
+  deadline: number,
+): Diff[] {
   // Cache the text lengths to prevent multiple calls.
   const text1Length = text1.length
   const text2Length = text2.length
@@ -137,7 +141,13 @@ export function bisect_(text1: string, text2: string, deadline: number): Diff[] 
  * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  * @private
  */
-function bisectSplit_(text1, text2, x, y, deadline: number) {
+function bisectSplit_(
+  text1: string,
+  text2: string,
+  x: number,
+  y: number,
+  deadline: number,
+) {
   const text1a = text1.substring(0, x)
   const text2a = text2.substring(0, y)
   const text1b = text1.substring(x)

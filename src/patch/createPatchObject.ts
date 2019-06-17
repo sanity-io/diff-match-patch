@@ -3,7 +3,7 @@
  */
 import { Diff } from '../diff/diff'
 
-export interface Patch {
+export interface UninitializedPatch {
   diffs: Diff[]
   start1: number | null
   start2: number | null
@@ -11,11 +11,25 @@ export interface Patch {
   length2: number
 }
 
-export function createPatchObject(): Patch {
+export interface Patch {
+  diffs: Diff[]
+  start1: number
+  start2: number
+  length1: number
+  length2: number
+}
+export function clone(patch: Patch): Patch {
+  return { ...patch, diffs: patch.diffs.map(diff => ({ ...diff })) }
+}
+
+export function deepCopy(patches: Patch[]): Patch[] {
+  return patches.map(clone)
+}
+export function createPatchObject(start1: number, start2: number): Patch {
   return {
     diffs: [],
-    start1: null,
-    start2: null,
+    start1,
+    start2,
     length1: 0,
     length2: 0,
   }

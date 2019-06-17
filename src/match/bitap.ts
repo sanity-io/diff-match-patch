@@ -4,6 +4,11 @@ interface BitapOptions {
   threshold: number
   distance: number
 }
+
+interface Alphabet {
+  [char: string]: number
+}
+
 const DEFAULT_OPTIONS: BitapOptions = {
   // At what point is no match declared (0.0 = perfection, 1.0 = very loose).
   threshold: 0.5,
@@ -14,7 +19,7 @@ const DEFAULT_OPTIONS: BitapOptions = {
 }
 
 function applyDefaults(options: Partial<BitapOptions>): BitapOptions {
-  return { ...DEFAULT_OPTIONS , ...options}
+  return { ...DEFAULT_OPTIONS, ...options }
 }
 
 // The number of bits in an int.
@@ -29,7 +34,12 @@ const MAX_BITS = 32
  * @return {number} Best match index or -1.
  * @private
  */
-export function bitap_(text, pattern, loc, opts: Partial<BitapOptions> = {}) {
+export function bitap_(
+  text: string,
+  pattern: string,
+  loc: number,
+  opts: Partial<BitapOptions> = {},
+) {
   if (pattern.length > MAX_BITS) {
     throw new Error('Pattern too long for this browser.')
   }
@@ -47,7 +57,7 @@ export function bitap_(text, pattern, loc, opts: Partial<BitapOptions> = {}) {
    * @return {number} Overall score for match (0.0 = good, 1.0 = bad).
    * @private
    */
-  function bitapScore_(e, x) {
+  function bitapScore_(e: number, x: number) {
     const accuracy = e / pattern.length
     const proximity = Math.abs(loc - x)
     if (!options.distance) {
@@ -146,8 +156,8 @@ export function bitap_(text, pattern, loc, opts: Partial<BitapOptions> = {}) {
  * @return {!Object} Hash of character locations.
  * @private
  */
-export function alphabet_(pattern) {
-  const s = {}
+export function alphabet_(pattern: string): Alphabet {
+  const s: Alphabet = {}
   for (let i = 0; i < pattern.length; i++) {
     s[pattern.charAt(i)] = 0
   }

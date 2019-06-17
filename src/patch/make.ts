@@ -72,7 +72,7 @@ function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {
     return [] // Get rid of the null case.
   }
   const patches = []
-  let patch = createPatchObject()
+  let patch = createPatchObject(0, 0)
   let patchDiffLength = 0 // Keeping our own length var is faster in JS.
   let charCount1 = 0 // Number of characters into the text1 string.
   let charCount2 = 0 // Number of characters into the text2 string.
@@ -122,7 +122,7 @@ function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {
           if (patchDiffLength) {
             addContext_(patch, prepatchText, options)
             patches.push(patch)
-            patch = createPatchObject()
+            patch = createPatchObject(-1, -1)
             patchDiffLength = 0
             // Unlike Unidiff, our patch lists have a rolling context.
             // http://code.google.com/p/google-diff-match-patch/wiki/Unidiff
@@ -159,7 +159,7 @@ function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {
  * @param {string} text Source text.
  * @private
  */
-export function addContext_(patch, text, opts: PatchOptions) {
+export function addContext_(patch: Patch, text: string, opts: PatchOptions) {
   if (text.length === 0) {
     return
   }

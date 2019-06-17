@@ -20,9 +20,8 @@ export function parse(textline: string): Patch[] {
     if (!m) {
       throw new Error('Invalid patch string: ' + text[textPointer])
     }
-    const patch = createPatchObject()
+    const patch = createPatchObject(parseInt(m[1], 10), parseInt(m[3], 10))
     patches.push(patch)
-    patch.start1 = parseInt(m[1], 10)
     if (m[2] === '') {
       patch.start1--
       patch.length1 = 1
@@ -33,7 +32,6 @@ export function parse(textline: string): Patch[] {
       patch.length1 = parseInt(m[2], 10)
     }
 
-    patch.start2 = parseInt(m[3], 10)
     if (m[4] === '') {
       patch.start2--
       patch.length2 = 1

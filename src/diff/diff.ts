@@ -24,10 +24,7 @@ export interface InternalDiffOptions {
   checkLines: boolean
   deadline: number
 }
-const DEFAULT_OPTIONS: DiffOptions = {
-  checkLines: true,
-  timeout: 1.0,
-}
+
 function createDeadLine(timeout: undefined | number): number {
   const t =
     typeof timeout === 'undefined'
@@ -38,7 +35,11 @@ function createDeadLine(timeout: undefined | number): number {
   return Date.now() + t * 1000
 }
 function createInternalOpts(opts: Partial<DiffOptions>): InternalDiffOptions {
-  return { deadline: createDeadLine(opts.timeout), checkLines: opts.checkLines }
+  return {
+    checkLines: true,
+    deadline: createDeadLine(opts.timeout || 1.0),
+    ...opts,
+  }
 }
 export function diff(
   text1: null | string,
@@ -50,7 +51,7 @@ export function diff(
     throw new Error('Null input. (diff)')
   }
 
-  return _diff(text1, text2, createInternalOpts(opts || DEFAULT_OPTIONS))
+  return _diff(text1, text2, createInternalOpts(opts || {}))
 }
 /**
  * Find the differences between two texts.  Simplifies the problem by stripping

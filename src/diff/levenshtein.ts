@@ -4,9 +4,9 @@
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
  * @return {number} Number of changes.
  */
-import { DiffType } from './diff'
+import { Diff, DiffType } from './diff'
 
-export function levenshtein(diffs) {
+export function levenshtein(diffs: Diff[]) {
   let leven = 0
   let insertions = 0
   let deletions = 0

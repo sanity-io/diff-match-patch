@@ -11,7 +11,7 @@
  * @private
  */
 import { bisect_ } from './bisect'
-import { diff, DiffType, InternalDiffOptions } from './diff'
+import { Diff, diff, DiffType, InternalDiffOptions } from './diff'
 import { halfMatch_ } from './halfMatch'
 import { lineMode_ } from './lineMode'
 
@@ -19,8 +19,8 @@ export function compute_(
   text1: string,
   text2: string,
   opts: InternalDiffOptions,
-) {
-  let diffs
+): Diff[] {
+  let diffs: Diff[]
 
   if (!text1) {
     // Just add some text (speedup).

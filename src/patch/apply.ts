@@ -5,7 +5,7 @@ import { levenshtein } from '../diff/levenshtein'
 import { xIndex } from '../diff/xIndex'
 import { match } from '../match/match'
 import { MAX_BITS } from './constants'
-import { createPatchObject, Patch } from './createPatchObject'
+import { createPatchObject, deepCopy, Patch } from './createPatchObject'
 
 // When deleting a large block of text (over ~64 characters), how close do
 // the contents have to be to match the expected contents. (0.0 = perfection,
@@ -40,7 +40,7 @@ type PatchResult = [string, boolean[]]
 
 export function apply(
   patches: Patch[],
-  text,
+  text: string,
   opts: Partial<PatchOptions> = {},
 ): PatchResult {
   if (patches.length === 0) {
@@ -152,30 +152,6 @@ export function apply(
 }
 
 /**
- * Given an array of patches, return another array that is identical.
- * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
- * @return {!Array.<!diff_match_patch.patch_obj>} Array of Patch objects.
- */
-function deepCopy(patches: Patch[]): Patch[] {
-  // Making deep copies is hard in JavaScript.
-  const patchesCopy = []
-  for (let x = 0; x < patches.length; x++) {
-    const patch = patches[x]
-    const patchCopy = createPatchObject()
-    patchCopy.diffs = []
-    for (let y = 0; y < patch.diffs.length; y++) {
-      patchCopy.diffs[y] = [patch.diffs[y][0], patch.diffs[y][1]]
-    }
-    patchCopy.start1 = patch.start1
-    patchCopy.start2 = patch.start2
-    patchCopy.length1 = patch.length1
-    patchCopy.length2 = patch.length2
-    patchesCopy[x] = patchCopy
-  }
-  return patchesCopy
-}
-
-/**
  * Add some padding on text start and end so that edges can match something.
  * Intended to be called only from within patch_apply.
  * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
@@ -189,10 +165,9 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN) {
   }
 
   // Bump all the patches forward.
-  // tslint:disable-next-line:prefer-for-of
-  for (let x = 0; x < patches.length; x++) {
-    patches[x].start1 += paddingLength
-    patches[x].start2 += paddingLength
+  for (const p of patches) {
+    p.start1 += paddingLength
+    p.start2 += paddingLength
   }
 
   // Add some padding on start of first diff.
@@ -254,10 +229,9 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN) {
     let precontext = ''
     while (bigpatch.diffs.length !== 0) {
       // Create one of several smaller patches.
-      const patch = createPatchObject()
+      const patch = createPatchObject(start1 - precontext.length, start2 - precontext.length)
       let empty = true
-      patch.start1 = start1 - precontext.length
-      patch.start2 = start2 - precontext.length
+
       if (precontext !== '') {
         patch.length1 = patch.length2 = precontext.length
         patch.diffs.push([DiffType.EQUAL, precontext])

@@ -6,7 +6,7 @@
  *     string and the start of the second string.
  * @private
  */
-export function commonOverlap_(text1, text2) {
+export function commonOverlap_(text1: string, text2: string) {
   // Cache the text lengths to prevent multiple calls.
   const text1Length = text1.length
   const text2Length = text2.length

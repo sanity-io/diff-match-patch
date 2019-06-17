@@ -9,9 +9,9 @@
  *     The zeroth element of the array of unique strings is intentionally blank.
  * @private
  */
-export function linesToChars_(text1, text2) {
+export function linesToChars_(text1: string, text2: string) {
   const lineArray = [] // e.g. lineArray[4] === 'Hello\n'
-  const lineHash = {} // e.g. lineHash['Hello\n'] === 4
+  const lineHash: {[key: string]: number} = {} // e.g. lineHash['Hello\n'] === 4
 
   // '\x00' is a valid character, but various debuggers don't like it.
   // So we'll insert a junk entry to avoid generating a null character.
@@ -25,7 +25,7 @@ export function linesToChars_(text1, text2) {
    * @return {string} Encoded string.
    * @private
    */
-  function diff_linesToCharsMunge_(text) {
+  function diff_linesToCharsMunge_(text: string) {
     let chars = ''
     // Walk the text, pulling out a substring for each line.
     // text.split('\n') would would temporarily double our memory footprint.

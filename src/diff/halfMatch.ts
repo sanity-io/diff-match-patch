@@ -1,3 +1,5 @@
+type HalfMatch = [string, string, string, string, string]
+
 /**
  * Do the two texts share a substring which is at least half the length of the
  * longer text?
@@ -12,7 +14,11 @@
 import { commonPrefix } from './commonPrefix'
 import { commonSuffix } from './commonSuffix'
 
-function halfMatchI_(longtext: string, shorttext: string, i: number) {
+function halfMatchI_(
+  longtext: string,
+  shorttext: string,
+  i: number,
+): null | HalfMatch {
   // Start with a 1/4 length substring at position i as a seed.
   const seed = longtext.substring(i, i + Math.floor(longtext.length / 4))
   let j = -1
@@ -43,18 +49,21 @@ function halfMatchI_(longtext: string, shorttext: string, i: number) {
   }
   if (bestCommon.length * 2 >= longtext.length) {
     return [
-      bestLongtextA,
-      bestLongtextB,
-      bestShorttextA,
-      bestShorttextB,
-      bestCommon,
+      bestLongtextA || '',
+      bestLongtextB || '',
+      bestShorttextA || '',
+      bestShorttextB || '',
+      bestCommon || '',
     ]
   } else {
     return null
   }
 }
-
-export function halfMatch_(text1, text2, timeout = 1) {
+export function halfMatch_(
+  text1: string,
+  text2: string,
+  timeout = 1,
+): null | HalfMatch {
   if (timeout <= 0) {
     // Don't risk returning a non-optimal diff if we have unlimited time.
     return null
@@ -96,21 +105,24 @@ export function halfMatch_(text1, text2, timeout = 1) {
   }
 
   // A half-match was found, sort out the return data.
-  let text1A
-  let text1B
-  let text2A
-  let text2B
-  if (text1.length > text2.length) {
-    text1A = hm[0]
-    text1B = hm[1]
-    text2A = hm[2]
-    text2B = hm[3]
-  } else {
-    text2A = hm[0]
-    text2B = hm[1]
-    text1A = hm[2]
-    text1B = hm[3]
+  let text1A: string
+  let text1B: string
+  let text2A: string
+  let text2B: string
+  if (hm) {
+    if (text1.length > text2.length) {
+      text1A = hm[0]
+      text1B = hm[1]
+      text2A = hm[2]
+      text2B = hm[3]
+    } else {
+      text2A = hm[0]
+      text2B = hm[1]
+      text1A = hm[2]
+      text1B = hm[3]
+    }
+    const midCommon = hm[4]
+    return [text1A, text1B, text2A, text2B, midCommon]
   }
-  const midCommon = hm[4]
-  return [text1A, text1B, text2A, text2B, midCommon]
+  throw new Error('nope')
 }

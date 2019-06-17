@@ -157,7 +157,7 @@ export function cleanupSemanticLossless(diffs: Diff[]) {
    * @return {number} The score.
    * @private
    */
-  function diff_cleanupSemanticScore_(one, two) {
+  function diff_cleanupSemanticScore_(one: string, two: string) {
     if (!one || !two) {
       // Edges are the best.
       return 6
@@ -268,7 +268,7 @@ export function cleanupSemanticLossless(diffs: Diff[]) {
  * Any edit section can move as long as it doesn't cross an equality.
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
  */
-export function cleanupMerge(diffs) {
+export function cleanupMerge(diffs: Diff[]) {
   diffs.push([DiffType.EQUAL, '']) // Add a dummy entry at the end.
   let pointer = 0
   let countDelete = 0
