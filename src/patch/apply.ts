@@ -1,7 +1,7 @@
 import { cleanupSemanticLossless } from '../diff/cleanup'
 import { diff, DiffType } from '../diff/diff'
-import { levenshtein } from '../diff/levenshtein'
 import { diffText1, diffText2 } from '../diff/diffText'
+import { levenshtein } from '../diff/levenshtein'
 import { xIndex } from '../diff/xIndex'
 import { match } from '../match/match'
 import { MAX_BITS } from './constants'
@@ -11,9 +11,23 @@ import { createPatchObject, Patch } from './createPatchObject'
 // the contents have to be to match the expected contents. (0.0 = perfection,
 // 1.0 = very loose).  Note that Match_Threshold controls how closely the
 // end points of a delete need to match.
-const PATCH_DELETE_THRESHOLD = 0.5
-const PATCH_MARGIN = 4
+interface PatchOptions {
+  // Chunk size for context length.
+  margin: number
+  deleteThreshold: number
+}
 
+const DEFAULT_MARGIN = 4
+const DEFAULT_OPTS = {
+  margin: DEFAULT_MARGIN,
+  deleteThreshold: 0.4,
+}
+function getDefaultOpts(opts: Partial<PatchOptions> = {}): PatchOptions {
+  return {
+    ...DEFAULT_OPTS,
+    ...opts,
+  }
+}
 /**
  * Merge a set of patches onto the text.  Return a patched text, as well
  * as a list of true/false values indicating which patches were applied.
@@ -24,18 +38,23 @@ const PATCH_MARGIN = 4
  */
 type PatchResult = [string, boolean[]]
 
-export function apply(patches: Patch[], text): PatchResult {
+export function apply(
+  patches: Patch[],
+  text,
+  opts: Partial<PatchOptions> = {},
+): PatchResult {
   if (patches.length === 0) {
     return [text, []]
   }
 
+  const options = getDefaultOpts(opts)
   // Deep copy the patches so that no changes are made to originals.
   patches = deepCopy(patches)
 
-  const nullPadding = addPadding(patches)
+  const nullPadding = addPadding(patches, options.margin)
   text = nullPadding + text + nullPadding
 
-  splitMax(patches)
+  splitMax(patches, options.margin)
   // delta keeps track of the offset between the expected and actual location
   // of the previous patch.  If there are patches expected at positions 10 and
   // 20, but the first patch was found at 12, delta is 2 and the second patch
@@ -90,10 +109,10 @@ export function apply(patches: Patch[], text): PatchResult {
       } else {
         // Imperfect match.  Run a diff to get a framework of equivalent
         // indices.
-        const diffs = diff(text1, text2, false)
+        const diffs = diff(text1, text2, { checkLines: false })
         if (
           text1.length > MAX_BITS &&
-          levenshtein(diffs) / text1.length > PATCH_DELETE_THRESHOLD
+          levenshtein(diffs) / text1.length > options.deleteThreshold
         ) {
           // The end points match, but the content is unacceptably bad.
           results[x] = false
@@ -162,8 +181,8 @@ function deepCopy(patches: Patch[]): Patch[] {
  * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
  * @return {string} The padding string added to each side.
  */
-export function addPadding(patches: Patch[]) {
-  const paddingLength = PATCH_MARGIN
+export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN) {
+  const paddingLength = margin
   let nullPadding = ''
   for (let x = 1; x <= paddingLength; x++) {
     nullPadding += String.fromCharCode(x)
@@ -221,7 +240,7 @@ export function addPadding(patches: Patch[]) {
  * Intended to be called only from within patch_apply.
  * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
  */
-export function splitMax(patches) {
+export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN) {
   const patchSize = MAX_BITS
   for (let x = 0; x < patches.length; x++) {
     if (patches[x].length1 <= patchSize) {
@@ -245,7 +264,7 @@ export function splitMax(patches) {
       }
       while (
         bigpatch.diffs.length !== 0 &&
-        patch.length1 < patchSize - PATCH_MARGIN
+        patch.length1 < patchSize - margin
       ) {
         const diffType = bigpatch.diffs[0][0]
         let diffText = bigpatch.diffs[0][1]
@@ -269,10 +288,7 @@ export function splitMax(patches) {
           bigpatch.diffs.shift()
         } else {
           // Deletion or equality.  Only take as much as we can stomach.
-          diffText = diffText.substring(
-            0,
-            patchSize - patch.length1 - PATCH_MARGIN,
-          )
+          diffText = diffText.substring(0, patchSize - patch.length1 - margin)
           patch.length1 += diffText.length
           start1 += diffText.length
           if (diffType === DiffType.EQUAL) {
@@ -293,9 +309,9 @@ export function splitMax(patches) {
       }
       // Compute the head context for the next patch.
       precontext = diffText2(patch.diffs)
-      precontext = precontext.substring(precontext.length - PATCH_MARGIN)
+      precontext = precontext.substring(precontext.length - margin)
       // Append the end context for this patch.
-      const postcontext = diffText1(bigpatch.diffs).substring(0, PATCH_MARGIN)
+      const postcontext = diffText1(bigpatch.diffs).substring(0, margin)
       if (postcontext !== '') {
         patch.length1 += postcontext.length
         patch.length2 += postcontext.length

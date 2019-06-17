@@ -13,6 +13,7 @@ import { diffText1, diffText2 } from '../src/diff/diffText'
 import { fromDelta } from '../src/diff/fromDelta'
 import { halfMatch_ } from '../src/diff/halfMatch'
 import { levenshtein } from '../src/diff/levenshtein'
+import { charsToLines_ } from '../src/diff/lineMode'
 import { linesToChars_ } from '../src/diff/linesToChars'
 import { toDelta } from '../src/diff/toDelta'
 import { xIndex } from '../src/diff/xIndex'
@@ -20,12 +21,10 @@ import { alphabet_, bitap_ } from '../src/match/bitap'
 import { match } from '../src/match/match'
 import { addPadding, apply, splitMax } from '../src/patch/apply'
 import { createPatchObject } from '../src/patch/createPatchObject'
-import { make } from '../src/patch/make'
+import { addContext_, make } from '../src/patch/make'
 import { parse } from '../src/patch/parse'
 import { stringify, stringifyPatch } from '../src/patch/stringify'
-import { charsToLines_ } from '../src/diff/lineMode'
 
-const dmp: any = {}
 /**
  * Test Harness for Diff Match and Patch
  *
@@ -1271,37 +1270,35 @@ test('PatchToText', () => {
   assertEquals(strp, stringify(p))
 })
 
-xtest('PatchAddContext', () => {
-  dmp.Patch_Margin = 4
+test('PatchAddContext', () => {
   let p = parse('@@ -21,4 +21,10 @@\n-jump\n+somersault\n')[0]
-  dmp.patch_addContext_(p, 'The quick brown fox jumps over the lazy dog.')
+  addContext_(p, 'The quick brown fox jumps over the lazy dog.', { margin: 4 })
   assertEquals(
     '@@ -17,12 +17,18 @@\n fox \n-jump\n+somersault\n s ov\n',
-    p.toString(),
+    stringifyPatch(p),
   )
 
   // Same, but not enough trailing context.
   p = parse('@@ -21,4 +21,10 @@\n-jump\n+somersault\n')[0]
-  dmp.patch_addContext_(p, 'The quick brown fox jumps.')
+  addContext_(p, 'The quick brown fox jumps.', { margin: 4 })
   assertEquals(
     '@@ -17,10 +17,16 @@\n fox \n-jump\n+somersault\n s.\n',
-    p.toString(),
+    stringifyPatch(p),
   )
 
   // Same, but not enough leading context.
   p = parse('@@ -3 +3,2 @@\n-e\n+at\n')[0]
-  dmp.patch_addContext_(p, 'The quick brown fox jumps.')
-  assertEquals('@@ -1,7 +1,8 @@\n Th\n-e\n+at\n  qui\n', p.toString())
+  addContext_(p, 'The quick brown fox jumps.', { margin: 4 })
+  assertEquals('@@ -1,7 +1,8 @@\n Th\n-e\n+at\n  qui\n', stringifyPatch(p))
 
   // Same, but with ambiguity.
   p = parse('@@ -3 +3,2 @@\n-e\n+at\n')[0]
-  dmp.patch_addContext_(
-    p,
-    'The quick brown fox jumps.  The quick brown fox crashes.',
-  )
+  addContext_(p, 'The quick brown fox jumps.  The quick brown fox crashes.', {
+    margin: 4,
+  })
   assertEquals(
     '@@ -1,27 +1,28 @@\n Th\n-e\n+at\n  quick brown fox jumps. \n',
-    p.toString(),
+    stringifyPatch(p),
   )
 })
 
@@ -1439,13 +1436,10 @@ test('PatchAddPadding', () => {
   assertEquals('@@ -5,8 +5,12 @@\n XXXX\n+test\n YYYY\n', stringify(patches))
 })
 
-xtest('PatchApply', () => {
-  dmp.Match_Distance = 1000
-  dmp.Match_Threshold = 0.5
-  dmp.Patch_DeleteThreshold = 0.5
+test('PatchApply', () => {
   // Null case.
   let patches = make('', '')
-  let results = apply(patches, 'Hello world.')
+  let results = apply(patches, 'Hello world.', { deleteThreshold: 0.5 })
   assertEquivalent(['Hello world.', []], results)
 
   // Exact match.
@@ -1502,7 +1496,6 @@ xtest('PatchApply', () => {
   )
 
   // Big delete, big change 2.
-  dmp.Patch_DeleteThreshold = 0.6
   patches = make(
     'x1234567890123456789012345678901234567890123456789012345678901234567890y',
     'xabcy',
@@ -1510,13 +1503,11 @@ xtest('PatchApply', () => {
   results = apply(
     patches,
     'x12345678901234567890---------------++++++++++---------------12345678901234567890y',
+    { deleteThreshold: 0.6 },
   )
   assertEquivalent(['xabcy', [true, true]], results)
-  dmp.Patch_DeleteThreshold = 0.5
 
   // Compensate for failed patch.
-  dmp.Match_Threshold = 0.0
-  dmp.Match_Distance = 0
   patches = make(
     'abcdefghijklmnopqrstuvwxyz--------------------1234567890',
     'abcXXXXXXXXXXdefghijklmnopqrstuvwxyz--------------------1234567YYYYYYYYYY890',
@@ -1524,6 +1515,7 @@ xtest('PatchApply', () => {
   results = apply(
     patches,
     'ABCDEFGHIJKLMNOPQRSTUVWXYZ--------------------1234567890',
+    { deleteThreshold: 0.5 },
   )
   assertEquivalent(
     [
@@ -1532,8 +1524,6 @@ xtest('PatchApply', () => {
     ],
     results,
   )
-  dmp.Match_Threshold = 0.5
-  dmp.Match_Distance = 1000
 
   // No side effects.
   patches = make('', 'test')

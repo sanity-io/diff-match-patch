@@ -47,7 +47,7 @@ export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
   if (typeof a === 'string' && typeof b === 'string') {
     // Method 1: text1, text2
     // Compute diffs from text1 and text2.
-    const diffs = diff(a, b, true)
+    const diffs = diff(a, b, {checkLines: true})
     if (diffs.length > 2) {
       _cleanupSemantic(diffs)
       cleanupEfficiency(diffs)
@@ -159,8 +159,7 @@ function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {
  * @param {string} text Source text.
  * @private
  */
-
-function addContext_(patch, text, opts: PatchOptions) {
+export function addContext_(patch, text, opts: PatchOptions) {
   if (text.length === 0) {
     return
   }
