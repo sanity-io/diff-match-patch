@@ -1,11 +1,21 @@
 /* tslint:disable:no-bitwise */
-// At what point is no match declared (0.0 = perfection, 1.0 = very loose).
-const THRESHOLD = 0.5
 
-// How far to search for a match (0 = exact location, 1000+ = broad match).
-// A match this many characters away from the expected location will add
-// 1.0 to the score (0.0 is a perfect match).
-const DISTANCE = 1000
+interface BitapOptions {
+  threshold: number
+  distance: number
+}
+const DEFAULT_OPTIONS: BitapOptions = {
+  // At what point is no match declared (0.0 = perfection, 1.0 = very loose).
+  threshold: 0.5,
+  // How far to search for a match (0 = exact location, 1000+ = broad match).
+  // A match this many characters away from the expected location will add
+  // 1.0 to the score (0.0 is a perfect match).
+  distance: 1000,
+}
+
+function applyDefaults(options: Partial<BitapOptions>): BitapOptions {
+  return { ...DEFAULT_OPTIONS , ...options}
+}
 
 // The number of bits in an int.
 const MAX_BITS = 32
@@ -19,10 +29,12 @@ const MAX_BITS = 32
  * @return {number} Best match index or -1.
  * @private
  */
-export function bitap_(text, pattern, loc) {
+export function bitap_(text, pattern, loc, opts: Partial<BitapOptions> = {}) {
   if (pattern.length > MAX_BITS) {
     throw new Error('Pattern too long for this browser.')
   }
+
+  const options = applyDefaults(opts)
 
   // Initialise the alphabet.
   const s = alphabet_(pattern)
@@ -38,15 +50,15 @@ export function bitap_(text, pattern, loc) {
   function bitapScore_(e, x) {
     const accuracy = e / pattern.length
     const proximity = Math.abs(loc - x)
-    if (!DISTANCE) {
+    if (!options.distance) {
       // Dodge divide by zero error.
       return proximity ? 1.0 : accuracy
     }
-    return accuracy + proximity / DISTANCE
+    return accuracy + proximity / options.distance
   }
 
   // Highest score beyond which we give up.
-  let scoreThreshold = THRESHOLD
+  let scoreThreshold = options.threshold
   // Is there a nearby exact match? (speedup)
   let bestLoc = text.indexOf(pattern, loc)
   if (bestLoc !== -1) {

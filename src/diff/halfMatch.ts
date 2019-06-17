@@ -54,7 +54,12 @@ function halfMatchI_(longtext: string, shorttext: string, i: number) {
   }
 }
 
-export function halfMatch_(text1, text2) {
+export function halfMatch_(text1, text2, timeout = 1) {
+  if (timeout <= 0) {
+    // Don't risk returning a non-optimal diff if we have unlimited time.
+    return null
+  }
+
   const longtext = text1.length > text2.length ? text1 : text2
   const shorttext = text1.length > text2.length ? text2 : text1
   if (longtext.length < 4 || shorttext.length * 2 < longtext.length) {

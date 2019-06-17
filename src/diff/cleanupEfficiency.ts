@@ -1,6 +1,10 @@
 import { cleanupMerge } from './cleanup'
 import { Diff, DiffType } from './diff'
 
+function trueCount(...args: boolean[]) {
+  return args.reduce((n, bool) => n + (bool ? 1 : 0), 0)
+}
+
 /**
  * Reduce the number of edits by eliminating operationally trivial equalities.
  */
@@ -13,9 +17,9 @@ export function cleanupEfficiency(diffs: Diff[], editCost: number = 4): void {
   // Always equal to diffs[equalities[equalitiesLength - 1]][1]
   let pointer = 0 // Index of current position.
   // Is there an insertion operation before the last equality.
-  let preIns: boolean = false
+  let preIns = false
   // Is there a deletion operation before the last equality.
-  let preDel: boolean = false
+  let preDel = false
   // Is there an insertion operation after the last equality.
   let postIns = false
   // Is there a deletion operation after the last equality.
@@ -54,10 +58,7 @@ export function cleanupEfficiency(diffs: Diff[], editCost: number = 4): void {
         lastequality &&
         ((preIns && preDel && postIns && postDel) ||
           (lastequality.length < editCost / 2 &&
-            preIns &&
-            preDel &&
-            postIns &&
-            postDel))
+            trueCount(preIns, preDel, postIns, postDel) === 3))
       ) {
         // Duplicate record.
         diffs.splice(equalities[equalitiesLength - 1], 0, [
