@@ -1,5 +1,6 @@
+import { charsToLines_ } from './charsToLines'
 import { _cleanupSemantic } from './cleanup'
-import { _diff, Diff, diff, DiffType, InternalDiffOptions } from './diff'
+import { _diff, Diff, DiffType, InternalDiffOptions } from './diff'
 import { linesToChars_ } from './linesToChars'
 
 /**
@@ -80,23 +81,4 @@ export function lineMode_(
   diffs.pop() // Remove the dummy entry at the end.
 
   return diffs
-}
-
-/**
- * Rehydrate the text in a diff from a string of line hashes to real lines of
- * text.
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
- * @param {!Array.<string>} lineArray Array of unique strings.
- * @private
- */
-export function charsToLines_(diffs: Diff[], lineArray: string[]): void {
-  // tslint:disable-next-line:prefer-for-of
-  for (let x = 0; x < diffs.length; x++) {
-    const chars = diffs[x][1]
-    const text = []
-    for (let y = 0; y < chars.length; y++) {
-      text[y] = lineArray[chars.charCodeAt(y)]
-    }
-    diffs[x][1] = text.join('')
-  }
 }

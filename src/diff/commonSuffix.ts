@@ -4,7 +4,7 @@
  * @param {string} text2 Second string.
  * @return {number} The number of characters common to the end of each string.
  */
-import { isStringArrayEqual } from '../isStringArrayEqual'
+import { isSliceEqual } from '../utils/isSliceEqual'
 
 export function commonSuffix(t1: string, t2: string): number {
   const text1 = [...t1]
@@ -21,9 +21,13 @@ export function commonSuffix(t1: string, t2: string): number {
   let pointerend = 0
   while (pointermin < pointermid) {
     if (
-      isStringArrayEqual(
-        text1.slice(text1.length - pointermid, text1.length - pointerend),
-        text2.slice(text2.length - pointermid, text2.length - pointerend),
+      isSliceEqual(
+        text1,
+        text2,
+        text1.length - pointermid,
+        text1.length - pointerend,
+        text2.length - pointermid,
+        text2.length - pointerend,
       )
     ) {
       pointermin = pointermid

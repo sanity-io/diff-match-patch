@@ -1,5 +1,4 @@
-import { _cleanupSemantic } from '../diff/cleanup'
-import { cleanupEfficiency } from '../diff/cleanupEfficiency'
+import { _cleanupSemantic, cleanupEfficiency } from '../diff/cleanup'
 import { diff, Diff, DiffType } from '../diff/diff'
 import { diffText1 } from '../diff/diffText'
 import { MAX_BITS } from './constants'
@@ -43,11 +42,12 @@ export function make(
   arg2: string | Diff[],
   options?: Partial<PatchOptions>,
 ): Patch[]
+
 export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
   if (typeof a === 'string' && typeof b === 'string') {
     // Method 1: text1, text2
     // Compute diffs from text1 and text2.
-    const diffs = diff(a, b, {checkLines: true})
+    const diffs = diff(a, b, { checkLines: true })
     if (diffs.length > 2) {
       _cleanupSemantic(diffs)
       cleanupEfficiency(diffs)
@@ -63,7 +63,7 @@ export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
     // Method 3: text1, diffs
     return _make(a, b, getDefaultOpts(options))
   } else {
-    throw new Error('Unknown call format to patch_make.')
+    throw new Error('Unknown call format to make()')
   }
 }
 
@@ -155,8 +155,9 @@ function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {
 /**
  * Increase the context until it is unique,
  * but don't let the pattern expand beyond MAX_BITS.
- * @param {!diff_match_patch.patch_obj} patch The patch to grow.
+ * @param patch The patch to grow.
  * @param {string} text Source text.
+ * @param opts
  * @private
  */
 export function addContext_(patch: Patch, text: string, opts: PatchOptions) {

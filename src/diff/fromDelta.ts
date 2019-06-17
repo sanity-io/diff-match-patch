@@ -24,7 +24,7 @@ export function fromDelta(text1: string, delta: string) {
           diffs[diffsLength++] = [DiffType.INSERT, decodeURI(param)]
         } catch (ex) {
           // Malformed URI sequence.
-          throw new Error('Illegal escape in diff_fromDelta: ' + param)
+          throw new Error('Illegal escape in fromDelta: ' + param)
         }
         break
       case '-':
@@ -32,7 +32,7 @@ export function fromDelta(text1: string, delta: string) {
       case '=':
         const n = parseInt(param, 10)
         if (isNaN(n) || n < 0) {
-          throw new Error('Invalid number in diff_fromDelta: ' + param)
+          throw new Error('Invalid number in fromDelta: ' + param)
         }
         const text = text1.substring(pointer, (pointer += n))
         if (tokens[x].charAt(0) === '=') {
@@ -46,7 +46,7 @@ export function fromDelta(text1: string, delta: string) {
         // Anything else is an error.
         if (tokens[x]) {
           throw new Error(
-            'Invalid diff operation in diff_fromDelta: ' + tokens[x],
+            'Invalid diff operation in fromDelta: ' + tokens[x],
           )
         }
     }
@@ -57,7 +57,7 @@ export function fromDelta(text1: string, delta: string) {
         pointer +
         ') does not equal source text length (' +
         text1.length +
-        ').',
+        ')',
     )
   }
   return diffs

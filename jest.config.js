@@ -3,6 +3,7 @@ module.exports = {
     '^.+\\.ts$': 'ts-jest',
   },
   testPathIgnorePatterns: ['/lib'],
-  testRegex: 'test/.*((\\.|/)(test|spec))\\.(js|ts)$',
+  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+  // testRegex: 'test/.*((\\.|/)(test|spec))\\.(js|ts)$',
   moduleFileExtensions: ['ts', 'js', 'json']
 }

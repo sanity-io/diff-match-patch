@@ -3,14 +3,6 @@
  */
 import { Diff } from '../diff/diff'
 
-export interface UninitializedPatch {
-  diffs: Diff[]
-  start1: number | null
-  start2: number | null
-  length1: number
-  length2: number
-}
-
 export interface Patch {
   diffs: Diff[]
   start1: number

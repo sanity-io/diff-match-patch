@@ -5,7 +5,7 @@
  * @return {number} The number of characters common to the start of each
  *     string.
  */
-import { isStringArrayEqual } from '../isStringArrayEqual'
+import { isSliceEqual } from '../utils/isSliceEqual'
 
 export function commonPrefix(t1: string, t2: string): number {
   const text1 = [...t1]
@@ -22,9 +22,13 @@ export function commonPrefix(t1: string, t2: string): number {
   let pointerstart = 0
   while (pointermin < pointermid) {
     if (
-      isStringArrayEqual(
-        text1.slice(pointerstart, pointermid),
-        text2.slice(pointerstart, pointermid),
+      isSliceEqual(
+        text1,
+        text2,
+        pointerstart,
+        pointermid,
+        pointerstart,
+        pointermid,
       )
     ) {
       pointermin = pointermid
