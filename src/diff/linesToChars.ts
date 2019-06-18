@@ -11,7 +11,7 @@
  */
 export function linesToChars_(text1: string, text2: string) {
   const lineArray = [] // e.g. lineArray[4] === 'Hello\n'
-  const lineHash: {[key: string]: number} = {} // e.g. lineHash['Hello\n'] === 4
+  const lineHash: { [key: string]: number } = {} // e.g. lineHash['Hello\n'] === 4
 
   // '\x00' is a valid character, but various debuggers don't like it.
   // So we'll insert a junk entry to avoid generating a null character.
@@ -39,8 +39,7 @@ export function linesToChars_(text1: string, text2: string) {
       if (lineEnd === -1) {
         lineEnd = text.length - 1
       }
-      const line = text.substring(lineStart, lineEnd + 1)
-      lineStart = lineEnd + 1
+      let line = text.substring(lineStart, lineEnd + 1)
 
       if (
         lineHash.hasOwnProperty
@@ -49,15 +48,24 @@ export function linesToChars_(text1: string, text2: string) {
       ) {
         chars += String.fromCharCode(lineHash[line])
       } else {
+        if (lineArrayLength === maxLines) {
+          // Bail out at 65535 because
+          // String.fromCharCode(65536) == String.fromCharCode(0)
+          line = text.substring(lineStart)
+          lineEnd = text.length
+        }
         chars += String.fromCharCode(lineArrayLength)
         lineHash[line] = lineArrayLength
         lineArray[lineArrayLength++] = line
       }
+      lineStart = lineEnd + 1
     }
     return chars
   }
-
+  // Allocate 2/3rds of the space for text1, the rest for text2.
+  let maxLines = 40000
   const chars1 = diff_linesToCharsMunge_(text1)
+  maxLines = 65535
   const chars2 = diff_linesToCharsMunge_(text2)
   return { chars1, chars2, lineArray }
 }

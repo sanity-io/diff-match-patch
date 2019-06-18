@@ -2,7 +2,7 @@
 
 var assert = require('assert');
 var test = require('testit');
-var diff_match_patch = require('../src/from-npm.js');
+var diff_match_patch = require('../diff_match_patch_uncompressed');
 var DIFF_DELETE = diff_match_patch.DIFF_DELETE;
 var DIFF_INSERT = diff_match_patch.DIFF_INSERT;
 var DIFF_EQUAL = diff_match_patch.DIFF_EQUAL;

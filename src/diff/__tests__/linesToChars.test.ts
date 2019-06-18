@@ -35,9 +35,9 @@ test('linesToChars', () => {
   const n = 300
   const lineList = []
   const charList = []
-  for (let x = 1; x < n + 1; x++) {
-    lineList[x - 1] = x + '\n'
-    charList[x - 1] = String.fromCharCode(x)
+  for (let i = 1; i < n + 1; i++) {
+    lineList[i - 1] = i + '\n';
+    charList[i - 1] = String.fromCharCode(i);
   }
   expect(n).toBe(lineList.length)
   const lines = lineList.join('')

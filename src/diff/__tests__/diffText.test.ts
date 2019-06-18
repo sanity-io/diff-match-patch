@@ -49,10 +49,14 @@ test('delta', () => {
   }
 
   // Generates error (19 !==  18).
-  expect(() => fromDelta(text1.substring(1), delta)).toThrowError('Delta length (19) does not equal source text length (18)')
+  expect(() => fromDelta(text1.substring(1), delta)).toThrowError(
+    'Delta length (19) does not equal source text length (18)',
+  )
 
   // Generates error (%c3%xy invalid Unicode).
-  expect(() => fromDelta('', '+%c3%xy')).toThrowError('Illegal escape in fromDelta: %c3%xy')
+  expect(() => fromDelta('', '+%c3%xy')).toThrowError(
+    'Illegal escape in fromDelta: %c3%xy',
+  )
 
   // Test deltas with special characters.
   diffs = [
@@ -81,4 +85,13 @@ test('delta', () => {
 
   // Convert delta string into a diff.
   expect(diffs).toEqual(fromDelta('', delta))
+
+  // 160 kb string.
+  let a = 'abcdefghij'
+  for (let i = 0; i < 14; i++) {
+    a += a
+  }
+  diffs = [[DiffType.INSERT, a]]
+  delta = toDelta(diffs)
+  expect(delta).toBe(`+${a}`)
 })

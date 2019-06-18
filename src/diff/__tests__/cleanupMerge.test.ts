@@ -129,4 +129,18 @@ test('cleanupMerge', () => {
   ]
   cleanupMerge(diffs)
   expect(diffs).toEqual([[DiffType.EQUAL, 'xca'], [DiffType.DELETE, 'cba']])
+
+  // Empty merge.
+  diffs = [
+    [DiffType.DELETE, 'b'],
+    [DiffType.INSERT, 'ab'],
+    [DiffType.EQUAL, 'c'],
+  ]
+  cleanupMerge(diffs)
+  expect(diffs).toEqual([[DiffType.INSERT, 'a'], [DiffType.EQUAL, 'bc']])
+
+  // Empty equality.
+  diffs = [[DiffType.EQUAL, ''], [DiffType.INSERT, 'a'], [DiffType.EQUAL, 'b']]
+  cleanupMerge(diffs)
+  expect(diffs).toEqual([[DiffType.INSERT, 'a'], [DiffType.EQUAL, 'b']])
 })

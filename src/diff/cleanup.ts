@@ -1,7 +1,7 @@
 import { commonOverlap_ } from './commonOverlap'
-import { commonPrefix } from './commonPrefix'
 import { commonSuffix } from './commonSuffix'
 import { Diff, DiffType } from './diff'
+import { commonPrefix } from './commonPrefix'
 
 /**
  * Reduce the number of edits by eliminating semantically trivial equalities.
@@ -269,7 +269,8 @@ export function cleanupSemanticLossless(diffs: Diff[]) {
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
  */
 export function cleanupMerge(diffs: Diff[]) {
-  diffs.push([DiffType.EQUAL, '']) // Add a dummy entry at the end.
+  // Add a dummy entry at the end.
+  diffs.push([DiffType.EQUAL, ''])
   let pointer = 0
   let countDelete = 0
   let countInsert = 0
@@ -298,11 +299,11 @@ export function cleanupMerge(diffs: Diff[]) {
               if (
                 pointer - countDelete - countInsert > 0 &&
                 diffs[pointer - countDelete - countInsert - 1][0] ===
-                DiffType.EQUAL
+                  DiffType.EQUAL
               ) {
                 diffs[
-                pointer - countDelete - countInsert - 1
-                  ][1] += textInsert.substring(0, commonlength)
+                  pointer - countDelete - countInsert - 1
+                ][1] += textInsert.substring(0, commonlength)
               } else {
                 diffs.splice(0, 0, [
                   DiffType.EQUAL,
@@ -330,31 +331,17 @@ export function cleanupMerge(diffs: Diff[]) {
             }
           }
           // Delete the offending records and add the merged ones.
-          if (countDelete === 0) {
-            diffs.splice(pointer - countInsert, countDelete + countInsert, [
-              DiffType.INSERT,
-              textInsert,
-            ])
-          } else if (countInsert === 0) {
-            diffs.splice(pointer - countDelete, countDelete + countInsert, [
-              DiffType.DELETE,
-              textDelete,
-            ])
-          } else {
-            diffs.splice(
-              pointer - countDelete - countInsert,
-              countDelete + countInsert,
-              [DiffType.DELETE, textDelete],
-              [DiffType.INSERT, textInsert],
-            )
+          pointer -= countDelete + countInsert
+          diffs.splice(pointer, countDelete + countInsert)
+          if (textDelete.length) {
+            diffs.splice(pointer, 0, [DiffType.DELETE, textDelete])
+            pointer++
           }
-          pointer =
-            pointer -
-            countDelete -
-            countInsert +
-            (countDelete ? 1 : 0) +
-            (countInsert ? 1 : 0) +
-            1
+          if (textInsert.length) {
+            diffs.splice(pointer, 0, [DiffType.INSERT, textInsert])
+            pointer++
+          }
+          pointer++
         } else if (pointer !== 0 && diffs[pointer - 1][0] === DiffType.EQUAL) {
           // Merge this equality with the previous one.
           diffs[pointer - 1][1] += diffs[pointer][1]
