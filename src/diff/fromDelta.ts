@@ -45,9 +45,7 @@ export function fromDelta(text1: string, delta: string) {
         // Blank tokens are ok (from a trailing \t).
         // Anything else is an error.
         if (tokens[x]) {
-          throw new Error(
-            'Invalid diff operation in fromDelta: ' + tokens[x],
-          )
+          throw new Error('Invalid diff operation in fromDelta: ' + tokens[x])
         }
     }
   }

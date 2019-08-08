@@ -1,6 +1,6 @@
-import path from 'path'
+import * as path from 'path'
 
-import fs from 'fs'
+import * as fs from 'fs'
 
 import { diff } from '../src/diff/diff'
 import { make } from '../src/patch/make'

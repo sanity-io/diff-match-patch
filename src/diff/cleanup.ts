@@ -1,7 +1,7 @@
 import { commonOverlap_ } from './commonOverlap'
+import { commonPrefix } from './commonPrefix'
 import { commonSuffix } from './commonSuffix'
 import { Diff, DiffType } from './diff'
-import { commonPrefix } from './commonPrefix'
 
 /**
  * Reduce the number of edits by eliminating semantically trivial equalities.

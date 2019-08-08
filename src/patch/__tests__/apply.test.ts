@@ -1,5 +1,5 @@
-import { make } from '../make'
 import { apply } from '../apply'
+import { make } from '../make'
 import { stringify } from '../stringify'
 
 test('apply', () => {

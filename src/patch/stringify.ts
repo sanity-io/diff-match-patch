@@ -1,5 +1,5 @@
-import { Patch } from './createPatchObject'
 import { DiffType } from '../diff/diff'
+import { Patch } from './createPatchObject'
 
 export function stringify(patches: Patch[]) {
   return patches.map(stringifyPatch).join('')
