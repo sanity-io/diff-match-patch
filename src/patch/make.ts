@@ -4,6 +4,29 @@ import { diffText1 } from '../diff/diffText'
 import { MAX_BITS } from './constants'
 import { createPatchObject, Patch } from './createPatchObject'
 
+interface PatchOptions {
+  // Chunk size for context length.
+  margin: number
+}
+
+const DEFAULT_OPTS: PatchOptions = {
+  margin: 4,
+}
+
+function getDefaultOpts(opts: Partial<PatchOptions> = {}): PatchOptions {
+  return {
+    ...DEFAULT_OPTS,
+    ...opts,
+  }
+}
+
+export function make(diffs: Diff[], options?: Partial<PatchOptions>): Patch[]
+export function make(
+  text1: string,
+  arg2: string | Diff[],
+  options?: Partial<PatchOptions>,
+): Patch[]
+
 /**
  * Compute a list of patches to turn text1 into text2.
  * Use diffs if provided, otherwise compute it ourselves.
@@ -22,27 +45,6 @@ import { createPatchObject, Patch } from './createPatchObject'
  * Array of diff tuples for text1 to text2 (method 3) or undefined (method 2).
  * @param {string|!Array.<!diff_match_patch.Diff>} opt_c Array of diff tuples
  */
-interface PatchOptions {
-  // Chunk size for context length.
-  margin: number
-}
-
-const DEFAULT_OPTS = {
-  margin: 4,
-}
-function getDefaultOpts(opts: Partial<PatchOptions> = {}): PatchOptions {
-  return {
-    ...DEFAULT_OPTS,
-    ...opts,
-  }
-}
-export function make(diffs: Diff[], options?: Partial<PatchOptions>): Patch[]
-export function make(
-  text1: string,
-  arg2: string | Diff[],
-  options?: Partial<PatchOptions>,
-): Patch[]
-
 export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
   if (typeof a === 'string' && typeof b === 'string') {
     // Method 1: text1, text2
@@ -54,17 +56,19 @@ export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
     }
     return _make(a, diffs, getDefaultOpts(options))
   }
+
   if (a && typeof a === 'object' && typeof b === 'undefined') {
     // Method 2: diffs
     // Compute text1 from diffs.
     return _make(diffText1(a), a, getDefaultOpts(options))
   }
+
   if (typeof a === 'string' && b && typeof b === 'object') {
     // Method 3: text1, diffs
     return _make(a, b, getDefaultOpts(options))
-  } else {
-    throw new Error('Unknown call format to make()')
   }
+
+  throw new Error('Unknown call format to make()')
 }
 
 function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {

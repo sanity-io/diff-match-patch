@@ -1,3 +1,5 @@
+import { Diff, DiffType } from './diff'
+
 /**
  * loc is a location in text1, compute and return the equivalent location in
  * text2.
@@ -6,8 +8,6 @@
  * @param {number} loc Location within text1.
  * @return {number} Location within text2.
  */
-import { Diff, DiffType } from './diff'
-
 export function xIndex(diffs: Diff[], loc: number) {
   let chars1 = 0
   let chars2 = 0

@@ -1,3 +1,6 @@
+import { commonPrefix } from './commonPrefix'
+import { commonSuffix } from './commonSuffix'
+
 type HalfMatch = [string, string, string, string, string]
 
 /**
@@ -11,9 +14,6 @@ type HalfMatch = [string, string, string, string, string]
  *     text2 and the common middle.  Or null if there was no match.
  * @private
  */
-import { commonPrefix } from './commonPrefix'
-import { commonSuffix } from './commonSuffix'
-
 function halfMatchI_(
   longtext: string,
   shorttext: string,

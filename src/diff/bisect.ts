@@ -1,4 +1,4 @@
-import { _diff, Diff, diff, DiffType } from './diff'
+import { _diff, Diff, DiffType } from './diff'
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
@@ -126,7 +126,10 @@ export function bisect_(
     }
   }
   // Number of diffs equals number of characters, no commonality at all.
-  return [[DiffType.DELETE, text1], [DiffType.INSERT, text2]]
+  return [
+    [DiffType.DELETE, text1],
+    [DiffType.INSERT, text2],
+  ]
 }
 
 /**

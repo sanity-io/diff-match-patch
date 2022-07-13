@@ -1,11 +1,11 @@
+import { Diff, DiffType } from './diff'
+
 /**
  * Compute the Levenshtein distance; the number of inserted, deleted or
  * substituted characters.
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
  * @return {number} Number of changes.
  */
-import { Diff, DiffType } from './diff'
-
 export function levenshtein(diffs: Diff[]) {
   let leven = 0
   let insertions = 0

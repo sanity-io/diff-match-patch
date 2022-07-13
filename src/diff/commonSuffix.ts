@@ -1,11 +1,11 @@
+import { isSliceEqual } from '../utils/isSliceEqual'
+
 /**
  * Determine the common suffix of two strings.
  * @param {string} text1 First string.
  * @param {string} text2 Second string.
  * @return {number} The number of characters common to the end of each string.
  */
-import { isSliceEqual } from '../utils/isSliceEqual'
-
 export function commonSuffix(t1: string, t2: string): number {
   const text1 = [...t1]
   const text2 = [...t2]

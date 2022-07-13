@@ -1,3 +1,5 @@
+import { Diff, DiffType } from './diff'
+
 /**
  * Crush the diff into an encoded string which describes the operations
  * required to transform text1 into text2.
@@ -6,8 +8,6 @@
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
  * @return {string} Delta text.
  */
-import { Diff, DiffType } from './diff'
-
 export function toDelta(diffs: Diff[]): string {
   const text = []
   for (let x = 0; x < diffs.length; x++) {

@@ -1,3 +1,8 @@
+import { bisect_ } from './bisect'
+import { Diff, diff, DiffType, InternalDiffOptions } from './diff'
+import { halfMatch_ } from './halfMatch'
+import { lineMode_ } from './lineMode'
+
 /**
  * Find the differences between two texts.  Assumes that the texts do not
  * have any common prefix or suffix.
@@ -10,11 +15,6 @@
  * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  * @private
  */
-import { bisect_ } from './bisect'
-import { Diff, diff, DiffType, InternalDiffOptions } from './diff'
-import { halfMatch_ } from './halfMatch'
-import { lineMode_ } from './lineMode'
-
 export function compute_(
   text1: string,
   text2: string,
@@ -52,7 +52,10 @@ export function compute_(
   if (shorttext.length === 1) {
     // Single character string.
     // After the previous speedup, the character can't be an equality.
-    return [[DiffType.DELETE, text1], [DiffType.INSERT, text2]]
+    return [
+      [DiffType.DELETE, text1],
+      [DiffType.INSERT, text2],
+    ]
   }
 
   // Check to see if the problem can be split in two.

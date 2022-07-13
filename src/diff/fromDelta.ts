@@ -1,3 +1,5 @@
+import { DiffType } from './diff'
+
 /**
  * Given the original text1, and an encoded string which describes the
  * operations required to transform text1 into text2, compute the full diff.
@@ -6,8 +8,6 @@
  * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  * @throws {!Error} If invalid input.
  */
-import { DiffType } from './diff'
-
 export function fromDelta(text1: string, delta: string) {
   const diffs = []
   let diffsLength = 0 // Keeping our own length var is faster in JS.

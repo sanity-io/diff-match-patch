@@ -56,6 +56,7 @@ export function diff(
 
   return _diff(text1, text2, createInternalOpts(opts || {}))
 }
+
 /**
  * Find the differences between two texts.  Simplifies the problem by stripping
  * any common prefix or suffix off the texts before diffing.
