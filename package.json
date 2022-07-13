@@ -1,31 +1,42 @@
 {
-  "name": "diff-match-patch-rearch",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@sanity/diff-match-patch",
+  "version": "0.0.1",
+  "description": "Robust diff, match and patch algorithms to perform operations required for synchronizing plain text",
+  "main": "./lib/cjs/index.cjs",
+  "source": "./src/index.ts",
+  "module": "./lib/esm/index.js",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.cjs",
+      "default": "./lib/esm/index.js"
+    }
+  },
+  "type": "module",
   "private": true,
   "scripts": {
+    "prebuild": "rimraf lib",
+    "build": "tsc && tsc --module commonjs --outDir lib/cjs",
+    "postbuild": "node scripts/fixExtensions.js",
+    "prepublishOnly": "npm run build",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "diff",
+    "diff-match-patch",
+    "google-diff-match-patch"
+  ],
+  "author": "Google Inc.",
+  "license": "Apache-2.0",
   "devDependencies": {
-    "@sanity/client": "0.139.0",
     "@types/jest": "^23.3.10",
-    "@types/lodash": "^4.14.119",
-    "@types/node": "^10.12.18",
-    "@types/ramda": "^0.25.45",
-    "jest": "^23.6.0",
-    "lodash": "^4.17.11",
-    "prettier": "1.15.3",
-    "rimraf": "^2.6.2",
+    "@types/node": "^14.0.0",
+    "jest": "^28.1.2",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
     "testit": "^3.1.0",
-    "ts-jest": "^23.10.5",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.12.0",
-    "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.2.2",
-    "url-regex": "^5.0.0"
+    "ts-jest": "^28.0.5",
+    "typescript": "^4.7.4"
   }
 }
