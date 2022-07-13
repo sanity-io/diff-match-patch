@@ -1,7 +1,13 @@
 import { linesToChars_ } from '../linesToChars'
 
+interface TestExpectation {
+  chars1: string
+  chars2: string
+  lineArray: string[]
+}
+
 test('linesToChars', () => {
-  function assertLinesToCharsResultEquals(a, b) {
+  function assertLinesToCharsResultEquals(a: TestExpectation, b: TestExpectation) {
     expect(a.chars1).toBe(b.chars1)
     expect(a.chars2).toBe(b.chars2)
     expect(a.lineArray).toEqual(b.lineArray)

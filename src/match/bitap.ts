@@ -87,7 +87,7 @@ export function bitap_(
   let binMin
   let binMid
   let binMax = pattern.length + text.length
-  let lastRd
+  let lastRd: number[] = []
   for (let d = 0; d < pattern.length; d++) {
     // Scan for the best match; each iteration allows for one more error.
     // Run a binary search to determine how far from 'loc' we can stray at this
@@ -107,7 +107,7 @@ export function bitap_(
     let start = Math.max(1, loc - binMid + 1)
     const finish = Math.min(loc + binMid, text.length) + pattern.length
 
-    const rd = Array(finish + 2)
+    const rd: number[] = new Array(finish + 2)
     rd[finish + 1] = (1 << d) - 1
     for (let j = finish; j >= start; j--) {
       // The alphabet (s) is a sparse hash, so the following line generates

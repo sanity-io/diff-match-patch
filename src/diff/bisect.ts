@@ -8,7 +8,6 @@ import { _diff, Diff, diff, DiffType } from './diff'
  * @param {string} text2 New string to be diffed.
  * @private
  */
-
 export function bisect_(
   text1: string,
   text2: string,

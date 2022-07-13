@@ -8,7 +8,7 @@ import { createPatchObject, Patch } from './createPatchObject'
  * @throws {!Error} If invalid input.
  */
 export function parse(textline: string): Patch[] {
-  const patches = []
+  const patches: Patch[] = []
   if (!textline) {
     return patches
   }

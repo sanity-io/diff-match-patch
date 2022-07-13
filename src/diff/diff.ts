@@ -20,6 +20,7 @@ export interface DiffOptions {
   checkLines: boolean
   timeout: number
 }
+
 export interface InternalDiffOptions {
   checkLines: boolean
   deadline: number
@@ -34,6 +35,7 @@ function createDeadLine(timeout: undefined | number): number {
       : timeout
   return Date.now() + t * 1000
 }
+
 function createInternalOpts(opts: Partial<DiffOptions>): InternalDiffOptions {
   return {
     checkLines: true,
@@ -41,6 +43,7 @@ function createInternalOpts(opts: Partial<DiffOptions>): InternalDiffOptions {
     ...opts,
   }
 }
+
 export function diff(
   text1: null | string,
   text2: null | string,

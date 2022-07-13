@@ -121,7 +121,7 @@ export function apply(
         } else {
           cleanupSemanticLossless(diffs)
           let index1 = 0
-          let index2
+          let index2 = 0
           // tslint:disable-next-line:prefer-for-of
           for (let y = 0; y < patches[x].diffs.length; y++) {
             const mod = patches[x].diffs[y]

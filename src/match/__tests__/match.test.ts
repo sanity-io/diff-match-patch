@@ -23,5 +23,6 @@ test('match', () => {
   ).toBe(4)
 
   // Test null inputs.
+  // @ts-expect-error
   expect(() => match(null, null, 0)).toThrowError(/null input/i)
 })

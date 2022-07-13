@@ -1,10 +1,10 @@
 import { cleanupMerge } from '../cleanup'
-import { DiffType } from '../diff'
+import { Diff, DiffType } from '../diff'
 
 test('cleanupMerge', () => {
   // Cleanup a messy diff.
   // Null case.
-  let diffs = []
+  let diffs: Diff[] = []
   cleanupMerge(diffs)
   expect(diffs).toEqual([])
 

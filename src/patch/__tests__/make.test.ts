@@ -60,5 +60,6 @@ test('make', () => {
   expect(stringify(patches)).toBe(expectedPatch)
 
   // Test null inputs.
+  // @ts-expect-error
   expect(() => make(null)).toThrowError(/unknown call format/i)
 })

@@ -3,12 +3,12 @@ import {
   cleanupEfficiency,
   cleanupSemanticLossless,
 } from '../cleanup'
-import { DiffType } from '../diff'
+import { Diff, DiffType } from '../diff'
 
 test('cleanupSemanticLossless', () => {
   // Slide diffs to match logical boundaries.
   // Null case.
-  let diffs = []
+  let diffs: Diff[] = []
   cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([])
 
@@ -99,7 +99,7 @@ test('cleanupSemanticLossless', () => {
 test('cleanupSemantic', () => {
   // Cleanup semantically trivial equalities.
   // Null case.
-  let diffs = []
+  let diffs: Diff[] = []
   _cleanupSemantic(diffs)
   expect(diffs).toEqual([])
 
@@ -236,7 +236,7 @@ test('cleanupSemantic', () => {
 test('cleanupEfficiency', () => {
   // Cleanup operationally trivial equalities.
   // Null case.
-  let diffs = []
+  let diffs: Diff[] = []
   cleanupEfficiency(diffs)
   expect(diffs).toEqual([])
 

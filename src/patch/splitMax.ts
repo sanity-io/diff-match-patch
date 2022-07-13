@@ -43,7 +43,10 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN) {
           // Insertions are harmless.
           patch.length2 += diffText.length
           start2 += diffText.length
-          patch.diffs.push(bigpatch.diffs.shift())
+          const diff = bigpatch.diffs.shift()
+          if (diff) {
+            patch.diffs.push(diff)
+          }
           empty = false
         } else if (
           diffType === DiffType.DELETE &&

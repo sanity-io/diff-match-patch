@@ -5,7 +5,6 @@ import { Diff, DiffType } from './diff'
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
  * @return {string} Source text.
  */
-
 export function diffText1(diffs: Diff[]) {
   const text = []
   for (let x = 0; x < diffs.length; x++) {
