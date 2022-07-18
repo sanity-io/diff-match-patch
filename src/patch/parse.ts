@@ -50,7 +50,7 @@ export function parse(textline: string): Patch[] {
         line = decodeURI(text[textPointer].substring(1))
       } catch (ex) {
         // Malformed URI sequence.
-        throw new Error('Illegal escape in patch_fromText: ' + line)
+        throw new Error('Illegal escape in parse: ' + line)
       }
       if (sign === '-') {
         // Deletion.

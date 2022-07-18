@@ -1,4 +1,4 @@
-import { DiffType } from './diff'
+import { Diff, DiffType } from './diff'
 
 /**
  * Given the original text1, and an encoded string which describes the
@@ -8,8 +8,8 @@ import { DiffType } from './diff'
  * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
  * @throws {!Error} If invalid input.
  */
-export function fromDelta(text1: string, delta: string) {
-  const diffs = []
+export function fromDelta(text1: string, delta: string): Diff[] {
+  const diffs: Diff[] = []
   let diffsLength = 0 // Keeping our own length var is faster in JS.
   let pointer = 0 // Cursor in text1
   const tokens = delta.split(/\t/g)
@@ -51,11 +51,7 @@ export function fromDelta(text1: string, delta: string) {
   }
   if (pointer !== text1.length) {
     throw new Error(
-      'Delta length (' +
-        pointer +
-        ') does not equal source text length (' +
-        text1.length +
-        ')',
+      `Delta length (${pointer}) does not equal source text length (${text1.length})`,
     )
   }
   return diffs

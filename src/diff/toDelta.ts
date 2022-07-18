@@ -11,17 +11,19 @@ import { Diff, DiffType } from './diff'
 export function toDelta(diffs: Diff[]): string {
   const text = []
   for (let x = 0; x < diffs.length; x++) {
-    switch (diffs[x][0]) {
+    const [diffType, diff] = diffs[x]
+    switch (diffType) {
       case DiffType.INSERT:
-        text[x] = '+' + encodeURI(diffs[x][1])
+        text.push('+' + encodeURI(diff))
         break
       case DiffType.DELETE:
-        text[x] = '-' + diffs[x][1].length
+        text.push('-' + diff.length)
         break
       case DiffType.EQUAL:
-        text[x] = '=' + diffs[x][1].length
+        text.push('=' + diff.length)
         break
     }
   }
+
   return text.join('\t').replace(/%20/g, ' ')
 }
