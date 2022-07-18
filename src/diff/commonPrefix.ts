@@ -1,5 +1,3 @@
-import { isSliceEqual } from '../utils/isSliceEqual'
-
 /**
  * Determine the common prefix of two strings.
  * @param {string} text1 First string.
@@ -7,9 +5,7 @@ import { isSliceEqual } from '../utils/isSliceEqual'
  * @return {number} The number of characters common to the start of each
  *     string.
  */
-export function commonPrefix(t1: string, t2: string): number {
-  const text1 = [...t1]
-  const text2 = [...t2]
+export function commonPrefix(text1: string, text2: string): number {
   // Quick check for common null cases.
   if (!text1 || !text2 || text1[0] !== text2[0]) {
     return 0
@@ -22,14 +18,8 @@ export function commonPrefix(t1: string, t2: string): number {
   let pointerstart = 0
   while (pointermin < pointermid) {
     if (
-      isSliceEqual(
-        text1,
-        text2,
-        pointerstart,
-        pointermid,
-        pointerstart,
-        pointermid,
-      )
+      text1.substring(pointerstart, pointermid) ==
+      text2.substring(pointerstart, pointermid)
     ) {
       pointermin = pointermid
       pointerstart = pointermin

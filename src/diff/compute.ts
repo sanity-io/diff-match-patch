@@ -1,5 +1,5 @@
 import { bisect_ } from './bisect'
-import { Diff, diff, DiffType, InternalDiffOptions } from './diff'
+import { Diff, DiffType, InternalDiffOptions, _diff } from './diff'
 import { halfMatch_ } from './halfMatch'
 import { lineMode_ } from './lineMode'
 
@@ -68,8 +68,8 @@ export function compute_(
     const text2B = halfMatch[3]
     const midCommon = halfMatch[4]
     // Send both pairs off for separate processing.
-    const diffsA = diff(text1A, text2A, opts)
-    const diffsB = diff(text1B, text2B, opts)
+    const diffsA = _diff(text1A, text2A, opts)
+    const diffsB = _diff(text1B, text2B, opts)
     // Merge the results.
     return diffsA.concat([[DiffType.EQUAL, midCommon]], diffsB)
   }
