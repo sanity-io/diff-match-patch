@@ -1,6 +1,6 @@
 {
   "name": "@sanity/diff-match-patch",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Robust diff, match and patch algorithms to perform operations required for synchronizing plain text",
   "main": "./lib/cjs/index.cjs",
   "source": "./src/index.ts",
@@ -12,6 +12,9 @@
       "require": "./lib/cjs/index.cjs",
       "default": "./lib/esm/index.js"
     }
+  },
+  "engines": {
+    "node": ">=14"
   },
   "type": "module",
   "private": true,
@@ -30,7 +33,7 @@
   "author": "Google Inc.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/jest": "^23.3.10",
+    "@types/jest": "^28.1.6",
     "@types/node": "^14.0.0",
     "jest": "^28.1.2",
     "prettier": "^2.7.1",
