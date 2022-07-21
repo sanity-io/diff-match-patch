@@ -18,6 +18,13 @@ readDir(cjsPath)
     const cjsPath = jsPath.replace(/\.js$/, '.cjs')
     fs.renameSync(jsPath, cjsPath)
     console.log(`${jsPath} => ${cjsPath}`)
+
+    const fromMapPath = jsPath.replace(/\.js$/, '.js.map')
+    const mapPath = jsPath.replace(/\.js$/, '.cjs.map')
+    fs.renameSync(fromMapPath, mapPath)
+
+    const newMap = rewriteMap(JSON.parse(fs.readFileSync(mapPath, 'utf8')))
+    fs.writeFileSync(mapPath, JSON.stringify(newMap))
   })
 
 function readDir(dir) {
@@ -26,4 +33,9 @@ function readDir(dir) {
     const itemPath = path.join(dir, item.name)
     return item.isDirectory() ? readDir(itemPath) : itemPath
   })
+}
+
+function rewriteMap(map) {
+  map.file = map.file.replace(/\.js$/, '.cjs')
+  return map
 }
