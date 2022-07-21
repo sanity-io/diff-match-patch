@@ -111,7 +111,7 @@ export function apply(
       } else {
         // Imperfect match.  Run a diff to get a framework of equivalent
         // indices.
-        const diffs = diff(text1, text2, { checkLines: false })
+        let diffs = diff(text1, text2, { checkLines: false })
         if (
           text1.length > MAX_BITS &&
           levenshtein(diffs) / text1.length > options.deleteThreshold
@@ -119,7 +119,7 @@ export function apply(
           // The end points match, but the content is unacceptably bad.
           results[x] = false
         } else {
-          cleanupSemanticLossless(diffs)
+          diffs = cleanupSemanticLossless(diffs)
           let index1 = 0
           let index2 = 0
           // tslint:disable-next-line:prefer-for-of

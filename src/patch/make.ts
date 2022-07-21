@@ -49,10 +49,10 @@ export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
   if (typeof a === 'string' && typeof b === 'string') {
     // Method 1: text1, text2
     // Compute diffs from text1 and text2.
-    const diffs = diff(a, b, { checkLines: true })
+    let diffs = diff(a, b, { checkLines: true })
     if (diffs.length > 2) {
-      _cleanupSemantic(diffs)
-      cleanupEfficiency(diffs)
+      diffs = _cleanupSemantic(diffs)
+      diffs = cleanupEfficiency(diffs)
     }
     return _make(a, diffs, getDefaultOpts(options))
   }

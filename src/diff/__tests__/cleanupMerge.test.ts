@@ -5,7 +5,7 @@ test('cleanupMerge', () => {
   // Cleanup a messy diff.
   // Null case.
   let diffs: Diff[] = []
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([])
 
   // No change case.
@@ -14,7 +14,7 @@ test('cleanupMerge', () => {
     [DiffType.DELETE, 'b'],
     [DiffType.INSERT, 'c'],
   ]
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'a'],
     [DiffType.DELETE, 'b'],
@@ -22,8 +22,12 @@ test('cleanupMerge', () => {
   ])
 
   // Merge equalities.
-  diffs = [[DiffType.EQUAL, 'a'], [DiffType.EQUAL, 'b'], [DiffType.EQUAL, 'c']]
-  cleanupMerge(diffs)
+  diffs = [
+    [DiffType.EQUAL, 'a'],
+    [DiffType.EQUAL, 'b'],
+    [DiffType.EQUAL, 'c'],
+  ]
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([[DiffType.EQUAL, 'abc']])
 
   // Merge deletions.
@@ -32,7 +36,7 @@ test('cleanupMerge', () => {
     [DiffType.DELETE, 'b'],
     [DiffType.DELETE, 'c'],
   ]
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([[DiffType.DELETE, 'abc']])
 
   // Merge insertions.
@@ -41,7 +45,7 @@ test('cleanupMerge', () => {
     [DiffType.INSERT, 'b'],
     [DiffType.INSERT, 'c'],
   ]
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([[DiffType.INSERT, 'abc']])
 
   // Merge interweave.
@@ -53,7 +57,7 @@ test('cleanupMerge', () => {
     [DiffType.EQUAL, 'e'],
     [DiffType.EQUAL, 'f'],
   ]
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'ac'],
     [DiffType.INSERT, 'bd'],
@@ -66,7 +70,7 @@ test('cleanupMerge', () => {
     [DiffType.INSERT, 'abc'],
     [DiffType.DELETE, 'dc'],
   ]
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'a'],
     [DiffType.DELETE, 'd'],
@@ -82,7 +86,7 @@ test('cleanupMerge', () => {
     [DiffType.DELETE, 'dc'],
     [DiffType.EQUAL, 'y'],
   ]
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'xa'],
     [DiffType.DELETE, 'd'],
@@ -96,8 +100,11 @@ test('cleanupMerge', () => {
     [DiffType.INSERT, 'ba'],
     [DiffType.EQUAL, 'c'],
   ]
-  cleanupMerge(diffs)
-  expect(diffs).toEqual([[DiffType.INSERT, 'ab'], [DiffType.EQUAL, 'ac']])
+  diffs = cleanupMerge(diffs)
+  expect(diffs).toEqual([
+    [DiffType.INSERT, 'ab'],
+    [DiffType.EQUAL, 'ac'],
+  ])
 
   // Slide edit right.
   diffs = [
@@ -105,8 +112,11 @@ test('cleanupMerge', () => {
     [DiffType.INSERT, 'ab'],
     [DiffType.EQUAL, 'a'],
   ]
-  cleanupMerge(diffs)
-  expect(diffs).toEqual([[DiffType.EQUAL, 'ca'], [DiffType.INSERT, 'ba']])
+  diffs = cleanupMerge(diffs)
+  expect(diffs).toEqual([
+    [DiffType.EQUAL, 'ca'],
+    [DiffType.INSERT, 'ba'],
+  ])
 
   // Slide edit left recursive.
   diffs = [
@@ -116,8 +126,11 @@ test('cleanupMerge', () => {
     [DiffType.DELETE, 'ac'],
     [DiffType.EQUAL, 'x'],
   ]
-  cleanupMerge(diffs)
-  expect(diffs).toEqual([[DiffType.DELETE, 'abc'], [DiffType.EQUAL, 'acx']])
+  diffs = cleanupMerge(diffs)
+  expect(diffs).toEqual([
+    [DiffType.DELETE, 'abc'],
+    [DiffType.EQUAL, 'acx'],
+  ])
 
   // Slide edit right recursive.
   diffs = [
@@ -127,8 +140,11 @@ test('cleanupMerge', () => {
     [DiffType.DELETE, 'b'],
     [DiffType.EQUAL, 'a'],
   ]
-  cleanupMerge(diffs)
-  expect(diffs).toEqual([[DiffType.EQUAL, 'xca'], [DiffType.DELETE, 'cba']])
+  diffs = cleanupMerge(diffs)
+  expect(diffs).toEqual([
+    [DiffType.EQUAL, 'xca'],
+    [DiffType.DELETE, 'cba'],
+  ])
 
   // Empty merge.
   diffs = [
@@ -136,11 +152,21 @@ test('cleanupMerge', () => {
     [DiffType.INSERT, 'ab'],
     [DiffType.EQUAL, 'c'],
   ]
-  cleanupMerge(diffs)
-  expect(diffs).toEqual([[DiffType.INSERT, 'a'], [DiffType.EQUAL, 'bc']])
+  diffs = cleanupMerge(diffs)
+  expect(diffs).toEqual([
+    [DiffType.INSERT, 'a'],
+    [DiffType.EQUAL, 'bc'],
+  ])
 
   // Empty equality.
-  diffs = [[DiffType.EQUAL, ''], [DiffType.INSERT, 'a'], [DiffType.EQUAL, 'b']]
-  cleanupMerge(diffs)
-  expect(diffs).toEqual([[DiffType.INSERT, 'a'], [DiffType.EQUAL, 'b']])
+  diffs = [
+    [DiffType.EQUAL, ''],
+    [DiffType.INSERT, 'a'],
+    [DiffType.EQUAL, 'b'],
+  ]
+  diffs = cleanupMerge(diffs)
+  expect(diffs).toEqual([
+    [DiffType.INSERT, 'a'],
+    [DiffType.EQUAL, 'b'],
+  ])
 })

@@ -215,7 +215,7 @@ export function diff(
   text1: null | string,
   text2: null | string,
   opts?: Partial<DiffOptions>,
-) {
+): Diff[] {
   // Check for null inputs.
   if (text1 === null || text2 === null) {
     throw new Error('Null input. (diff)')
@@ -256,7 +256,7 @@ export function _diff(
   text2 = text2.substring(0, text2.length - commonlength)
 
   // Compute the diff on the middle block.
-  const diffs = compute_(text1, text2, options)
+  let diffs = compute_(text1, text2, options)
 
   // Restore the prefix and suffix.
   if (commonprefix) {
@@ -265,6 +265,6 @@ export function _diff(
   if (commonsuffix) {
     diffs.push([DiffType.EQUAL, commonsuffix])
   }
-  cleanupMerge(diffs)
+  diffs = cleanupMerge(diffs)
   return diffs
 }

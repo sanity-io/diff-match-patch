@@ -24,7 +24,7 @@ export function lineMode_(
   text2 = a.chars2
   const linearray = a.lineArray
 
-  const diffs = _diff(text1, text2, {
+  let diffs = _diff(text1, text2, {
     checkLines: false,
     deadline: opts.deadline,
   })
@@ -32,7 +32,7 @@ export function lineMode_(
   // Convert the diff back to original text.
   charsToLines_(diffs, linearray)
   // Eliminate freak matches (e.g. blank lines)
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
 
   // Rediff any replacement blocks, this time character-by-character.
   // Add a dummy entry at the end.

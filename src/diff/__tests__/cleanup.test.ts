@@ -9,7 +9,7 @@ test('cleanupSemanticLossless', () => {
   // Slide diffs to match logical boundaries.
   // Null case.
   let diffs: Diff[] = []
-  cleanupSemanticLossless(diffs)
+  diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([])
 
   // Blank lines.
@@ -18,7 +18,7 @@ test('cleanupSemanticLossless', () => {
     [DiffType.INSERT, '\r\nDDD\r\n\r\nBBB'],
     [DiffType.EQUAL, '\r\nEEE'],
   ]
-  cleanupSemanticLossless(diffs)
+  diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'AAA\r\n\r\n'],
     [DiffType.INSERT, 'BBB\r\nDDD\r\n\r\n'],
@@ -31,7 +31,7 @@ test('cleanupSemanticLossless', () => {
     [DiffType.INSERT, ' DDD\r\nBBB'],
     [DiffType.EQUAL, ' EEE'],
   ]
-  cleanupSemanticLossless(diffs)
+  diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'AAA\r\n'],
     [DiffType.INSERT, 'BBB DDD\r\n'],
@@ -44,7 +44,7 @@ test('cleanupSemanticLossless', () => {
     [DiffType.INSERT, 'ow and the c'],
     [DiffType.EQUAL, 'at.'],
   ]
-  cleanupSemanticLossless(diffs)
+  diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'The '],
     [DiffType.INSERT, 'cow and the '],
@@ -57,7 +57,7 @@ test('cleanupSemanticLossless', () => {
     [DiffType.INSERT, 'ow-and-the-c'],
     [DiffType.EQUAL, 'at.'],
   ]
-  cleanupSemanticLossless(diffs)
+  diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'The-'],
     [DiffType.INSERT, 'cow-and-the-'],
@@ -70,8 +70,11 @@ test('cleanupSemanticLossless', () => {
     [DiffType.DELETE, 'a'],
     [DiffType.EQUAL, 'ax'],
   ]
-  cleanupSemanticLossless(diffs)
-  expect(diffs).toEqual([[DiffType.DELETE, 'a'], [DiffType.EQUAL, 'aax']])
+  diffs = cleanupSemanticLossless(diffs)
+  expect(diffs).toEqual([
+    [DiffType.DELETE, 'a'],
+    [DiffType.EQUAL, 'aax'],
+  ])
 
   // Hitting the end.
   diffs = [
@@ -79,8 +82,11 @@ test('cleanupSemanticLossless', () => {
     [DiffType.DELETE, 'a'],
     [DiffType.EQUAL, 'a'],
   ]
-  cleanupSemanticLossless(diffs)
-  expect(diffs).toEqual([[DiffType.EQUAL, 'xaa'], [DiffType.DELETE, 'a']])
+  diffs = cleanupSemanticLossless(diffs)
+  expect(diffs).toEqual([
+    [DiffType.EQUAL, 'xaa'],
+    [DiffType.DELETE, 'a'],
+  ])
 
   // Sentence boundaries.
   diffs = [
@@ -88,7 +94,7 @@ test('cleanupSemanticLossless', () => {
     [DiffType.INSERT, 'zzz. The '],
     [DiffType.EQUAL, 'yyy.'],
   ]
-  cleanupSemanticLossless(diffs)
+  diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'The xxx.'],
     [DiffType.INSERT, ' The zzz.'],
@@ -100,7 +106,7 @@ test('cleanupSemantic', () => {
   // Cleanup semantically trivial equalities.
   // Null case.
   let diffs: Diff[] = []
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([])
 
   // No elimination #1.
@@ -110,7 +116,7 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, '12'],
     [DiffType.DELETE, 'e'],
   ]
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'ab'],
     [DiffType.INSERT, 'cd'],
@@ -125,7 +131,7 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, '1234'],
     [DiffType.DELETE, 'wxyz'],
   ]
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abc'],
     [DiffType.INSERT, 'ABC'],
@@ -139,8 +145,11 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, 'b'],
     [DiffType.DELETE, 'c'],
   ]
-  _cleanupSemantic(diffs)
-  expect(diffs).toEqual([[DiffType.DELETE, 'abc'], [DiffType.INSERT, 'b']])
+  diffs = _cleanupSemantic(diffs)
+  expect(diffs).toEqual([
+    [DiffType.DELETE, 'abc'],
+    [DiffType.INSERT, 'b'],
+  ])
 
   // Backpass elimination.
   diffs = [
@@ -150,7 +159,7 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, 'f'],
     [DiffType.INSERT, 'g'],
   ]
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abcdef'],
     [DiffType.INSERT, 'cdfg'],
@@ -168,7 +177,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'B'],
     [DiffType.INSERT, '2'],
   ]
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'AB_AB'],
     [DiffType.INSERT, '1A2_1A2'],
@@ -180,7 +189,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'ow and the c'],
     [DiffType.EQUAL, 'at.'],
   ]
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'The '],
     [DiffType.DELETE, 'cow and the '],
@@ -188,16 +197,22 @@ test('cleanupSemantic', () => {
   ])
 
   // No overlap elimination.
-  diffs = [[DiffType.DELETE, 'abcxx'], [DiffType.INSERT, 'xxdef']]
-  _cleanupSemantic(diffs)
+  diffs = [
+    [DiffType.DELETE, 'abcxx'],
+    [DiffType.INSERT, 'xxdef'],
+  ]
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abcxx'],
     [DiffType.INSERT, 'xxdef'],
   ])
 
   // Overlap elimination.
-  diffs = [[DiffType.DELETE, 'abcxxx'], [DiffType.INSERT, 'xxxdef']]
-  _cleanupSemantic(diffs)
+  diffs = [
+    [DiffType.DELETE, 'abcxxx'],
+    [DiffType.INSERT, 'xxxdef'],
+  ]
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abc'],
     [DiffType.EQUAL, 'xxx'],
@@ -205,8 +220,11 @@ test('cleanupSemantic', () => {
   ])
 
   // Reverse overlap elimination.
-  diffs = [[DiffType.DELETE, 'xxxabc'], [DiffType.INSERT, 'defxxx']]
-  _cleanupSemantic(diffs)
+  diffs = [
+    [DiffType.DELETE, 'xxxabc'],
+    [DiffType.INSERT, 'defxxx'],
+  ]
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.INSERT, 'def'],
     [DiffType.EQUAL, 'xxx'],
@@ -221,7 +239,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'A3'],
     [DiffType.INSERT, '3BC'],
   ]
-  _cleanupSemantic(diffs)
+  diffs = _cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abcd'],
     [DiffType.EQUAL, '1212'],
@@ -237,7 +255,7 @@ test('cleanupEfficiency', () => {
   // Cleanup operationally trivial equalities.
   // Null case.
   let diffs: Diff[] = []
-  cleanupEfficiency(diffs)
+  diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([])
 
   // No elimination.
@@ -248,7 +266,7 @@ test('cleanupEfficiency', () => {
     [DiffType.DELETE, 'cd'],
     [DiffType.INSERT, '34'],
   ]
-  cleanupEfficiency(diffs)
+  diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'ab'],
     [DiffType.INSERT, '12'],
@@ -265,7 +283,7 @@ test('cleanupEfficiency', () => {
     [DiffType.DELETE, 'cd'],
     [DiffType.INSERT, '34'],
   ]
-  cleanupEfficiency(diffs)
+  diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abxyzcd'],
     [DiffType.INSERT, '12xyz34'],
@@ -278,8 +296,11 @@ test('cleanupEfficiency', () => {
     [DiffType.DELETE, 'cd'],
     [DiffType.INSERT, '34'],
   ]
-  cleanupEfficiency(diffs)
-  expect(diffs).toEqual([[DiffType.DELETE, 'xcd'], [DiffType.INSERT, '12x34']])
+  diffs = cleanupEfficiency(diffs)
+  expect(diffs).toEqual([
+    [DiffType.DELETE, 'xcd'],
+    [DiffType.INSERT, '12x34'],
+  ])
 
   // Backpass elimination.
   diffs = [
@@ -291,7 +312,7 @@ test('cleanupEfficiency', () => {
     [DiffType.DELETE, 'cd'],
     [DiffType.INSERT, '56'],
   ]
-  cleanupEfficiency(diffs)
+  diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abxyzcd'],
     [DiffType.INSERT, '12xy34z56'],
@@ -305,7 +326,7 @@ test('cleanupEfficiency', () => {
     [DiffType.DELETE, 'cd'],
     [DiffType.INSERT, '34'],
   ]
-  cleanupEfficiency(diffs, 5)
+  diffs = cleanupEfficiency(diffs, 5)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abwxyzcd'],
     [DiffType.INSERT, '12wxyz34'],

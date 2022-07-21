@@ -1,3 +1,4 @@
+import { cloneDiff } from './clone'
 import { commonOverlap_ } from './commonOverlap'
 import { commonPrefix } from './commonPrefix'
 import { commonSuffix } from './commonSuffix'
@@ -5,9 +6,11 @@ import { Diff, DiffType } from './diff'
 
 /**
  * Reduce the number of edits by eliminating semantically trivial equalities.
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+ * @param {!Array.<!diff_match_patch.Diff>} rawDiffs Array of diff tuples.
  */
-export function _cleanupSemantic(diffs: Diff[]) {
+export function _cleanupSemantic(rawDiffs: Diff[]): Diff[] {
+  let diffs: Diff[] = rawDiffs.map((diff) => cloneDiff(diff))
+
   let changes = false
   const equalities = [] // Stack of indices where equalities are found.
   let equalitiesLength = 0 // Keeping our own length var is faster in JS.
@@ -69,9 +72,9 @@ export function _cleanupSemantic(diffs: Diff[]) {
 
   // Normalize the diff.
   if (changes) {
-    cleanupMerge(diffs)
+    diffs = cleanupMerge(diffs)
   }
-  cleanupSemanticLossless(diffs)
+  diffs = cleanupSemanticLossless(diffs)
 
   // Find any overlaps between deletions and insertions.
   // e.g: <del>abcxxx</del><ins>xxxdef</ins>
@@ -131,6 +134,7 @@ export function _cleanupSemantic(diffs: Diff[]) {
     }
     pointer++
   }
+  return diffs
 }
 
 // Define some regex patterns for matching boundaries.
@@ -144,9 +148,11 @@ const blanklineStartRegex = /^\r?\n\r?\n/
  * Look for single edits surrounded on both sides by equalities
  * which can be shifted sideways to align the edit to a word boundary.
  * e.g: The c<ins>at c</ins>ame. -> The <ins>cat </ins>came.
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+ * @param {!Array.<!diff_match_patch.Diff>} rawDiffs Array of diff tuples.
  */
-export function cleanupSemanticLossless(diffs: Diff[]) {
+export function cleanupSemanticLossless(rawDiffs: Diff[]): Diff[] {
+  const diffs = rawDiffs.map((diff) => cloneDiff(diff))
+
   /**
    * Given two strings, compute a score representing whether the internal
    * boundary falls on logical boundaries.
@@ -261,14 +267,18 @@ export function cleanupSemanticLossless(diffs: Diff[]) {
     }
     pointer++
   }
+
+  return diffs
 }
 
 /**
  * Reorder and merge like edit sections.  Merge equalities.
  * Any edit section can move as long as it doesn't cross an equality.
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+ * @param {!Array.<!diff_match_patch.Diff>} rawDiffs Array of diff tuples.
  */
-export function cleanupMerge(diffs: Diff[]) {
+export function cleanupMerge(rawDiffs: Diff[]): Diff[] {
+  let diffs = rawDiffs.map((diff) => cloneDiff(diff))
+
   // Add a dummy entry at the end.
   diffs.push([DiffType.EQUAL, ''])
   let pointer = 0
@@ -301,9 +311,8 @@ export function cleanupMerge(diffs: Diff[]) {
                 diffs[pointer - countDelete - countInsert - 1][0] ===
                   DiffType.EQUAL
               ) {
-                diffs[
-                  pointer - countDelete - countInsert - 1
-                ][1] += textInsert.substring(0, commonlength)
+                diffs[pointer - countDelete - countInsert - 1][1] +=
+                  textInsert.substring(0, commonlength)
               } else {
                 diffs.splice(0, 0, [
                   DiffType.EQUAL,
@@ -404,8 +413,10 @@ export function cleanupMerge(diffs: Diff[]) {
   }
   // If shifts were made, the diff needs reordering and another shift sweep.
   if (changes) {
-    cleanupMerge(diffs)
+    diffs = cleanupMerge(diffs)
   }
+
+  return diffs
 }
 
 function trueCount(...args: boolean[]) {
@@ -415,7 +426,11 @@ function trueCount(...args: boolean[]) {
 /**
  * Reduce the number of edits by eliminating operationally trivial equalities.
  */
-export function cleanupEfficiency(diffs: Diff[], editCost: number = 4): void {
+export function cleanupEfficiency(
+  rawDiffs: Diff[],
+  editCost: number = 4,
+): Diff[] {
+  let diffs = rawDiffs.map((diff) => cloneDiff(diff))
   let changes = false
   const equalities = [] // Stack of indices where equalities are found.
   let equalitiesLength = 0 // Keeping our own length var is faster in JS.
@@ -492,6 +507,8 @@ export function cleanupEfficiency(diffs: Diff[], editCost: number = 4): void {
   }
 
   if (changes) {
-    cleanupMerge(diffs)
+    diffs = cleanupMerge(diffs)
   }
+
+  return diffs
 }
