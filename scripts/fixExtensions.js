@@ -19,6 +19,11 @@ readDir(cjsPath)
     fs.renameSync(jsPath, cjsPath)
     console.log(`${jsPath} => ${cjsPath}`)
 
+    const fromDtsPath = jsPath.replace(/\.js$/, '.d.ts')
+    const toDtsPath = jsPath.replace(/\.js$/, '.cjs.d.ts')
+    fs.renameSync(fromDtsPath, toDtsPath)
+    console.log(`${fromDtsPath} => ${toDtsPath}`)
+
     const fromMapPath = jsPath.replace(/\.js$/, '.js.map')
     const mapPath = jsPath.replace(/\.js$/, '.cjs.map')
     fs.renameSync(fromMapPath, mapPath)
