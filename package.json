@@ -1,6 +1,6 @@
 {
   "name": "@sanity/diff-match-patch",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Robust diff, match and patch algorithms to perform operations required for synchronizing plain text",
   "main": "./lib/cjs/index.cjs",
   "source": "./src/index.ts",
