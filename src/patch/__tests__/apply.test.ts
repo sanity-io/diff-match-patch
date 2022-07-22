@@ -1,6 +1,6 @@
-import { apply } from '../apply'
-import { make } from '../make'
-import { stringify } from '../stringify'
+import { apply } from '../apply.js'
+import { make } from '../make.js'
+import { stringify } from '../stringify.js'
 
 test('apply', () => {
   // Null case.

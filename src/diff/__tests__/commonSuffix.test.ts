@@ -1,4 +1,4 @@
-import { commonSuffix } from '../commonSuffix'
+import { commonSuffix } from '../commonSuffix.js'
 
 test('commonSuffix', () => {
   // Detect any common suffix.

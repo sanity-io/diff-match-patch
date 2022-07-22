@@ -1,6 +1,6 @@
-import { addPadding } from '../apply'
-import { make } from '../make'
-import { stringify } from '../stringify'
+import { addPadding } from '../apply.js'
+import { make } from '../make.js'
+import { stringify } from '../stringify.js'
 
 test('addPadding', () => {
   // Both edges full.

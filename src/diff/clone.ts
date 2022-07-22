@@ -1,4 +1,4 @@
-import type { Diff } from './diff'
+import type { Diff } from './diff.js'
 
 export function cloneDiff(diff: Diff): Diff {
   const [type, patch] = diff

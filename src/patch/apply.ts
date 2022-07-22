@@ -1,13 +1,13 @@
-import { cleanupSemanticLossless } from '../diff/cleanup'
-import { diff, DiffType } from '../diff/diff'
-import { diffText1, diffText2 } from '../diff/diffText'
-import { levenshtein } from '../diff/levenshtein'
-import { xIndex } from '../diff/xIndex'
-import { match } from '../match/match'
-import { DEFAULT_MARGIN, MAX_BITS } from './constants'
-import { deepCopy, Patch } from './createPatchObject'
-import { parse } from './parse'
-import { splitMax } from './splitMax'
+import { cleanupSemanticLossless } from '../diff/cleanup.js'
+import { diff, DiffType } from '../diff/diff.js'
+import { diffText1, diffText2 } from '../diff/diffText.js'
+import { levenshtein } from '../diff/levenshtein.js'
+import { xIndex } from '../diff/xIndex.js'
+import { match } from '../match/match.js'
+import { DEFAULT_MARGIN, MAX_BITS } from './constants.js'
+import { deepCopy, Patch } from './createPatchObject.js'
+import { parse } from './parse.js'
+import { splitMax } from './splitMax.js'
 
 // When deleting a large block of text (over ~64 characters), how close do
 // the contents have to be to match the expected contents. (0.0 = perfection,

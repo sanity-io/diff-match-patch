@@ -1,8 +1,8 @@
-import { cloneDiff } from './clone'
-import { commonOverlap_ } from './commonOverlap'
-import { commonPrefix } from './commonPrefix'
-import { commonSuffix } from './commonSuffix'
-import { Diff, DiffType } from './diff'
+import { cloneDiff } from './clone.js'
+import { commonOverlap_ } from './commonOverlap.js'
+import { commonPrefix } from './commonPrefix.js'
+import { commonSuffix } from './commonSuffix.js'
+import { Diff, DiffType } from './diff.js'
 
 /**
  * Reduce the number of edits by eliminating semantically trivial equalities.

@@ -1,5 +1,5 @@
-import { commonPrefix } from './commonPrefix'
-import { commonSuffix } from './commonSuffix'
+import { commonPrefix } from './commonPrefix.js'
+import { commonSuffix } from './commonSuffix.js'
 
 type HalfMatch = [string, string, string, string, string]
 

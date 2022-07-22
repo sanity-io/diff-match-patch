@@ -1,4 +1,4 @@
-import { linesToChars_ } from '../linesToChars'
+import { linesToChars_ } from '../linesToChars.js'
 
 interface TestExpectation {
   chars1: string
@@ -7,7 +7,10 @@ interface TestExpectation {
 }
 
 test('linesToChars', () => {
-  function assertLinesToCharsResultEquals(a: TestExpectation, b: TestExpectation) {
+  function assertLinesToCharsResultEquals(
+    a: TestExpectation,
+    b: TestExpectation,
+  ) {
     expect(a.chars1).toBe(b.chars1)
     expect(a.chars2).toBe(b.chars2)
     expect(a.lineArray).toEqual(b.lineArray)

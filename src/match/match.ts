@@ -1,6 +1,5 @@
 //  MATCH FUNCTIONS
-
-import { bitap_ } from './bitap'
+import { bitap_ } from './bitap.js'
 
 /**
  * Locate the best instance of 'pattern' in 'text' near 'loc'.

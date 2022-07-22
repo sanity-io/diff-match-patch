@@ -1,4 +1,4 @@
-import { Diff, DiffType } from './diff'
+import { Diff, DiffType } from './diff.js'
 
 /**
  * Compute the Levenshtein distance; the number of inserted, deleted or

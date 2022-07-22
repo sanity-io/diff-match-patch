@@ -1,7 +1,7 @@
-import { Diff, DiffType } from '../diff'
-import { diffText1, diffText2 } from '../diffText'
-import { fromDelta } from '../fromDelta'
-import { toDelta } from '../toDelta'
+import { Diff, DiffType } from '../diff.js'
+import { diffText1, diffText2 } from '../diffText.js'
+import { fromDelta } from '../fromDelta.js'
+import { toDelta } from '../toDelta.js'
 
 test('diffText1, diffText2', () => {
   // Compute the source and destination texts.

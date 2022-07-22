@@ -1,6 +1,6 @@
-import { addContext_ } from '../make'
-import { parse } from '../parse'
-import { stringifyPatch } from '../stringify'
+import { addContext_ } from '../make.js'
+import { parse } from '../parse.js'
+import { stringifyPatch } from '../stringify.js'
 
 test('addContext', () => {
   let p = parse('@@ -21,4 +21,10 @@\n-jump\n+somersault\n')[0]

@@ -1,4 +1,4 @@
-import { alphabet_, bitap_ } from '../bitap'
+import { alphabet_, bitap_ } from '../bitap.js'
 
 test('bitap', () => {
   // Bitap algorithm.

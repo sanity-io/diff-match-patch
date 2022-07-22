@@ -1,8 +1,8 @@
-import { cleanupSemantic, cleanupEfficiency } from '../diff/cleanup'
-import { diff, Diff, DiffType } from '../diff/diff'
-import { diffText1 } from '../diff/diffText'
-import { MAX_BITS } from './constants'
-import { createPatchObject, Patch } from './createPatchObject'
+import { cleanupSemantic, cleanupEfficiency } from '../diff/cleanup.js'
+import { diff, Diff, DiffType } from '../diff/diff.js'
+import { diffText1 } from '../diff/diffText.js'
+import { MAX_BITS } from './constants.js'
+import { createPatchObject, Patch } from './createPatchObject.js'
 
 export interface MakePatchOptions {
   // Chunk size for context length.

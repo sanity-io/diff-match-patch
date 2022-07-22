@@ -1,5 +1,5 @@
-import { DiffType } from '../diff'
-import { levenshtein } from '../levenshtein'
+import { DiffType } from '../diff.js'
+import { levenshtein } from '../levenshtein.js'
 
 test('levenshtein', () => {
   // Levenshtein with trailing equality.

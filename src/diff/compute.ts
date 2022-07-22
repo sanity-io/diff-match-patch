@@ -1,7 +1,7 @@
-import { bisect_ } from './bisect'
-import { Diff, DiffType, InternalDiffOptions, _diff } from './diff'
-import { halfMatch_ } from './halfMatch'
-import { lineMode_ } from './lineMode'
+import { bisect_ } from './bisect.js'
+import { Diff, DiffType, InternalDiffOptions, _diff } from './diff.js'
+import { halfMatch_ } from './halfMatch.js'
+import { lineMode_ } from './lineMode.js'
 
 /**
  * Find the differences between two texts.  Assumes that the texts do not

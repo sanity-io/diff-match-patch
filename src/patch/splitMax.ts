@@ -1,7 +1,7 @@
-import { DiffType } from '../diff/diff'
-import { diffText1, diffText2 } from '../diff/diffText'
-import { DEFAULT_MARGIN, MAX_BITS } from './constants'
-import { createPatchObject, Patch } from './createPatchObject'
+import { DiffType } from '../diff/diff.js'
+import { diffText1, diffText2 } from '../diff/diffText.js'
+import { DEFAULT_MARGIN, MAX_BITS } from './constants.js'
+import { createPatchObject, Patch } from './createPatchObject.js'
 
 /**
  * Look through the patches and break up any which are longer than the maximum

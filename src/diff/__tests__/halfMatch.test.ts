@@ -1,4 +1,4 @@
-import { halfMatch_ } from '../halfMatch'
+import { halfMatch_ } from '../halfMatch.js'
 
 test('halfMatch', () => {
   // Detect a halfmatch.

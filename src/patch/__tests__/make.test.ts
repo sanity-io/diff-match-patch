@@ -1,7 +1,7 @@
-import { diff, DiffType } from '../../diff/diff'
-import { make } from '../make'
-import { parse } from '../parse'
-import { stringify } from '../stringify'
+import { diff, DiffType } from '../../diff/diff.js'
+import { make } from '../make.js'
+import { parse } from '../parse.js'
+import { stringify } from '../stringify.js'
 
 test('make', () => {
   // Null case.

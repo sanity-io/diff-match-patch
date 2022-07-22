@@ -1,5 +1,5 @@
-import { DiffType } from '../diff/diff'
-import { createPatchObject, Patch } from './createPatchObject'
+import { DiffType } from '../diff/diff.js'
+import { createPatchObject, Patch } from './createPatchObject.js'
 
 /**
  * Parse a textual representation of patches and return a list of Patch objects.

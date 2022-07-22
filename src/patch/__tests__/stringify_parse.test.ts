@@ -1,7 +1,7 @@
-import { DiffType } from '../../diff/diff'
-import { createPatchObject } from '../createPatchObject'
-import { parse } from '../parse'
-import { stringify, stringifyPatch } from '../stringify'
+import { DiffType } from '../../diff/diff.js'
+import { createPatchObject } from '../createPatchObject.js'
+import { parse } from '../parse.js'
+import { stringify, stringifyPatch } from '../stringify.js'
 
 test('stringify', () => {
   let strp = '@@ -21,18 +22,17 @@\n jump\n-s\n+ed\n  over \n-the\n+a\n  laz\n'

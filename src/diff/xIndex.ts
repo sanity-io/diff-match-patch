@@ -1,4 +1,4 @@
-import { Diff, DiffType } from './diff'
+import { Diff, DiffType } from './diff.js'
 
 /**
  * loc is a location in text1, compute and return the equivalent location in

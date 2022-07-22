@@ -1,4 +1,4 @@
-import { Diff, DiffType } from './diff'
+import { Diff, DiffType } from './diff.js'
 
 /**
  * Given the original text1, and an encoded string which describes the

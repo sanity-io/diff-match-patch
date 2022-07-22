@@ -1,5 +1,5 @@
-import { cleanupMerge } from '../cleanup'
-import { Diff, DiffType } from '../diff'
+import { cleanupMerge } from '../cleanup.js'
+import { Diff, DiffType } from '../diff.js'
 
 test('cleanupMerge', () => {
   // Cleanup a messy diff.

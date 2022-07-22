@@ -1,6 +1,6 @@
-import { make } from '../make'
-import { splitMax } from '../splitMax'
-import { stringify } from '../stringify'
+import { make } from '../make.js'
+import { splitMax } from '../splitMax.js'
+import { stringify } from '../stringify.js'
 
 test('splitMax', () => {
   // Assumes that dmp.Match_MaxBits is 32.

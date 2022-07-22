@@ -1,4 +1,4 @@
-import { commonOverlap_ } from '../commonOverlap'
+import { commonOverlap_ } from '../commonOverlap.js'
 
 test('commonOverLap', () => {
   // Detect any suffix/prefix overlap.

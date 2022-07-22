@@ -1,5 +1,5 @@
-import { parse } from '../parse'
-import { stringifyPatch } from '../stringify'
+import { parse } from '../parse.js'
+import { stringifyPatch } from '../stringify.js'
 
 test('fromText', () => {
   expect(parse('')).toEqual([])

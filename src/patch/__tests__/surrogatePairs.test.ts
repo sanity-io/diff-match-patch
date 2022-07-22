@@ -1,10 +1,10 @@
-import { diff, DiffType } from '../../diff/diff'
-import { fromDelta } from '../../diff/fromDelta'
-import { toDelta } from '../../diff/toDelta'
-import { Patch } from '../createPatchObject'
-import { make } from '../make'
-import { parse } from '../parse'
-import { stringify } from '../stringify'
+import { diff, DiffType } from '../../diff/diff.js'
+import { fromDelta } from '../../diff/fromDelta.js'
+import { toDelta } from '../../diff/toDelta.js'
+import { Patch } from '../createPatchObject.js'
+import { make } from '../make.js'
+import { parse } from '../parse.js'
+import { stringify } from '../stringify.js'
 
 test('surrogate pairs', () => {
   let p: Patch[]

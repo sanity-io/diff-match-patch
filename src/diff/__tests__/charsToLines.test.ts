@@ -1,6 +1,6 @@
-import { charsToLines_ } from '../charsToLines'
-import { Diff, DiffType } from '../diff'
-import { linesToChars_ } from '../linesToChars'
+import { charsToLines_ } from '../charsToLines.js'
+import { Diff, DiffType } from '../diff.js'
+import { linesToChars_ } from '../linesToChars.js'
 
 test('charsToLines', () => {
   // Convert chars up to lines.

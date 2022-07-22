@@ -1,4 +1,4 @@
-import { Diff, DiffType } from './diff'
+import { Diff, DiffType } from './diff.js'
 
 /**
  * Crush the diff into an encoded string which describes the operations

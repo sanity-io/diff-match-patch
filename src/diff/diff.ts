@@ -1,8 +1,8 @@
-import { isHighSurrogate, isLowSurrogate } from '../utils/surrogatePairs'
-import { cleanupMerge } from './cleanup'
-import { commonPrefix } from './commonPrefix'
-import { commonSuffix } from './commonSuffix'
-import { compute_ } from './compute'
+import { isHighSurrogate, isLowSurrogate } from '../utils/surrogatePairs.js'
+import { cleanupMerge } from './cleanup.js'
+import { commonPrefix } from './commonPrefix.js'
+import { commonSuffix } from './commonSuffix.js'
+import { compute_ } from './compute.js'
 
 /**
  * The data structure representing a diff is an array of tuples:

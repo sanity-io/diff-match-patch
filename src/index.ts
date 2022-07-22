@@ -4,22 +4,22 @@ export {
   DiffType,
   type Diff,
   type DiffOptions,
-} from './diff/diff'
-export { cleanupSemantic, cleanupEfficiency } from './diff/cleanup'
+} from './diff/diff.js'
+export { cleanupSemantic, cleanupEfficiency } from './diff/cleanup.js'
 
 // Match
-export { match } from './match/match'
+export { match } from './match/match.js'
 
 // Patch
-export { type Patch } from './patch/createPatchObject'
-export { make as makePatches, type MakePatchOptions } from './patch/make'
+export { type Patch } from './patch/createPatchObject.js'
+export { make as makePatches, type MakePatchOptions } from './patch/make.js'
 export {
   apply as applyPatches,
   type PatchResult,
   type ApplyPatchOptions,
-} from './patch/apply'
+} from './patch/apply.js'
 export {
   stringify as stringifyPatches,
   stringifyPatch,
-} from './patch/stringify'
-export { parse as parsePatch } from './patch/parse'
+} from './patch/stringify.js'
+export { parse as parsePatch } from './patch/parse.js'

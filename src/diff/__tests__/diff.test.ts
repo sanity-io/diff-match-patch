@@ -1,4 +1,4 @@
-import { Diff, diff, DiffType } from '../diff'
+import { Diff, diff, DiffType } from '../diff.js'
 
 test('diff', () => {
   // Perform a trivial diff.

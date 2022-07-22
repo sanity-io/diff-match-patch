@@ -1,7 +1,7 @@
-import { charsToLines_ } from './charsToLines'
-import { cleanupSemantic } from './cleanup'
-import { _diff, Diff, DiffType, InternalDiffOptions } from './diff'
-import { linesToChars_ } from './linesToChars'
+import { charsToLines_ } from './charsToLines.js'
+import { cleanupSemantic } from './cleanup.js'
+import { _diff, Diff, DiffType, InternalDiffOptions } from './diff.js'
+import { linesToChars_ } from './linesToChars.js'
 
 /**
  * Do a quick line-level diff on both strings, then rediff the parts for

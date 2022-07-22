@@ -1,5 +1,5 @@
-import { DiffType } from '../diff'
-import { xIndex } from '../xIndex'
+import { DiffType } from '../diff.js'
+import { xIndex } from '../xIndex.js'
 
 test('xIndex', () => {
   // Translate a location in text1 to text2.

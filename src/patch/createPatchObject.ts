@@ -1,4 +1,4 @@
-import { Diff } from '../diff/diff'
+import { Diff } from '../diff/diff.js'
 
 /**
  * Class representing one patch operation.
