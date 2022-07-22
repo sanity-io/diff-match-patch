@@ -22,3 +22,4 @@ export {
   stringify as stringifyPatches,
   stringifyPatch,
 } from './patch/stringify'
+export { parse as parsePatch } from './patch/parse'
