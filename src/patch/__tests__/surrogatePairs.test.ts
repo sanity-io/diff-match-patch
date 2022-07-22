@@ -143,10 +143,20 @@ describe('surrogate pairs splitting', () => {
     ])
   })
 
-  test('stringified/non-stringified, reapplied', () => {
-    const source = 'Honestly? I thought it was total 😉, really.'
-    const target = 'Honestly? I thought it was total 😀, really.'
-
+  test.each([
+    [
+      'Honestly? I thought it was total 😉, really.',
+      'Honestly? I thought it was total 😀, really.',
+    ],
+    [
+      'Jeg skriver litt tekst. Med emojis! 😅 Gøy',
+      'Jeg skriver litt tekst. Med emojis! 😅 Gø',
+    ],
+    [
+      'Jeg skriver litt tekst. Med emojis! 😅 Gø',
+      'Jeg skriver litt tekst. Med emojis! 😅 Gøy',
+    ],
+  ])('stringified/non-stringified, reapplied', (source, target) => {
     const patch = make(source, target)
     let result = apply(patch, source)[0]
     expect(result).toBe(target)
