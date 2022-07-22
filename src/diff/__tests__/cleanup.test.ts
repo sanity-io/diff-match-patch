@@ -1,5 +1,5 @@
 import {
-  _cleanupSemantic,
+  cleanupSemantic,
   cleanupEfficiency,
   cleanupSemanticLossless,
 } from '../cleanup'
@@ -106,7 +106,7 @@ test('cleanupSemantic', () => {
   // Cleanup semantically trivial equalities.
   // Null case.
   let diffs: Diff[] = []
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([])
 
   // No elimination #1.
@@ -116,7 +116,7 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, '12'],
     [DiffType.DELETE, 'e'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'ab'],
     [DiffType.INSERT, 'cd'],
@@ -131,7 +131,7 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, '1234'],
     [DiffType.DELETE, 'wxyz'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abc'],
     [DiffType.INSERT, 'ABC'],
@@ -145,7 +145,7 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, 'b'],
     [DiffType.DELETE, 'c'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abc'],
     [DiffType.INSERT, 'b'],
@@ -159,7 +159,7 @@ test('cleanupSemantic', () => {
     [DiffType.EQUAL, 'f'],
     [DiffType.INSERT, 'g'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abcdef'],
     [DiffType.INSERT, 'cdfg'],
@@ -177,7 +177,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'B'],
     [DiffType.INSERT, '2'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'AB_AB'],
     [DiffType.INSERT, '1A2_1A2'],
@@ -189,7 +189,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'ow and the c'],
     [DiffType.EQUAL, 'at.'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.EQUAL, 'The '],
     [DiffType.DELETE, 'cow and the '],
@@ -201,7 +201,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'abcxx'],
     [DiffType.INSERT, 'xxdef'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abcxx'],
     [DiffType.INSERT, 'xxdef'],
@@ -212,7 +212,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'abcxxx'],
     [DiffType.INSERT, 'xxxdef'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abc'],
     [DiffType.EQUAL, 'xxx'],
@@ -224,7 +224,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'xxxabc'],
     [DiffType.INSERT, 'defxxx'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.INSERT, 'def'],
     [DiffType.EQUAL, 'xxx'],
@@ -239,7 +239,7 @@ test('cleanupSemantic', () => {
     [DiffType.DELETE, 'A3'],
     [DiffType.INSERT, '3BC'],
   ]
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
     [DiffType.DELETE, 'abcd'],
     [DiffType.EQUAL, '1212'],

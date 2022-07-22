@@ -1,5 +1,5 @@
 import { charsToLines_ } from './charsToLines'
-import { _cleanupSemantic } from './cleanup'
+import { cleanupSemantic } from './cleanup'
 import { _diff, Diff, DiffType, InternalDiffOptions } from './diff'
 import { linesToChars_ } from './linesToChars'
 
@@ -32,7 +32,7 @@ export function lineMode_(
   // Convert the diff back to original text.
   charsToLines_(diffs, linearray)
   // Eliminate freak matches (e.g. blank lines)
-  diffs = _cleanupSemantic(diffs)
+  diffs = cleanupSemantic(diffs)
 
   // Rediff any replacement blocks, this time character-by-character.
   // Add a dummy entry at the end.

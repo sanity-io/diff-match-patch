@@ -8,7 +8,7 @@ import { Diff, DiffType } from './diff'
  * Reduce the number of edits by eliminating semantically trivial equalities.
  * @param {!Array.<!diff_match_patch.Diff>} rawDiffs Array of diff tuples.
  */
-export function _cleanupSemantic(rawDiffs: Diff[]): Diff[] {
+export function cleanupSemantic(rawDiffs: Diff[]): Diff[] {
   let diffs: Diff[] = rawDiffs.map((diff) => cloneDiff(diff))
 
   let changes = false

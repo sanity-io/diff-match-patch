@@ -1,1 +1,1 @@
-export { apply as patch } from './apply'
+export { apply as applyPatches } from './apply'

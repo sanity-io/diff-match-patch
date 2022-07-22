@@ -1,4 +1,4 @@
-import { _cleanupSemantic, cleanupEfficiency } from '../diff/cleanup'
+import { cleanupSemantic, cleanupEfficiency } from '../diff/cleanup'
 import { diff, Diff, DiffType } from '../diff/diff'
 import { diffText1 } from '../diff/diffText'
 import { MAX_BITS } from './constants'
@@ -51,7 +51,7 @@ export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
     // Compute diffs from text1 and text2.
     let diffs = diff(a, b, { checkLines: true })
     if (diffs.length > 2) {
-      diffs = _cleanupSemantic(diffs)
+      diffs = cleanupSemantic(diffs)
       diffs = cleanupEfficiency(diffs)
     }
     return _make(a, diffs, getDefaultOpts(options))
