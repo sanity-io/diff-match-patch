@@ -2,6 +2,8 @@
 
 A TypeScript fork of the JavaScript version of [google/diff-match-patch](https://github.com/google/diff-match-patch), that includes a few long-standing pull requests, fixing [certain bugs](#significant-changes) and with an API more familiar to the JavaScript ecosystem.
 
+### What is it?
+
 The Diff Match and Patch libraries offer robust algorithms to perform the
 operations required for synchronizing plain text.
 
@@ -17,28 +19,44 @@ operations required for synchronizing plain text.
 
 Originally built in 2006 to power Google Docs, this library is now available in C++, C#, Dart, Java, JavaScript, Lua, Objective C, and Python.
 
-### Reference
+### API
 
-- [API](https://github.com/google/diff-match-patch/wiki/API) - Common API across all languages.
-- [Line or Word Diffs](https://github.com/google/diff-match-patch/wiki/Line-or-Word-Diffs) - Less detailed diffs.
-- [Plain Text vs. Structured Content](https://github.com/google/diff-match-patch/wiki/Plain-Text-vs.-Structured-Content) - How to deal with data like XML.
-- [Unidiff](https://github.com/google/diff-match-patch/wiki/Unidiff) - The patch serialization format.
-- [Support](https://groups.google.com/forum/#!forum/diff-match-patch) - Newsgroup for developers.
+#### Creating and applying patches
 
-### Languages
+```ts
+import {
+  makePatches,
+  applyPatches,
+  stringifyPatches,
+} from '@sanity/diff-match-patch'
 
-Although each language port of Diff Match Patch uses the same API, there are some language-specific notes.
+// Make array of diffs in internal array format, eg tuples of `[DiffType, string]`
+const patches = makePatches('from this', 'to this')
 
-- [C++](https://github.com/google/diff-match-patch/wiki/Language:-Cpp)
-- [C#](https://github.com/google/diff-match-patch/wiki/Language:-C%23)
-- [Dart](https://github.com/google/diff-match-patch/wiki/Language:-Dart)
-- [Java](https://github.com/google/diff-match-patch/wiki/Language:-Java)
-- [JavaScript](https://github.com/google/diff-match-patch/wiki/Language:-JavaScript)
-- [Lua](https://github.com/google/diff-match-patch/wiki/Language:-Lua)
-- [Objective-C](https://github.com/google/diff-match-patch/wiki/Language:-Objective-C)
-- [Python](https://github.com/google/diff-match-patch/wiki/Language:-Python)
+// Make unidiff-formatted (string) patch
+const patch = stringifyPatches(patches)
 
-A standardized speed test tracks the [relative performance of diffs](https://docs.google.com/spreadsheets/d/1zpZccuBpjMZTvL1nGDMKJc7rWL_m_drF4XKOJvB27Kc/edit#gid=0) in each language.
+// Apply the patch (either the unidiff-formatted or the internal array representation)
+const newValue = applyPatches('from this', patches)
+```
+
+#### Creating diffs
+
+```ts
+import { makeDiff } from '@sanity/diff-match-patch'
+
+// Make an array of diff tuples, eg `[DiffType, string]`
+const diff = makeDiff('from this', 'to this')
+```
+
+#### Matching text
+
+```ts
+import { match } from '@sanity/diff-match-patch'
+
+// Find position in text for the given pattern, at the approximate location given
+const position = match('some text to match against', 'match', 9)
+```
 
 ### Algorithms
 
