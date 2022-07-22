@@ -39,10 +39,9 @@ readDir(cjsPath)
     const dtsContent = fs.readFileSync(toDtsPath, 'utf8')
     fs.writeFileSync(
       toDtsPath,
-      dtsContent.replace(
-        /import (.*?) from '(.*)\.js'/g,
-        "import $1 from '$2.cjs'",
-      ),
+      dtsContent
+        .replace(/import (.*?) from '(.*)\.js'/g, "import $1 from '$2.cjs'")
+        .replace(/export (.*?) from '(.*)\.js'/g, "export $1 from '$2.cjs'"),
     )
 
     // Source maps also needs to be file.cjs.map
