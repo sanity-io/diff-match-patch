@@ -1,2 +1,14 @@
-dist
-.cache
+__tests__
+*.test.ts
+/.github
+/scripts
+/speedtest
+/upstream
+.gitignore
+.npmignore
+.prettierignore
+.prettierrc
+CONTRIBUTING.md
+jest.config.js
+tsconfig.json
+tslint.json
