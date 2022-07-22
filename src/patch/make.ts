@@ -4,27 +4,32 @@ import { diffText1 } from '../diff/diffText'
 import { MAX_BITS } from './constants'
 import { createPatchObject, Patch } from './createPatchObject'
 
-interface PatchOptions {
+export interface MakePatchOptions {
   // Chunk size for context length.
   margin: number
 }
 
-const DEFAULT_OPTS: PatchOptions = {
+const DEFAULT_OPTS: MakePatchOptions = {
   margin: 4,
 }
 
-function getDefaultOpts(opts: Partial<PatchOptions> = {}): PatchOptions {
+function getDefaultOpts(
+  opts: Partial<MakePatchOptions> = {},
+): MakePatchOptions {
   return {
     ...DEFAULT_OPTS,
     ...opts,
   }
 }
 
-export function make(diffs: Diff[], options?: Partial<PatchOptions>): Patch[]
+export function make(
+  diffs: Diff[],
+  options?: Partial<MakePatchOptions>,
+): Patch[]
 export function make(
   text1: string,
   arg2: string | Diff[],
-  options?: Partial<PatchOptions>,
+  options?: Partial<MakePatchOptions>,
 ): Patch[]
 
 /**
@@ -45,7 +50,7 @@ export function make(
  * Array of diff tuples for text1 to text2 (method 3) or undefined (method 2).
  * @param {string|!Array.<!diff_match_patch.Diff>} opt_c Array of diff tuples
  */
-export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
+export function make(a: any, b?: any, options?: Partial<MakePatchOptions>) {
   if (typeof a === 'string' && typeof b === 'string') {
     // Method 1: text1, text2
     // Compute diffs from text1 and text2.
@@ -71,7 +76,11 @@ export function make(a: any, b?: any, options?: Partial<PatchOptions>) {
   throw new Error('Unknown call format to make()')
 }
 
-function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {
+function _make(
+  text1: string,
+  diffs: Diff[],
+  options: MakePatchOptions,
+): Patch[] {
   if (diffs.length === 0) {
     return [] // Get rid of the null case.
   }
@@ -164,7 +173,11 @@ function _make(text1: string, diffs: Diff[], options: PatchOptions): Patch[] {
  * @param opts
  * @private
  */
-export function addContext_(patch: Patch, text: string, opts: PatchOptions) {
+export function addContext_(
+  patch: Patch,
+  text: string,
+  opts: MakePatchOptions,
+) {
   if (text.length === 0) {
     return
   }

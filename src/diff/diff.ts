@@ -211,6 +211,13 @@ function adjustDiffForSurrogatePairs(diffs: Diff[]) {
   }
 }
 
+/**
+ * Find the differences between two texts.  Simplifies the problem by stripping
+ * any common prefix or suffix off the texts before diffing.
+ * @param {string} text1 Old string to be diffed.
+ * @param {string} text2 New string to be diffed.
+ * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+ */
 export function diff(
   text1: null | string,
   text2: null | string,

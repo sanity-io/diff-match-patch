@@ -111,4 +111,9 @@ test('apply', () => {
   patches = make('y', 'y123')
   results = apply(patches, 'x')
   expect(results).toEqual(['x123', [true]])
+
+  // From text-formatted patch
+  patches = make('abc123', 'xyz123')
+  results = apply(stringify(patches), 'abc123')
+  expect(results).toEqual(['xyz123', [true]])
 })

@@ -11,6 +11,7 @@ import {
   // Patch
   makePatches,
   applyPatches,
+  stringifyPatches,
 } from './index'
 
 test('diff api', () => {
@@ -65,7 +66,17 @@ test('patch api', () => {
     },
   ])
 
+  const stringified = stringifyPatches(patches)
+  expect(stringified).toEqual('@@ -1,8 +1,6 @@\n-from\n+to\n  thi\n')
+
   const [newValue, success] = applyPatches(patches, 'from this')
   expect(newValue).toBe('to this')
   expect(success).toEqual([true])
+
+  const [newValueFromString, stringifiedSuccess] = applyPatches(
+    stringified,
+    'from this',
+  )
+  expect(newValueFromString).toBe('to this')
+  expect(stringifiedSuccess).toEqual([true])
 })

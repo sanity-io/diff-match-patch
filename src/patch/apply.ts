@@ -6,13 +6,14 @@ import { xIndex } from '../diff/xIndex'
 import { match } from '../match/match'
 import { DEFAULT_MARGIN, MAX_BITS } from './constants'
 import { deepCopy, Patch } from './createPatchObject'
+import { parse } from './parse'
 import { splitMax } from './splitMax'
 
 // When deleting a large block of text (over ~64 characters), how close do
 // the contents have to be to match the expected contents. (0.0 = perfection,
 // 1.0 = very loose).  Note that Match_Threshold controls how closely the
 // end points of a delete need to match.
-interface PatchOptions {
+export interface ApplyPatchOptions {
   // Chunk size for context length.
   margin: number
   deleteThreshold: number
@@ -23,7 +24,9 @@ const DEFAULT_OPTS = {
   deleteThreshold: 0.4,
 }
 
-function getDefaultOpts(opts: Partial<PatchOptions> = {}): PatchOptions {
+function getDefaultOpts(
+  opts: Partial<ApplyPatchOptions> = {},
+): ApplyPatchOptions {
   return {
     ...DEFAULT_OPTS,
     ...opts,
@@ -38,15 +41,19 @@ function getDefaultOpts(opts: Partial<PatchOptions> = {}): PatchOptions {
  * @return {!Array.<string|!Array.<boolean>>} Two element Array, containing the
  *      new text and an array of boolean values.
  */
-type PatchResult = [string, boolean[]]
+export type PatchResult = [string, boolean[]]
 
 export function apply(
-  patches: Patch[],
+  patches: Patch[] | string,
   text: string,
-  opts: Partial<PatchOptions> = {},
+  opts: Partial<ApplyPatchOptions> = {},
 ): PatchResult {
   if (patches.length === 0) {
     return [text, []]
+  }
+
+  if (typeof patches === 'string') {
+    patches = parse(patches)
   }
 
   const options = getDefaultOpts(opts)
