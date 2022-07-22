@@ -2,6 +2,7 @@ import { diff, DiffType } from '../../diff/diff.js'
 import { fromDelta } from '../../diff/fromDelta.js'
 import { toDelta } from '../../diff/toDelta.js'
 import { Patch } from '../createPatchObject.js'
+import { apply } from '../apply.js'
 import { make } from '../make.js'
 import { parse } from '../parse.js'
 import { stringify } from '../stringify.js'
@@ -140,5 +141,18 @@ describe('surrogate pairs splitting', () => {
       [DiffType.DELETE, '\ud83c\udd70'],
       [DiffType.INSERT, '\ud83c\udd71'],
     ])
+  })
+
+  test('stringified/non-stringified, reapplied', () => {
+    const source = 'Honestly? I thought it was total 😉, really.'
+    const target = 'Honestly? I thought it was total 😀, really.'
+
+    const patch = make(source, target)
+    let result = apply(patch, source)[0]
+    expect(result).toBe(target)
+
+    const strPatch = stringify(patch)
+    result = apply(strPatch, source)[0]
+    expect(result).toBe(target)
   })
 })
