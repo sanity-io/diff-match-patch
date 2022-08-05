@@ -1,6 +1,7 @@
 import { cleanupSemantic, cleanupEfficiency } from '../diff/cleanup.js'
 import { diff, Diff, DiffType } from '../diff/diff.js'
 import { diffText1 } from '../diff/diffText.js'
+import { isLowSurrogate } from '../utils/surrogatePairs.js'
 import { MAX_BITS } from './constants.js'
 import { createPatchObject, Patch } from './createPatchObject.js'
 
@@ -200,15 +201,27 @@ export function addContext_(
   padding += opts.margin
 
   // Add the prefix.
-  const prefix = text.substring(patch.start2 - padding, patch.start2)
+
+  // Avoid splitting inside a surrogate.
+  let prefixStart = patch.start2 - padding
+  if (prefixStart >= 1 && isLowSurrogate(text[prefixStart])) {
+    prefixStart--
+  }
+
+  const prefix = text.substring(prefixStart, patch.start2)
   if (prefix) {
     patch.diffs.unshift([DiffType.EQUAL, prefix])
   }
+
   // Add the suffix.
-  const suffix = text.substring(
-    patch.start2 + patch.length1,
-    patch.start2 + patch.length1 + padding,
-  )
+
+  // Avoid splitting inside a surrogate.
+  let suffixEnd = patch.start2 + patch.length1 + padding
+  if (suffixEnd < text.length && isLowSurrogate(text[suffixEnd])) {
+    suffixEnd++
+  }
+
+  const suffix = text.substring(patch.start2 + patch.length1, suffixEnd)
   if (suffix) {
     patch.diffs.push([DiffType.EQUAL, suffix])
   }

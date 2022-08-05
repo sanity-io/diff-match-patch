@@ -156,6 +156,10 @@ describe('surrogate pairs splitting', () => {
       'Jeg skriver litt tekst. Med emojis! 😅 Gø',
       'Jeg skriver litt tekst. Med emojis! 😅 Gøy',
     ],
+    [
+      'Gøy 😅',
+      'øy 😅',
+    ],
   ])('stringified/non-stringified, reapplied', (source, target) => {
     const patch = make(source, target)
     let result = apply(patch, source)[0]
