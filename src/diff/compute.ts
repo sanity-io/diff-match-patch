@@ -1,25 +1,22 @@
-import { bisect_ } from './bisect.js'
-import { Diff, DiffType, InternalDiffOptions, _diff } from './diff.js'
-import { halfMatch_ } from './halfMatch.js'
-import { lineMode_ } from './lineMode.js'
+import {bisect_} from './bisect.js'
+import {Diff, DiffType, InternalDiffOptions, _diff} from './diff.js'
+import {halfMatch_} from './halfMatch.js'
+import {lineMode_} from './lineMode.js'
 
 /**
  * Find the differences between two texts.  Assumes that the texts do not
  * have any common prefix or suffix.
- * @param {string} text1 Old string to be diffed.
- * @param {string} text2 New string to be diffed.
- * @param {boolean} checklines Speedup flag.  If false, then don't run a
+ *
+ * @param text1 - Old string to be diffed.
+ * @param text2 - New string to be diffed.
+ * @param checklines - Speedup flag.  If false, then don't run a
  *     line-level diff first to identify the changed areas.
  *     If true, then run a faster, slightly less optimal diff.
- * @param {number} deadline Time when the diff should be complete by.
- * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
- * @private
+ * @param deadline - Time when the diff should be complete by.
+ * @returns Array of diff tuples.
+ * @internal
  */
-export function compute_(
-  text1: string,
-  text2: string,
-  opts: InternalDiffOptions,
-): Diff[] {
+export function compute_(text1: string, text2: string, opts: InternalDiffOptions): Diff[] {
   let diffs: Diff[]
 
   if (!text1) {
@@ -44,7 +41,8 @@ export function compute_(
     ]
     // Swap insertions for deletions if diff is reversed.
     if (text1.length > text2.length) {
-      diffs[0][0] = diffs[2][0] = DiffType.DELETE
+      diffs[0][0] = DiffType.DELETE
+      diffs[2][0] = DiffType.DELETE
     }
     return diffs
   }

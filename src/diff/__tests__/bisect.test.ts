@@ -1,5 +1,6 @@
-import { bisect_ } from '../bisect.js'
-import { DiffType } from '../diff.js'
+import {test, expect} from 'vitest'
+import {bisect_} from '../bisect.js'
+import {DiffType} from '../diff.js'
 
 test('bisect', () => {
   // Normal.

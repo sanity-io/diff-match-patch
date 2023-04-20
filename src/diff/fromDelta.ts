@@ -1,19 +1,21 @@
-import { Diff, DiffType } from './diff.js'
+/* eslint-disable no-case-declarations */
+import {Diff, DiffType} from './diff.js'
 
 /**
  * Given the original text1, and an encoded string which describes the
  * operations required to transform text1 into text2, compute the full diff.
- * @param {string} text1 Source string for the diff.
- * @param {string} delta Delta text.
- * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
- * @throws {!Error} If invalid input.
+ *
+ * @param text1 - Source string for the diff.
+ * @param delta - Delta text.
+ * @returns Array of diff tuples.
+ * @internal
  */
 export function fromDelta(text1: string, delta: string): Diff[] {
   const diffs: Diff[] = []
   let diffsLength = 0 // Keeping our own length var is faster in JS.
   let pointer = 0 // Cursor in text1
   const tokens = delta.split(/\t/g)
-  // tslint:disable-next-line:prefer-for-of
+
   for (let x = 0; x < tokens.length; x++) {
     // Each token begins with a one character parameter which specifies the
     // operation of this token (delete, insert, equality).
@@ -24,7 +26,7 @@ export function fromDelta(text1: string, delta: string): Diff[] {
           diffs[diffsLength++] = [DiffType.INSERT, decodeURI(param)]
         } catch (ex) {
           // Malformed URI sequence.
-          throw new Error('Illegal escape in fromDelta: ' + param)
+          throw new Error(`Illegal escape in fromDelta: ${param}`)
         }
         break
       case '-':
@@ -32,7 +34,7 @@ export function fromDelta(text1: string, delta: string): Diff[] {
       case '=':
         const n = parseInt(param, 10)
         if (isNaN(n) || n < 0) {
-          throw new Error('Invalid number in fromDelta: ' + param)
+          throw new Error(`Invalid number in fromDelta: ${param}`)
         }
         const text = text1.substring(pointer, (pointer += n))
         if (tokens[x].charAt(0) === '=') {
@@ -45,14 +47,12 @@ export function fromDelta(text1: string, delta: string): Diff[] {
         // Blank tokens are ok (from a trailing \t).
         // Anything else is an error.
         if (tokens[x]) {
-          throw new Error('Invalid diff operation in fromDelta: ' + tokens[x])
+          throw new Error(`Invalid diff operation in fromDelta: ${tokens[x]}`)
         }
     }
   }
   if (pointer !== text1.length) {
-    throw new Error(
-      `Delta length (${pointer}) does not equal source text length (${text1.length})`,
-    )
+    throw new Error(`Delta length (${pointer}) does not equal source text length (${text1.length})`)
   }
   return diffs
 }

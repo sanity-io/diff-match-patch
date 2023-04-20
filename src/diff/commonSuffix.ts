@@ -1,14 +1,17 @@
 /**
  * Determine the common suffix of two strings.
- * @param {string} text1 First string.
- * @param {string} text2 Second string.
- * @return {number} The number of characters common to the end of each string.
+ *
+ * @param text1 - First string.
+ * @param text2 - Second string.
+ * @returns The number of characters common to the end of each string.
+ * @internal
  */
 export function commonSuffix(text1: string, text2: string): number {
   // Quick check for common null cases.
   if (!text1 || !text2 || text1[text1.length - 1] !== text2[text2.length - 1]) {
     return 0
   }
+
   // Binary search.
   // Performance analysis: http://neil.fraser.name/news/2007/10/09/
   let pointermin = 0
@@ -27,5 +30,6 @@ export function commonSuffix(text1: string, text2: string): number {
     }
     pointermid = Math.floor((pointermax - pointermin) / 2 + pointermin)
   }
+
   return pointermid
 }

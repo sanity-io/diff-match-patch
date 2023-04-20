@@ -1,28 +1,42 @@
-import { DiffType } from '../diff/diff.js'
-import { Patch } from './createPatchObject.js'
+import {DiffType} from '../diff/diff.js'
+import {Patch} from './createPatchObject.js'
 
-export function stringify(patches: Patch[]) {
+/**
+ * Create a textual representation of a patch list.
+ *
+ * @param patches - Patches to stringify
+ * @returns Text representation of patches
+ * @public
+ */
+export function stringify(patches: Patch[]): string {
   return patches.map(stringifyPatch).join('')
 }
 
-export function stringifyPatch(patch: Patch) {
+/**
+ * Create a textual representation of a patch.
+ *
+ * @param patch - Patch to stringify
+ * @returns Text representation of patch
+ * @public
+ */
+export function stringifyPatch(patch: Patch): string {
   let coords1
   let coords2
   if (patch.length1 === 0) {
-    coords1 = patch.start1 + ',0'
+    coords1 = `${patch.start1},0`
   } else if (patch.length1 === 1) {
     coords1 = patch.start1 + 1
   } else {
-    coords1 = patch.start1 + 1 + ',' + patch.length1
+    coords1 = `${patch.start1 + 1},${patch.length1}`
   }
   if (patch.length2 === 0) {
-    coords2 = patch.start2 + ',0'
+    coords2 = `${patch.start2},0`
   } else if (patch.length2 === 1) {
     coords2 = patch.start2 + 1
   } else {
-    coords2 = patch.start2 + 1 + ',' + patch.length2
+    coords2 = `${patch.start2 + 1},${patch.length2}`
   }
-  const text = ['@@ -' + coords1 + ' +' + coords2 + ' @@\n']
+  const text = [`@@ -${coords1} +${coords2} @@\n`]
   let op
   // Escape the body of the patch with %xx notation.
   for (let x = 0; x < patch.diffs.length; x++) {
@@ -36,8 +50,10 @@ export function stringifyPatch(patch: Patch) {
       case DiffType.EQUAL:
         op = ' '
         break
+      default:
+        throw new Error('Unknown patch operation.')
     }
-    text[x + 1] = op + encodeURI(patch.diffs[x][1]) + '\n'
+    text[x + 1] = `${op + encodeURI(patch.diffs[x][1])}\n`
   }
   return text.join('').replace(/%20/g, ' ')
 }

@@ -1,13 +1,15 @@
-import { isHighSurrogate, isLowSurrogate } from '../utils/surrogatePairs.js'
-import { cleanupMerge } from './cleanup.js'
-import { commonPrefix } from './commonPrefix.js'
-import { commonSuffix } from './commonSuffix.js'
-import { compute_ } from './compute.js'
+import {isHighSurrogate, isLowSurrogate} from '../utils/surrogatePairs.js'
+import {cleanupMerge} from './cleanup.js'
+import {commonPrefix} from './commonPrefix.js'
+import {commonSuffix} from './commonSuffix.js'
+import {compute_} from './compute.js'
 
 /**
  * The data structure representing a diff is an array of tuples:
  * [[DiffType.DELETE, 'Hello'], [DiffType.INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
  * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
+ *
+ * @public
  */
 export enum DiffType {
   DELETE = -1,
@@ -15,25 +17,40 @@ export enum DiffType {
   EQUAL = 0,
 }
 
+/**
+ * Tuple holding the type of the diff and the associated text.
+ *
+ * @public
+ */
 export type Diff = [DiffType, string]
 
+/**
+ * Options for generating a diff.
+ *
+ * @public
+ */
 export interface DiffOptions {
   checkLines: boolean
   timeout: number
 }
 
+/**
+ * @internal
+ */
 export interface InternalDiffOptions {
   checkLines: boolean
+
+  /**
+   * Time when the diff should be complete by.
+   */
   deadline: number
 }
 
 function createDeadLine(timeout: undefined | number): number {
-  const t =
-    typeof timeout === 'undefined'
-      ? 1
-      : timeout <= 0
-      ? Number.MAX_VALUE
-      : timeout
+  let t = 1
+  if (typeof timeout !== 'undefined') {
+    t = timeout <= 0 ? Number.MAX_VALUE : timeout
+  }
   return Date.now() + t * 1000
 }
 
@@ -46,41 +63,25 @@ function createInternalOpts(opts: Partial<DiffOptions>): InternalDiffOptions {
 }
 
 function combineChar(data: string, char: string, dir: 1 | -1) {
-  if (dir === 1) {
-    return data + char
-  } else {
-    return char + data
-  }
+  return dir === 1 ? data + char : char + data
 }
 
 /**
  * Splits out a character in a given direction.
  */
 function splitChar(data: string, dir: 1 | -1): [string, string] {
-  if (dir === 1) {
-    return [data.substring(0, data.length - 1), data[data.length - 1]]
-  } else {
-    return [data.substring(1), data[0]]
-  }
+  return dir === 1
+    ? [data.substring(0, data.length - 1), data[data.length - 1]]
+    : [data.substring(1), data[0]]
 }
 
 /**
  * Checks if two entries of the diff has the same character in the same "direction".
  */
-function hasSharedChar(
-  diffs: Diff[],
-  i: number,
-  j: number,
-  dir: 1 | -1,
-): boolean {
-  if (dir === 1) {
-    return (
-      diffs[i][1][diffs[i][1].length - 1] ===
-      diffs[j][1][diffs[j][1].length - 1]
-    )
-  } else {
-    return diffs[i][1][0] === diffs[j][1][0]
-  }
+function hasSharedChar(diffs: Diff[], i: number, j: number, dir: 1 | -1): boolean {
+  return dir === 1
+    ? diffs[i][1][diffs[i][1].length - 1] === diffs[j][1][diffs[j][1].length - 1]
+    : diffs[i][1][0] === diffs[j][1][0]
 }
 
 /**
@@ -120,42 +121,35 @@ function deisolateChar(diffs: Diff[], i: number, dir: 1 | -1) {
   let deleteIdx: null | number = null
 
   let j = i + dir
-  loop: for (
-    ;
-    j >= 0 && j < diffs.length && (insertIdx === null || deleteIdx === null);
-    j += dir
-  ) {
-    const nextDiff = diffs[j]
-    if (nextDiff[1].length === 0) continue
+  for (; j >= 0 && j < diffs.length && (insertIdx === null || deleteIdx === null); j += dir) {
+    const [op, text] = diffs[j]
+    if (text.length === 0) {
+      continue
+    }
 
-    switch (nextDiff[0]) {
-      case DiffType.INSERT:
-        if (insertIdx === null) {
-          insertIdx = j
-        }
-        break
-      case DiffType.DELETE:
-        if (deleteIdx === null) {
-          deleteIdx = j
-        }
-        break
-      case DiffType.EQUAL:
-        if (insertIdx === null && deleteIdx === null) {
-          // This means that there was two consecutive EQUAL. Kinda weird, but easy to handle.
-          const [text, char] = splitChar(diffs[i][1], dir)
-          diffs[i][1] = text
-          diffs[j][1] = combineChar(diffs[j][1], char, inv)
-          return
-        }
-        break loop
+    if (op === DiffType.INSERT) {
+      if (insertIdx === null) {
+        insertIdx = j
+      }
+      continue
+    } else if (op === DiffType.DELETE) {
+      if (deleteIdx === null) {
+        deleteIdx = j
+      }
+      continue
+    } else if (op === DiffType.EQUAL) {
+      if (insertIdx === null && deleteIdx === null) {
+        // This means that there was two consecutive EQUAL. Kinda weird, but easy to handle.
+        const [rest, char] = splitChar(diffs[i][1], dir)
+        diffs[i][1] = rest
+        diffs[j][1] = combineChar(diffs[j][1], char, inv)
+        return
+      }
+      break
     }
   }
 
-  if (
-    insertIdx !== null &&
-    deleteIdx !== null &&
-    hasSharedChar(diffs, insertIdx, deleteIdx, dir)
-  ) {
+  if (insertIdx !== null && deleteIdx !== null && hasSharedChar(diffs, insertIdx, deleteIdx, dir)) {
     // Special case.
     const [insertText, insertChar] = splitChar(diffs[insertIdx][1], inv)
     const [deleteText, _] = splitChar(diffs[deleteIdx][1], inv)
@@ -187,7 +181,7 @@ function deisolateChar(diffs: Diff[], i: number, dir: 1 | -1) {
 function adjustDiffForSurrogatePairs(diffs: Diff[]) {
   // Go over each pair of diffs and see if there was a split at a surrogate pair
   for (let i = 0; i < diffs.length; i++) {
-    let [diffType, diffText] = diffs[i]
+    const [diffType, diffText] = diffs[i]
 
     if (diffText.length === 0) continue
 
@@ -214,21 +208,23 @@ function adjustDiffForSurrogatePairs(diffs: Diff[]) {
 /**
  * Find the differences between two texts.  Simplifies the problem by stripping
  * any common prefix or suffix off the texts before diffing.
- * @param {string} text1 Old string to be diffed.
- * @param {string} text2 New string to be diffed.
- * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+ *
+ * @param textA - Old string to be diffed.
+ * @param textA - New string to be diffed.
+ * @returns Array of diff tuples.
+ * @public
  */
 export function diff(
-  text1: null | string,
-  text2: null | string,
-  opts?: Partial<DiffOptions>,
+  textA: null | string,
+  textB: null | string,
+  opts?: Partial<DiffOptions>
 ): Diff[] {
   // Check for null inputs.
-  if (text1 === null || text2 === null) {
+  if (textA === null || textB === null) {
     throw new Error('Null input. (diff)')
   }
 
-  const diffs = _diff(text1, text2, createInternalOpts(opts || {}))
+  const diffs = _diff(textA, textB, createInternalOpts(opts || {}))
   adjustDiffForSurrogatePairs(diffs)
   return diffs
 }
@@ -236,15 +232,17 @@ export function diff(
 /**
  * Find the differences between two texts.  Simplifies the problem by stripping
  * any common prefix or suffix off the texts before diffing.
- * @param {string} text1 Old string to be diffed.
- * @param {string} text2 New string to be diffed.
- * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+ *
+ * @param textA - Old string to be diffed.
+ * @param textB - New string to be diffed.
+ * @returns Array of diff tuples.
+ * @internal
  */
-export function _diff(
-  text1: string,
-  text2: string,
-  options: InternalDiffOptions,
-): Diff[] {
+export function _diff(textA: string, textB: string, options: InternalDiffOptions): Diff[] {
+  // Don't reassign fn params
+  let text1 = textA
+  let text2 = textB
+
   // Check for equality (speedup).
   if (text1 === text2) {
     return text1 ? [[DiffType.EQUAL, text1]] : []

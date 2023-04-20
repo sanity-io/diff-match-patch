@@ -1,4 +1,5 @@
-import { commonOverlap_ } from '../commonOverlap.js'
+import {test, expect} from 'vitest'
+import {commonOverlap_} from '../commonOverlap.js'
 
 test('commonOverLap', () => {
   // Detect any suffix/prefix overlap.

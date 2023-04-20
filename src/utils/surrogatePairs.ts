@@ -1,8 +1,22 @@
+/* eslint-disable no-bitwise */
+
+/**
+ * Checks if the character is a high surrogate
+ *
+ * @param char - Character to check
+ * @returns True if high surrogate, false otherwise
+ */
 export function isHighSurrogate(char: string): boolean {
   const charCode = char.charCodeAt(0)
   return charCode >= 0xd800 && charCode <= 0xdbff
 }
 
+/**
+ * Checks if the character is a low surrogate
+ *
+ * @param char - Character to check
+ * @returns True if low surrogate, false otherwise
+ */
 export function isLowSurrogate(char: string): boolean {
   const charCode = char.charCodeAt(0)
   return charCode >= 0xdc00 && charCode <= 0xdfff
@@ -21,15 +35,16 @@ export function isLowSurrogate(char: string): boolean {
  *
  * @cite: @mathiasbynens utf8.js at https://github.com/mathiasbynens/utf8.js
  *
- * @param {String} text input string encoded by encodeURI() or equivalent
- * @return {String}
+ * @param text - Input string encoded by encodeURI() or equivalent
+ * @returns Surrogate-safe decoded string
+ * @internal
  */
 export function surrogateSafeDecodeURI(text: string): string {
   try {
     return decodeURI(text)
   } catch (e) {
-    var i = 0
-    var decoded = ''
+    let i = 0
+    let decoded = ''
 
     while (i < text.length) {
       if (text[i] !== '%') {
@@ -38,7 +53,7 @@ export function surrogateSafeDecodeURI(text: string): string {
       }
 
       // start a percent-sequence
-      var byte1 = (digit16(text[i + 1]) << 4) + digit16(text[i + 2])
+      const byte1 = (digit16(text[i + 1]) << 4) + digit16(text[i + 2])
       if ((byte1 & 0x80) === 0) {
         decoded += String.fromCharCode(byte1)
         i += 3
@@ -49,54 +64,49 @@ export function surrogateSafeDecodeURI(text: string): string {
         throw new URIError('URI malformed')
       }
 
-      var byte2 = (digit16(text[i + 4]) << 4) + digit16(text[i + 5])
+      let byte2 = (digit16(text[i + 4]) << 4) + digit16(text[i + 5])
       if ((byte2 & 0xc0) !== 0x80) {
         throw new URIError('URI malformed')
       }
-      byte2 = byte2 & 0x3f
+      byte2 &= 0x3f
       if ((byte1 & 0xe0) === 0xc0) {
         decoded += String.fromCharCode(((byte1 & 0x1f) << 6) | byte2)
         i += 6
         continue
       }
 
-      if ('%' !== text[i + 6]) {
+      if (text[i + 6] !== '%') {
         throw new URIError('URI malformed')
       }
 
-      var byte3 = (digit16(text[i + 7]) << 4) + digit16(text[i + 8])
+      let byte3 = (digit16(text[i + 7]) << 4) + digit16(text[i + 8])
       if ((byte3 & 0xc0) !== 0x80) {
         throw new URIError('URI malformed')
       }
 
-      byte3 = byte3 & 0x3f
+      byte3 &= 0x3f
       if ((byte1 & 0xf0) === 0xe0) {
         // unpaired surrogate are fine here
-        decoded += String.fromCharCode(
-          ((byte1 & 0x0f) << 12) | (byte2 << 6) | byte3,
-        )
+        decoded += String.fromCharCode(((byte1 & 0x0f) << 12) | (byte2 << 6) | byte3)
         i += 9
         continue
       }
 
-      if ('%' !== text[i + 9]) {
+      if (text[i + 9] !== '%') {
         throw new URIError('URI malformed')
       }
 
-      var byte4 = (digit16(text[i + 10]) << 4) + digit16(text[i + 11])
+      let byte4 = (digit16(text[i + 10]) << 4) + digit16(text[i + 11])
       if ((byte4 & 0xc0) !== 0x80) {
         throw new URIError('URI malformed')
       }
 
-      byte4 = byte4 & 0x3f
+      byte4 &= 0x3f
       if ((byte1 & 0xf8) === 0xf0) {
-        const codePoint =
-          ((byte1 & 0x07) << 0x12) | (byte2 << 0x0c) | (byte3 << 0x06) | byte4
+        const codePoint = ((byte1 & 0x07) << 0x12) | (byte2 << 0x0c) | (byte3 << 0x06) | byte4
 
         if (codePoint >= 0x010000 && codePoint <= 0x10ffff) {
-          decoded += String.fromCharCode(
-            (((codePoint & 0xffff) >>> 10) & 0x3ff) | 0xd800,
-          )
+          decoded += String.fromCharCode((((codePoint & 0xffff) >>> 10) & 0x3ff) | 0xd800)
           decoded += String.fromCharCode(0xdc00 | (codePoint & 0xffff & 0x3ff))
           i += 12
           continue

@@ -1,5 +1,6 @@
-import { DiffType } from '../diff.js'
-import { xIndex } from '../xIndex.js'
+import {test, expect} from 'vitest'
+import {DiffType} from '../diff.js'
+import {xIndex} from '../xIndex.js'
 
 test('xIndex', () => {
   // Translate a location in text1 to text2.
@@ -11,8 +12,8 @@ test('xIndex', () => {
         [DiffType.INSERT, '1234'],
         [DiffType.EQUAL, 'xyz'],
       ],
-      2,
-    ),
+      2
+    )
   ).toEqual(5)
 
   // Translation on deletion.
@@ -23,7 +24,7 @@ test('xIndex', () => {
         [DiffType.DELETE, '1234'],
         [DiffType.EQUAL, 'xyz'],
       ],
-      3,
-    ),
+      3
+    )
   ).toEqual(1)
 })

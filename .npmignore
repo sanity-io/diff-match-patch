@@ -11,4 +11,4 @@ __tests__
 CONTRIBUTING.md
 jest.config.js
 tsconfig.json
-tslint.json
+

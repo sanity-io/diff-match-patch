@@ -1,17 +1,24 @@
 /**
  * Split two texts into an array of strings.  Reduce the texts to a string of
  * hashes where each Unicode character represents one line.
- * @param {string} text1 First string.
- * @param {string} text2 Second string.
- * @return {{chars1: string, chars2: string, lineArray: !Array.<string>}}
- *     An object containing the encoded text1, the encoded text2 and
- *     the array of unique strings.
- *     The zeroth element of the array of unique strings is intentionally blank.
- * @private
+ *
+ * @param textA - First string.
+ * @param textB - Second string.
+ * @returns An object containing the encoded textA, the encoded textB and
+ *   the array of unique strings. The zeroth element of the array of unique
+ *   strings is intentionally blank.
+ * @internal
  */
-export function linesToChars_(text1: string, text2: string) {
+export function linesToChars_(
+  textA: string,
+  textB: string
+): {
+  chars1: string
+  chars2: string
+  lineArray: string[]
+} {
   const lineArray = [] // e.g. lineArray[4] === 'Hello\n'
-  const lineHash: { [key: string]: number } = {} // e.g. lineHash['Hello\n'] === 4
+  const lineHash: {[key: string]: number} = {} // e.g. lineHash['Hello\n'] === 4
 
   // '\x00' is a valid character, but various debuggers don't like it.
   // So we'll insert a junk entry to avoid generating a null character.
@@ -21,11 +28,12 @@ export function linesToChars_(text1: string, text2: string) {
    * Split a text into an array of strings.  Reduce the texts to a string of
    * hashes where each Unicode character represents one line.
    * Modifies linearray and linehash through being a closure.
-   * @param {string} text String to encode.
-   * @return {string} Encoded string.
-   * @private
+   *
+   * @param text - String to encode.
+   * @returns Encoded string.
+   * @internal
    */
-  function diff_linesToCharsMunge_(text: string) {
+  function diffLinesToMunge(text: string) {
     let chars = ''
     // Walk the text, pulling out a substring for each line.
     // text.split('\n') would would temporarily double our memory footprint.
@@ -41,11 +49,7 @@ export function linesToChars_(text1: string, text2: string) {
       }
       let line = text.substring(lineStart, lineEnd + 1)
 
-      if (
-        lineHash.hasOwnProperty
-          ? lineHash.hasOwnProperty(line)
-          : lineHash[line] !== undefined
-      ) {
+      if (lineHash.hasOwnProperty ? lineHash.hasOwnProperty(line) : lineHash[line] !== undefined) {
         chars += String.fromCharCode(lineHash[line])
       } else {
         if (lineArrayLength === maxLines) {
@@ -62,10 +66,10 @@ export function linesToChars_(text1: string, text2: string) {
     }
     return chars
   }
-  // Allocate 2/3rds of the space for text1, the rest for text2.
+  // Allocate 2/3rds of the space for textA, the rest for textB.
   let maxLines = 40000
-  const chars1 = diff_linesToCharsMunge_(text1)
+  const chars1 = diffLinesToMunge(textA)
   maxLines = 65535
-  const chars2 = diff_linesToCharsMunge_(text2)
-  return { chars1, chars2, lineArray }
+  const chars2 = diffLinesToMunge(textB)
+  return {chars1, chars2, lineArray}
 }

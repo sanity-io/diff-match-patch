@@ -1,4 +1,5 @@
-import { match } from '../match.js'
+import {test, expect} from 'vitest'
+import {match} from '../match.js'
 
 test('match', () => {
   // Full match.
@@ -18,9 +19,7 @@ test('match', () => {
   expect(match('abcdef', 'abcdefy', 0)).toBe(0)
 
   // Complex match.
-  expect(
-    match('I am the very model of a modern major general.', ' that berry ', 5),
-  ).toBe(4)
+  expect(match('I am the very model of a modern major general.', ' that berry ', 5)).toBe(4)
 
   // Test null inputs.
   // @ts-expect-error

@@ -1,11 +1,13 @@
-import { Diff, DiffType } from './diff.js'
+import {Diff, DiffType} from './diff.js'
 
 /**
  * Compute and return the source text (all equalities and deletions).
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
- * @return {string} Source text.
+ *
+ * @param diffs - Array of diff tuples.
+ * @returns Source text.
+ * @private
  */
-export function diffText1(diffs: Diff[]) {
+export function diffText1(diffs: Diff[]): string {
   const text = []
   for (let x = 0; x < diffs.length; x++) {
     if (diffs[x][0] !== DiffType.INSERT) {
@@ -17,8 +19,10 @@ export function diffText1(diffs: Diff[]) {
 
 /**
  * Compute and return the destination text (all equalities and insertions).
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
- * @return {string} Destination text.
+ *
+ * @param diffs - Array of diff tuples.
+ * @returns Destination text.
+ * @private
  */
 export function diffText2(diffs: Diff[]): string {
   const text = []

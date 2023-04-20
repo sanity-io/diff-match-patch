@@ -1,21 +1,32 @@
-import { cleanupSemanticLossless } from '../diff/cleanup.js'
-import { diff, DiffType } from '../diff/diff.js'
-import { diffText1, diffText2 } from '../diff/diffText.js'
-import { levenshtein } from '../diff/levenshtein.js'
-import { xIndex } from '../diff/xIndex.js'
-import { match } from '../match/match.js'
-import { DEFAULT_MARGIN, MAX_BITS } from './constants.js'
-import { deepCopy, Patch } from './createPatchObject.js'
-import { parse } from './parse.js'
-import { splitMax } from './splitMax.js'
+/* eslint-disable max-depth */
+/* eslint-disable max-statements */
+import {cleanupSemanticLossless} from '../diff/cleanup.js'
+import {diff, DiffType} from '../diff/diff.js'
+import {diffText1, diffText2} from '../diff/diffText.js'
+import {levenshtein} from '../diff/levenshtein.js'
+import {xIndex} from '../diff/xIndex.js'
+import {match} from '../match/match.js'
+import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
+import {deepCopy, Patch} from './createPatchObject.js'
+import {parse} from './parse.js'
+import {splitMax} from './splitMax.js'
 
 // When deleting a large block of text (over ~64 characters), how close do
 // the contents have to be to match the expected contents. (0.0 = perfection,
 // 1.0 = very loose).  Note that Match_Threshold controls how closely the
 // end points of a delete need to match.
+
+/**
+ * Options for applying a patch.
+ *
+ * @public
+ */
 export interface ApplyPatchOptions {
-  // Chunk size for context length.
+  /**
+   * Chunk size for context length
+   */
   margin: number
+
   deleteThreshold: number
 }
 
@@ -24,9 +35,7 @@ const DEFAULT_OPTS = {
   deleteThreshold: 0.4,
 }
 
-function getDefaultOpts(
-  opts: Partial<ApplyPatchOptions> = {},
-): ApplyPatchOptions {
+function getDefaultOpts(opts: Partial<ApplyPatchOptions> = {}): ApplyPatchOptions {
   return {
     ...DEFAULT_OPTS,
     ...opts,
@@ -34,45 +43,50 @@ function getDefaultOpts(
 }
 
 /**
- * Merge a set of patches onto the text.  Return a patched text, as well
- * as a list of true/false values indicating which patches were applied.
- * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
- * @param {string} text Old text.
- * @return {!Array.<string|!Array.<boolean>>} Two element Array, containing the
- *      new text and an array of boolean values.
+ * Result of a patch application operation.
+ * Index 0 contains the new text
+ * Index 1 contains an array of booleans indicating which patches were applied
+ *
+ * @public
  */
 export type PatchResult = [string, boolean[]]
 
+/**
+ * Merge a set of patches onto the text.  Return a patched text, as well
+ * as a list of true/false values indicating which patches were applied.
+ *
+ * @param patches - Array of Patch objects.
+ * @param text - Old text.
+ * @returns Two element Array, containing the new text and an array of boolean values.
+ * @public
+ */
 export function apply(
   patches: Patch[] | string,
-  text: string,
-  opts: Partial<ApplyPatchOptions> = {},
+  originalText: string,
+  opts: Partial<ApplyPatchOptions> = {}
 ): PatchResult {
+  let text = originalText
   if (patches.length === 0) {
     return [text, []]
   }
 
-  if (typeof patches === 'string') {
-    patches = parse(patches)
-  }
-
-  const options = getDefaultOpts(opts)
   // Deep copy the patches so that no changes are made to originals.
-  patches = deepCopy(patches)
+  const parsed = typeof patches === 'string' ? parse(patches) : deepCopy(patches)
+  const options = getDefaultOpts(opts)
 
-  const nullPadding = addPadding(patches, options.margin)
+  const nullPadding = addPadding(parsed, options.margin)
   text = nullPadding + text + nullPadding
 
-  splitMax(patches, options.margin)
+  splitMax(parsed, options.margin)
   // delta keeps track of the offset between the expected and actual location
   // of the previous patch.  If there are patches expected at positions 10 and
   // 20, but the first patch was found at 12, delta is 2 and the second patch
   // has an effective expected position of 22.
   let delta = 0
   const results = []
-  for (let x = 0; x < patches.length; x++) {
-    const expectedLoc = patches[x].start2 + delta
-    const text1 = diffText1(patches[x].diffs)
+  for (let x = 0; x < parsed.length; x++) {
+    const expectedLoc = parsed[x].start2 + delta
+    const text1 = diffText1(parsed[x].diffs)
     let startLoc
     let endLoc = -1
     if (text1.length > MAX_BITS) {
@@ -83,7 +97,7 @@ export function apply(
         endLoc = match(
           text,
           text1.substring(text1.length - MAX_BITS),
-          expectedLoc + text1.length - MAX_BITS,
+          expectedLoc + text1.length - MAX_BITS
         )
         if (endLoc === -1 || startLoc >= endLoc) {
           // Can't find valid trailing context.  Drop this patch.
@@ -97,13 +111,12 @@ export function apply(
       // No match found.  :(
       results[x] = false
       // Subtract the delta for this failed patch from subsequent patches.
-      delta -= patches[x].length2 - patches[x].length1
+      delta -= parsed[x].length2 - parsed[x].length1
     } else {
       // Found a match.  :)
       results[x] = true
       delta = startLoc - expectedLoc
       let text2
-      // tslint:disable-next-line:prefer-conditional-expression
       if (endLoc === -1) {
         text2 = text.substring(startLoc, startLoc + text1.length)
       } else {
@@ -113,12 +126,12 @@ export function apply(
         // Perfect match, just shove the replacement text in.
         text =
           text.substring(0, startLoc) +
-          diffText2(patches[x].diffs) +
+          diffText2(parsed[x].diffs) +
           text.substring(startLoc + text1.length)
       } else {
         // Imperfect match.  Run a diff to get a framework of equivalent
         // indices.
-        let diffs = diff(text1, text2, { checkLines: false })
+        let diffs = diff(text1, text2, {checkLines: false})
         if (
           text1.length > MAX_BITS &&
           levenshtein(diffs) / text1.length > options.deleteThreshold
@@ -129,18 +142,15 @@ export function apply(
           diffs = cleanupSemanticLossless(diffs)
           let index1 = 0
           let index2 = 0
-          // tslint:disable-next-line:prefer-for-of
-          for (let y = 0; y < patches[x].diffs.length; y++) {
-            const mod = patches[x].diffs[y]
+          for (let y = 0; y < parsed[x].diffs.length; y++) {
+            const mod = parsed[x].diffs[y]
             if (mod[0] !== DiffType.EQUAL) {
               index2 = xIndex(diffs, index1)
             }
             if (mod[0] === DiffType.INSERT) {
               // Insertion
               text =
-                text.substring(0, startLoc + index2) +
-                mod[1] +
-                text.substring(startLoc + index2)
+                text.substring(0, startLoc + index2) + mod[1] + text.substring(startLoc + index2)
             } else if (mod[0] === DiffType.DELETE) {
               // Deletion
               text =
@@ -163,10 +173,12 @@ export function apply(
 /**
  * Add some padding on text start and end so that edges can match something.
  * Intended to be called only from within patch_apply.
- * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
- * @return {string} The padding string added to each side.
+ *
+ * @param patches - Array of Patch objects.
+ * @returns The padding string added to each side.
+ * @internal
  */
-export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN) {
+export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): string {
   const paddingLength = margin
   let nullPadding = ''
   for (let x = 1; x <= paddingLength; x++) {

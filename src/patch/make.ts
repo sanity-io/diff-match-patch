@@ -1,10 +1,15 @@
-import { cleanupSemantic, cleanupEfficiency } from '../diff/cleanup.js'
-import { diff, Diff, DiffType } from '../diff/diff.js'
-import { diffText1 } from '../diff/diffText.js'
-import { isLowSurrogate } from '../utils/surrogatePairs.js'
-import { MAX_BITS } from './constants.js'
-import { createPatchObject, Patch } from './createPatchObject.js'
+import {cleanupSemantic, cleanupEfficiency} from '../diff/cleanup.js'
+import {diff, Diff, DiffType} from '../diff/diff.js'
+import {diffText1} from '../diff/diffText.js'
+import {isLowSurrogate} from '../utils/surrogatePairs.js'
+import {MAX_BITS} from './constants.js'
+import {createPatchObject, Patch} from './createPatchObject.js'
 
+/**
+ * Options for patch generation.
+ *
+ * @public
+ */
 export interface MakePatchOptions {
   // Chunk size for context length.
   margin: number
@@ -14,48 +19,54 @@ const DEFAULT_OPTS: MakePatchOptions = {
   margin: 4,
 }
 
-function getDefaultOpts(
-  opts: Partial<MakePatchOptions> = {},
-): MakePatchOptions {
+function getDefaultOpts(opts: Partial<MakePatchOptions> = {}): MakePatchOptions {
   return {
     ...DEFAULT_OPTS,
     ...opts,
   }
 }
 
-export function make(
-  diffs: Diff[],
-  options?: Partial<MakePatchOptions>,
-): Patch[]
-export function make(
-  text1: string,
-  arg2: string | Diff[],
-  options?: Partial<MakePatchOptions>,
-): Patch[]
+/**
+ * Compute a list of patches to turn based on passed diffs.
+ *
+ * @param diffs - Array of diff tuples.
+ * @param options - Options for the patch generation.
+ * @returns Array of Patch objects.
+ * @public
+ */
+export function make(diffs: Diff[], options?: Partial<MakePatchOptions>): Patch[]
 
 /**
- * Compute a list of patches to turn text1 into text2.
- * Use diffs if provided, otherwise compute it ourselves.
- * There are four ways to call this function, depending on what data is
- * available to the caller:
- * Method 1:
- * a = text1, b = text2
- * Method 2:
- * a = diffs
- * Method 3 (optimal):
- * a = text1, b = diffs
+ * Compute a list of patches to turn textA into textB.
  *
- * @param {string|!Array.<!diff_match_patch.Diff>} a text1 (methods 1,3,4) or
- * Array of diff tuples for text1 to text2 (method 2).
- * @param {string|!Array.<!diff_match_patch.Diff>} arg text2 (methods 1,4) or
- * Array of diff tuples for text1 to text2 (method 3) or undefined (method 2).
- * @param {string|!Array.<!diff_match_patch.Diff>} opt_c Array of diff tuples
+ * @param textA - Original text.
+ * @param textB - New text.
+ * @param options - Options for the patch generation.
+ * @returns Array of Patch objects.
+ * @public
  */
-export function make(a: any, b?: any, options?: Partial<MakePatchOptions>) {
+export function make(textA: string, textB: string, options?: Partial<MakePatchOptions>): Patch[]
+
+/**
+ * Compute a list of patches to turn textA into textB using provided diff tuples.
+ *
+ * @param textA - Original text.
+ * @param diffs - Diff tuples to use as base.
+ * @param options - Options for the patch generation.
+ * @returns Array of Patch objects.
+ * @public
+ */
+export function make(textA: string, diffs: Diff[], options?: Partial<MakePatchOptions>): Patch[]
+
+export function make(
+  a: Diff[] | string,
+  b?: Partial<MakePatchOptions> | string | Diff[],
+  options?: Partial<MakePatchOptions>
+): Patch[] {
   if (typeof a === 'string' && typeof b === 'string') {
-    // Method 1: text1, text2
-    // Compute diffs from text1 and text2.
-    let diffs = diff(a, b, { checkLines: true })
+    // Method 1: textA, textB
+    // Compute diffs from textA and textB.
+    let diffs = diff(a, b, {checkLines: true})
     if (diffs.length > 2) {
       diffs = cleanupSemantic(diffs)
       diffs = cleanupEfficiency(diffs)
@@ -63,38 +74,34 @@ export function make(a: any, b?: any, options?: Partial<MakePatchOptions>) {
     return _make(a, diffs, getDefaultOpts(options))
   }
 
-  if (a && typeof a === 'object' && typeof b === 'undefined') {
+  if (a && Array.isArray(a) && typeof b === 'undefined') {
     // Method 2: diffs
-    // Compute text1 from diffs.
+    // Compute textA from diffs.
     return _make(diffText1(a), a, getDefaultOpts(options))
   }
 
-  if (typeof a === 'string' && b && typeof b === 'object') {
-    // Method 3: text1, diffs
+  if (typeof a === 'string' && b && Array.isArray(b)) {
+    // Method 3: textA, diffs
     return _make(a, b, getDefaultOpts(options))
   }
 
   throw new Error('Unknown call format to make()')
 }
 
-function _make(
-  text1: string,
-  diffs: Diff[],
-  options: MakePatchOptions,
-): Patch[] {
+function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[] {
   if (diffs.length === 0) {
     return [] // Get rid of the null case.
   }
   const patches = []
   let patch = createPatchObject(0, 0)
   let patchDiffLength = 0 // Keeping our own length var is faster in JS.
-  let charCount1 = 0 // Number of characters into the text1 string.
-  let charCount2 = 0 // Number of characters into the text2 string.
-  // Start with text1 (prepatchText) and apply the diffs until we arrive at
-  // text2 (postpatchText).  We recreate the patches one by one to determine
+  let charCount1 = 0 // Number of characters into the textA string.
+  let charCount2 = 0 // Number of characters into the textB string.
+  // Start with textA (prepatchText) and apply the diffs until we arrive at
+  // textB (postpatchText).  We recreate the patches one by one to determine
   // context info.
-  let prepatchText = text1
-  let postpatchText = text1
+  let prepatchText = textA
+  let postpatchText = textA
   for (let x = 0; x < diffs.length; x++) {
     const diffType = diffs[x][0]
     const diffText = diffs[x][1]
@@ -110,9 +117,7 @@ function _make(
         patch.diffs[patchDiffLength++] = diffs[x]
         patch.length2 += diffText.length
         postpatchText =
-          postpatchText.substring(0, charCount2) +
-          diffText +
-          postpatchText.substring(charCount2)
+          postpatchText.substring(0, charCount2) + diffText + postpatchText.substring(charCount2)
         break
       case DiffType.DELETE:
         patch.length1 += diffText.length
@@ -122,11 +127,7 @@ function _make(
           postpatchText.substring(charCount2 + diffText.length)
         break
       case DiffType.EQUAL:
-        if (
-          diffText.length <= 2 * options.margin &&
-          patchDiffLength &&
-          diffs.length !== x + 1
-        ) {
+        if (diffText.length <= 2 * options.margin && patchDiffLength && diffs.length !== x + 1) {
           // Small equality inside a patch.
           patch.diffs[patchDiffLength++] = diffs[x]
           patch.length1 += diffText.length
@@ -147,6 +148,8 @@ function _make(
           }
         }
         break
+      default:
+        throw new Error('Unknown diff type')
     }
 
     // Update the current character count.
@@ -169,16 +172,13 @@ function _make(
 /**
  * Increase the context until it is unique,
  * but don't let the pattern expand beyond MAX_BITS.
- * @param patch The patch to grow.
- * @param {string} text Source text.
+ *
+ * @param patch - The patch to grow.
+ * @param text - Source text.
  * @param opts
- * @private
+ * @internal
  */
-export function addContext_(
-  patch: Patch,
-  text: string,
-  opts: MakePatchOptions,
-) {
+export function addContext_(patch: Patch, text: string, opts: MakePatchOptions): void {
   if (text.length === 0) {
     return
   }
@@ -192,10 +192,7 @@ export function addContext_(
     pattern.length < MAX_BITS - opts.margin - opts.margin
   ) {
     padding += opts.margin
-    pattern = text.substring(
-      patch.start2 - padding,
-      patch.start2 + patch.length1 + padding,
-    )
+    pattern = text.substring(patch.start2 - padding, patch.start2 + patch.length1 + padding)
   }
   // Add one chunk for good luck.
   padding += opts.margin

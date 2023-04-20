@@ -1,4 +1,5 @@
-import { commonSuffix } from '../commonSuffix.js'
+import {test, expect} from 'vitest'
+import {commonSuffix} from '../commonSuffix.js'
 
 test('commonSuffix', () => {
   // Detect any common suffix.

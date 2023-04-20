@@ -1,11 +1,12 @@
-import { DiffType } from '../diff/diff.js'
-import { createPatchObject, Patch } from './createPatchObject.js'
+import {DiffType} from '../diff/diff.js'
+import {createPatchObject, Patch} from './createPatchObject.js'
 
 /**
  * Parse a textual representation of patches and return a list of Patch objects.
- * @param {string} textline Text representation of patches.
- * @return {!Array.<!diff_match_patch.patch_obj>} Array of Patch objects.
- * @throws {!Error} If invalid input.
+ *
+ * @param textline - Text representation of patches.
+ * @returns Array of Patch objects.
+ * @public
  */
 export function parse(textline: string): Patch[] {
   const patches: Patch[] = []
@@ -18,7 +19,7 @@ export function parse(textline: string): Patch[] {
   while (textPointer < text.length) {
     const m = text[textPointer].match(patchHeader)
     if (!m) {
-      throw new Error('Invalid patch string: ' + text[textPointer])
+      throw new Error(`Invalid patch string: ${text[textPointer]}`)
     }
     const patch = createPatchObject(parseInt(m[1], 10), parseInt(m[3], 10))
     patches.push(patch)
@@ -50,7 +51,7 @@ export function parse(textline: string): Patch[] {
         line = decodeURI(text[textPointer].substring(1))
       } catch (ex) {
         // Malformed URI sequence.
-        throw new Error('Illegal escape in parse: ' + line)
+        throw new Error(`Illegal escape in parse: ${line}`)
       }
       if (sign === '-') {
         // Deletion.
@@ -68,7 +69,7 @@ export function parse(textline: string): Patch[] {
         // Blank line?  Whatever.
       } else {
         // WTF?
-        throw new Error('Invalid patch mode "' + sign + '" in: ' + line)
+        throw new Error(`Invalid patch mode "${sign}" in: ${line}`)
       }
       textPointer++
     }

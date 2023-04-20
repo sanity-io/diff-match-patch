@@ -1,11 +1,11 @@
-import { diff, DiffType } from '../../diff/diff.js'
-import { fromDelta } from '../../diff/fromDelta.js'
-import { toDelta } from '../../diff/toDelta.js'
-import { Patch } from '../createPatchObject.js'
-import { apply } from '../apply.js'
-import { make } from '../make.js'
-import { parse } from '../parse.js'
-import { stringify } from '../stringify.js'
+import {describe, expect, test} from 'vitest'
+import {diff, DiffType} from '../../diff/diff.js'
+import {toDelta} from '../../diff/toDelta.js'
+import {Patch} from '../createPatchObject.js'
+import {apply} from '../apply.js'
+import {make} from '../make.js'
+import {parse} from '../parse.js'
+import {stringify} from '../stringify.js'
 
 test('surrogate pairs', () => {
   let p: Patch[]
@@ -58,40 +58,40 @@ test('surrogate pairs: random edits', () => {
 
   // applies some random edits to string and returns new, edited string
   function applyRandomTextEdit(text: string) {
-    let textArr = [...text]
-    let r = Math.random()
+    const textArr = [...text]
+    const r = Math.random()
     if (r < 1 / 3) {
       // swap
-      let swapCount = Math.floor(Math.random() * 5)
+      const swapCount = Math.floor(Math.random() * 5)
       for (let i = 0; i < swapCount; i++) {
-        let swapPos1 = Math.floor(Math.random() * textArr.length)
-        let swapPos2 = Math.floor(Math.random() * textArr.length)
-        let char1 = textArr[swapPos1]
-        let char2 = textArr[swapPos2]
+        const swapPos1 = Math.floor(Math.random() * textArr.length)
+        const swapPos2 = Math.floor(Math.random() * textArr.length)
+        const char1 = textArr[swapPos1]
+        const char2 = textArr[swapPos2]
         textArr[swapPos1] = char2
         textArr[swapPos2] = char1
       }
     } else if (r < 2 / 3) {
       // remove
-      let removeCount = Math.floor(Math.random() * 5)
+      const removeCount = Math.floor(Math.random() * 5)
       for (let i = 0; i < removeCount; i++) {
-        let removePos = Math.floor(Math.random() * textArr.length)
+        const removePos = Math.floor(Math.random() * textArr.length)
         textArr[removePos] = ''
       }
     } else {
       // add
-      let addCount = Math.floor(Math.random() * 5)
+      const addCount = Math.floor(Math.random() * 5)
       for (let i = 0; i < addCount; i++) {
-        let addPos = Math.floor(Math.random() * textArr.length)
-        let addFromPos = Math.floor(Math.random() * textArr.length)
-        textArr[addPos] = textArr[addPos] + textArr[addFromPos]
+        const addPos = Math.floor(Math.random() * textArr.length)
+        const addFromPos = Math.floor(Math.random() * textArr.length)
+        textArr[addPos] += textArr[addFromPos]
       }
     }
     return textArr.join('')
   }
 
   for (let i = 0; i < 1000; i++) {
-    let newText = applyRandomTextEdit(originalText)
+    const newText = applyRandomTextEdit(originalText)
     expect(typeof toDelta(diff(originalText, newText))).toBe('string')
   }
 })
@@ -99,18 +99,14 @@ test('surrogate pairs: random edits', () => {
 // Unicode - splitting surrogates
 describe('surrogate pairs splitting', () => {
   test('insert similar surrogate pair at beginning', () => {
-    expect(
-      diff('\ud83c\udd70\ud83c\udd71', '\ud83c\udd71\ud83c\udd70\ud83c\udd71'),
-    ).toEqual([
+    expect(diff('\ud83c\udd70\ud83c\udd71', '\ud83c\udd71\ud83c\udd70\ud83c\udd71')).toEqual([
       [DiffType.INSERT, '\ud83c\udd71'],
       [DiffType.EQUAL, '\ud83c\udd70\ud83c\udd71'],
     ])
   })
 
   test('inserting similar surrogate pair in the middle', () => {
-    expect(
-      diff('\ud83c\udd70\ud83c\udd71', '\ud83c\udd70\ud83c\udd70\ud83c\udd71'),
-    ).toEqual([
+    expect(diff('\ud83c\udd70\ud83c\udd71', '\ud83c\udd70\ud83c\udd70\ud83c\udd71')).toEqual([
       [DiffType.EQUAL, '\ud83c\udd70'],
       [DiffType.INSERT, '\ud83c\udd70'],
       [DiffType.EQUAL, '\ud83c\udd71'],
@@ -118,18 +114,14 @@ describe('surrogate pairs splitting', () => {
   })
 
   test('deleting similar surrogate pair at the beginning', () => {
-    expect(
-      diff('\ud83c\udd71\ud83c\udd70\ud83c\udd71', '\ud83c\udd70\ud83c\udd71'),
-    ).toEqual([
+    expect(diff('\ud83c\udd71\ud83c\udd70\ud83c\udd71', '\ud83c\udd70\ud83c\udd71')).toEqual([
       [DiffType.DELETE, '\ud83c\udd71'],
       [DiffType.EQUAL, '\ud83c\udd70\ud83c\udd71'],
     ])
   })
 
   test('deleting similar surrogate pair in the middle', () => {
-    expect(
-      diff('\ud83c\udd70\ud83c\udd72\ud83c\udd71', '\ud83c\udd70\ud83c\udd71'),
-    ).toEqual([
+    expect(diff('\ud83c\udd70\ud83c\udd72\ud83c\udd71', '\ud83c\udd70\ud83c\udd71')).toEqual([
       [DiffType.EQUAL, '\ud83c\udd70'],
       [DiffType.DELETE, '\ud83c\udd72'],
       [DiffType.EQUAL, '\ud83c\udd71'],
@@ -148,18 +140,9 @@ describe('surrogate pairs splitting', () => {
       'Honestly? I thought it was total 😉, really.',
       'Honestly? I thought it was total 😀, really.',
     ],
-    [
-      'Jeg skriver litt tekst. Med emojis! 😅 Gøy',
-      'Jeg skriver litt tekst. Med emojis! 😅 Gø',
-    ],
-    [
-      'Jeg skriver litt tekst. Med emojis! 😅 Gø',
-      'Jeg skriver litt tekst. Med emojis! 😅 Gøy',
-    ],
-    [
-      'Gøy 😅',
-      'øy 😅',
-    ],
+    ['Jeg skriver litt tekst. Med emojis! 😅 Gøy', 'Jeg skriver litt tekst. Med emojis! 😅 Gø'],
+    ['Jeg skriver litt tekst. Med emojis! 😅 Gø', 'Jeg skriver litt tekst. Med emojis! 😅 Gøy'],
+    ['Gøy 😅', 'øy 😅'],
   ])('stringified/non-stringified, reapplied', (source, target) => {
     const patch = make(source, target)
     let result = apply(patch, source)[0]

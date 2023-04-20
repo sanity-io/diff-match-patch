@@ -1,14 +1,14 @@
-import { DiffType } from '../../diff/diff.js'
-import { createPatchObject } from '../createPatchObject.js'
-import { parse } from '../parse.js'
-import { stringify, stringifyPatch } from '../stringify.js'
+import {test, expect} from 'vitest'
+import {DiffType} from '../../diff/diff.js'
+import {createPatchObject} from '../createPatchObject.js'
+import {parse} from '../parse.js'
+import {stringify, stringifyPatch} from '../stringify.js'
 
 test('stringify', () => {
   let strp = '@@ -21,18 +22,17 @@\n jump\n-s\n+ed\n  over \n-the\n+a\n  laz\n'
   expect(stringify(parse(strp))).toBe(strp)
 
-  strp =
-    '@@ -1,9 +1,9 @@\n-f\n+F\n oo+fooba\n@@ -7,9 +7,9 @@\n obar\n-,\n+.\n  tes\n'
+  strp = '@@ -1,9 +1,9 @@\n-f\n+F\n oo+fooba\n@@ -7,9 +7,9 @@\n obar\n-,\n+.\n  tes\n'
   expect(stringify(parse(strp))).toBe(strp)
 })
 
@@ -27,7 +27,5 @@ test('stringifyPatch', () => {
     [DiffType.EQUAL, '\nlaz'],
   ]
   const strp = stringifyPatch(p)
-  expect(strp).toEqual(
-    '@@ -21,18 +22,17 @@\n jump\n-s\n+ed\n  over \n-the\n+a\n %0Alaz\n',
-  )
+  expect(strp).toEqual('@@ -21,18 +22,17 @@\n jump\n-s\n+ed\n  over \n-the\n+a\n %0Alaz\n')
 })

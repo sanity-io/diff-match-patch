@@ -1,18 +1,16 @@
-import { _diff, Diff, DiffType } from './diff.js'
+import {_diff, Diff, DiffType} from './diff.js'
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
  * and return the recursively constructed diff.
  * See Myers 1986 paper: An O(ND) Difference Algorithm and Its Variations.
- * @param {string} text1 Old string to be diffed.
- * @param {string} text2 New string to be diffed.
- * @private
+ *
+ * @param text1 - Old string to be diffed.
+ * @param text2 - New string to be diffed.
+ * @returns Array of diff tuples.
+ * @internal
  */
-export function bisect_(
-  text1: string,
-  text2: string,
-  deadline: number,
-): Diff[] {
+export function bisect_(text1: string, text2: string, deadline: number): Diff[] {
   // Cache the text lengths to prevent multiple calls.
   const text1Length = text1.length
   const text2Length = text2.length
@@ -48,18 +46,13 @@ export function bisect_(
     for (let k1 = -d + k1start; k1 <= d - k1end; k1 += 2) {
       const k1Offset = vOffset + k1
       let x1
-      // tslint:disable-next-line:prefer-conditional-expression
       if (k1 === -d || (k1 !== d && v1[k1Offset - 1] < v1[k1Offset + 1])) {
         x1 = v1[k1Offset + 1]
       } else {
         x1 = v1[k1Offset - 1] + 1
       }
       let y1 = x1 - k1
-      while (
-        x1 < text1Length &&
-        y1 < text2Length &&
-        text1.charAt(x1) === text2.charAt(y1)
-      ) {
+      while (x1 < text1Length && y1 < text2Length && text1.charAt(x1) === text2.charAt(y1)) {
         x1++
         y1++
       }
@@ -87,7 +80,6 @@ export function bisect_(
     for (let k2 = -d + k2start; k2 <= d - k2end; k2 += 2) {
       const k2Offset = vOffset + k2
       let x2
-      // tslint:disable-next-line:prefer-conditional-expression
       if (k2 === -d || (k2 !== d && v2[k2Offset - 1] < v2[k2Offset + 1])) {
         x2 = v2[k2Offset + 1]
       } else {
@@ -97,8 +89,7 @@ export function bisect_(
       while (
         x2 < text1Length &&
         y2 < text2Length &&
-        text1.charAt(text1Length - x2 - 1) ===
-          text2.charAt(text2Length - y2 - 1)
+        text1.charAt(text1Length - x2 - 1) === text2.charAt(text2Length - y2 - 1)
       ) {
         x2++
         y2++
@@ -135,29 +126,30 @@ export function bisect_(
 /**
  * Given the location of the 'middle snake', split the diff in two parts
  * and recurse.
- * @param {string} text1 Old string to be diffed.
- * @param {string} text2 New string to be diffed.
- * @param {number} x Index of split point in text1.
- * @param {number} y Index of split point in text2.
- * @param {number} deadline Time at which to bail if not yet complete.
- * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
- * @private
+ *
+ * @param text1 - Old string to be diffed.
+ * @param text2 - New string to be diffed.
+ * @param x - Index of split point in text1.
+ * @param y - Index of split point in text2.
+ * @param deadline - Time at which to bail if not yet complete.
+ * @returns Array of diff tuples.
+ * @internal
  */
 function bisectSplit_(
   text1: string,
   text2: string,
   x: number,
   y: number,
-  deadline: number,
-) {
+  deadline: number
+): Diff[] {
   const text1a = text1.substring(0, x)
   const text2a = text2.substring(0, y)
   const text1b = text1.substring(x)
   const text2b = text2.substring(y)
 
   // Compute both diffs serially.
-  const diffs = _diff(text1a, text2a, { checkLines: false, deadline })
-  const diffsb = _diff(text1b, text2b, { checkLines: false, deadline })
+  const diffs = _diff(text1a, text2a, {checkLines: false, deadline})
+  const diffsb = _diff(text1b, text2b, {checkLines: false, deadline})
 
   return diffs.concat(diffsb)
 }

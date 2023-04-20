@@ -1,4 +1,5 @@
-import { halfMatch_ } from '../halfMatch.js'
+import {test, expect} from 'vitest'
+import {halfMatch_} from '../halfMatch.js'
 
 test('halfMatch', () => {
   // Detect a halfmatch.
@@ -8,37 +9,13 @@ test('halfMatch', () => {
   expect(halfMatch_('12345', '23')).toBe(null)
 
   // Single Match.
-  expect(halfMatch_('1234567890', 'a345678z')).toEqual([
-    '12',
-    '90',
-    'a',
-    'z',
-    '345678',
-  ])
+  expect(halfMatch_('1234567890', 'a345678z')).toEqual(['12', '90', 'a', 'z', '345678'])
 
-  expect(halfMatch_('a345678z', '1234567890')).toEqual([
-    'a',
-    'z',
-    '12',
-    '90',
-    '345678',
-  ])
+  expect(halfMatch_('a345678z', '1234567890')).toEqual(['a', 'z', '12', '90', '345678'])
 
-  expect(halfMatch_('abc56789z', '1234567890')).toEqual([
-    'abc',
-    'z',
-    '1234',
-    '0',
-    '56789',
-  ])
+  expect(halfMatch_('abc56789z', '1234567890')).toEqual(['abc', 'z', '1234', '0', '56789'])
 
-  expect(halfMatch_('a23456xyz', '1234567890')).toEqual([
-    'a',
-    'xyz',
-    '1',
-    '7890',
-    '23456',
-  ])
+  expect(halfMatch_('a23456xyz', '1234567890')).toEqual(['a', 'xyz', '1', '7890', '23456'])
 
   // Multiple Matches.
   expect(halfMatch_('121231234123451234123121', 'a1234123451234z')).toEqual([

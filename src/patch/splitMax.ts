@@ -1,15 +1,17 @@
-import { DiffType } from '../diff/diff.js'
-import { diffText1, diffText2 } from '../diff/diffText.js'
-import { DEFAULT_MARGIN, MAX_BITS } from './constants.js'
-import { createPatchObject, Patch } from './createPatchObject.js'
+import {DiffType} from '../diff/diff.js'
+import {diffText1, diffText2} from '../diff/diffText.js'
+import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
+import {createPatchObject, Patch} from './createPatchObject.js'
 
 /**
  * Look through the patches and break up any which are longer than the maximum
  * limit of the match algorithm.
  * Intended to be called only from within patch_apply.
- * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
+ *
+ * @param patches - Array of Patch objects.
+ * @internal
  */
-export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN) {
+export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): void {
   const patchSize = MAX_BITS
   for (let x = 0; x < patches.length; x++) {
     if (patches[x].length1 <= patchSize) {
@@ -23,20 +25,15 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN) {
     let precontext = ''
     while (bigpatch.diffs.length !== 0) {
       // Create one of several smaller patches.
-      const patch = createPatchObject(
-        start1 - precontext.length,
-        start2 - precontext.length,
-      )
+      const patch = createPatchObject(start1 - precontext.length, start2 - precontext.length)
       let empty = true
 
       if (precontext !== '') {
-        patch.length1 = patch.length2 = precontext.length
+        patch.length1 = precontext.length
+        patch.length2 = precontext.length
         patch.diffs.push([DiffType.EQUAL, precontext])
       }
-      while (
-        bigpatch.diffs.length !== 0 &&
-        patch.length1 < patchSize - margin
-      ) {
+      while (bigpatch.diffs.length !== 0 && patch.length1 < patchSize - margin) {
         const diffType = bigpatch.diffs[0][0]
         let diffText = bigpatch.diffs[0][1]
         if (diffType === DiffType.INSERT) {
@@ -75,9 +72,7 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN) {
           if (diffText === bigpatch.diffs[0][1]) {
             bigpatch.diffs.shift()
           } else {
-            bigpatch.diffs[0][1] = bigpatch.diffs[0][1].substring(
-              diffText.length,
-            )
+            bigpatch.diffs[0][1] = bigpatch.diffs[0][1].substring(diffText.length)
           }
         }
       }
@@ -89,10 +84,7 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN) {
       if (postcontext !== '') {
         patch.length1 += postcontext.length
         patch.length2 += postcontext.length
-        if (
-          patch.diffs.length !== 0 &&
-          patch.diffs[patch.diffs.length - 1][0] === DiffType.EQUAL
-        ) {
+        if (patch.diffs.length !== 0 && patch.diffs[patch.diffs.length - 1][0] === DiffType.EQUAL) {
           patch.diffs[patch.diffs.length - 1][1] += postcontext
         } else {
           patch.diffs.push([DiffType.EQUAL, postcontext])

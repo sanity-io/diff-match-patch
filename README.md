@@ -24,11 +24,7 @@ Originally built in 2006 to power Google Docs, this library is now available in 
 #### Creating and applying patches
 
 ```ts
-import {
-  makePatches,
-  applyPatches,
-  stringifyPatches,
-} from '@sanity/diff-match-patch'
+import {makePatches, applyPatches, stringifyPatches} from '@sanity/diff-match-patch'
 
 // Make array of diffs in internal array format, eg tuples of `[DiffType, string]`
 const patches = makePatches('from this', 'to this')
@@ -43,7 +39,7 @@ const newValue = applyPatches('from this', patches)
 #### Creating diffs
 
 ```ts
-import { makeDiff } from '@sanity/diff-match-patch'
+import {makeDiff} from '@sanity/diff-match-patch'
 
 // Make an array of diff tuples, eg `[DiffType, string]`
 const diff = makeDiff('from this', 'to this')
@@ -52,7 +48,7 @@ const diff = makeDiff('from this', 'to this')
 #### Matching text
 
 ```ts
-import { match } from '@sanity/diff-match-patch'
+import {match} from '@sanity/diff-match-patch'
 
 // Find position in text for the given pattern, at the approximate location given
 const position = match('some text to match against', 'match', 9)

@@ -3,27 +3,32 @@
   "version": "0.0.8",
   "description": "Robust diff, match and patch algorithms to perform operations required for synchronizing plain text",
   "sideEffects": false,
-  "main": "./lib/cjs/index.cjs",
-  "source": "./src/index.ts",
-  "module": "./lib/esm/index.js",
+  "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "import": "./lib/esm/index.js",
-      "require": "./lib/cjs/index.cjs",
-      "default": "./lib/esm/index.js"
-    }
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=14.16"
+    "node": ">=14.18"
   },
-  "type": "module",
   "scripts": {
-    "prebuild": "rimraf lib",
-    "build": "tsc && tsc --module commonjs --outDir lib/cjs",
-    "postbuild": "node scripts/fixExtensions.js",
-    "prepublishOnly": "npm run build",
-    "test": "jest"
+    "clean": "rimraf dist coverage",
+    "build": "pkg-utils build && pkg-utils --strict",
+    "prebuild": "npm run clean",
+    "lint": "eslint . && tsc --noEmit",
+    "test": "vitest --reporter=verbose",
+    "posttest": "npm run lint",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "diff",
@@ -33,13 +38,47 @@
   "author": "Google Inc.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/jest": "^28.1.6",
-    "@types/node": "^14.0.0",
-    "jest": "^28.1.2",
-    "prettier": "^2.7.1",
-    "rimraf": "^3.0.2",
-    "testit": "^3.1.0",
-    "ts-jest": "^28.0.5",
-    "typescript": "^4.7.4"
+    "@sanity/pkg-utils": "^2.2.13",
+    "@sanity/semantic-release-preset": "^4.0.2",
+    "@types/node": "^14.18.0",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-sanity": "^6.0.0",
+    "prettier": "^2.8.6",
+    "rimraf": "^5.0.0",
+    "rollup-plugin-visualizer": "^5.9.0",
+    "semantic-release": "^21.0.1",
+    "typescript": "^4.9.5",
+    "vitest": "^0.30.1"
+  },
+  "prettier": {
+    "semi": false,
+    "printWidth": 100,
+    "bracketSpacing": false,
+    "singleQuote": true
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 9,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "modules": true
+      }
+    },
+    "extends": [
+      "sanity",
+      "sanity/typescript",
+      "prettier"
+    ],
+    "ignorePatterns": [
+      "lib/**/"
+    ],
+    "rules": {
+      "complexity": "off",
+      "max-depth": "off",
+      "max-statements": "off"
+    }
   }
 }

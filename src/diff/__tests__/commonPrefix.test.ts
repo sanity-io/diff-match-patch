@@ -1,4 +1,5 @@
-import { commonPrefix } from '../commonPrefix.js'
+import {test, expect} from 'vitest'
+import {commonPrefix} from '../commonPrefix.js'
 
 test('commonPrefix', () => {
   // Detect any common prefix.

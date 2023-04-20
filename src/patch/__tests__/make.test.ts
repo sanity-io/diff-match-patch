@@ -1,7 +1,8 @@
-import { diff, DiffType } from '../../diff/diff.js'
-import { make } from '../make.js'
-import { parse } from '../parse.js'
-import { stringify } from '../stringify.js'
+import {test, expect} from 'vitest'
+import {diff, DiffType} from '../../diff/diff.js'
+import {make} from '../make.js'
+import {parse} from '../parse.js'
+import {stringify} from '../stringify.js'
 
 test('make', () => {
   // Null case.
@@ -24,7 +25,7 @@ test('make', () => {
   expect(stringify(patches)).toBe(expectedPatch)
 
   // Diff input.
-  let diffs = diff(text1, text2, { checkLines: false })
+  let diffs = diff(text1, text2, {checkLines: false})
   patches = make(diffs)
   expect(stringify(patches)).toBe(expectedPatch)
 
@@ -35,7 +36,7 @@ test('make', () => {
   // Character encoding.
   patches = make("`1234567890-=[]\\;',./", '~!@#$%^&*()_+{}|:"<>?')
   expect(stringify(patches)).toBe(
-    "@@ -1,21 +1,21 @@\n-%601234567890-=%5B%5D%5C;',./\n+~!@#$%25%5E&*()_+%7B%7D%7C:%22%3C%3E?\n",
+    "@@ -1,21 +1,21 @@\n-%601234567890-=%5B%5D%5C;',./\n+~!@#$%25%5E&*()_+%7B%7D%7C:%22%3C%3E?\n"
   )
 
   // Character decoding.
@@ -45,8 +46,8 @@ test('make', () => {
   ]
   expect(diffs).toEqual(
     parse(
-      "@@ -1,21 +1,21 @@\n-%601234567890-=%5B%5D%5C;',./\n+~!@#$%25%5E&*()_+%7B%7D%7C:%22%3C%3E?\n",
-    )[0].diffs,
+      "@@ -1,21 +1,21 @@\n-%601234567890-=%5B%5D%5C;',./\n+~!@#$%25%5E&*()_+%7B%7D%7C:%22%3C%3E?\n"
+    )[0].diffs
   )
 
   // Long string with repeats.
@@ -54,7 +55,7 @@ test('make', () => {
   for (let x = 0; x < 100; x++) {
     text1 += 'abcdef'
   }
-  text2 = text1 + '123'
+  text2 = `${text1}123`
   expectedPatch = '@@ -573,28 +573,31 @@\n cdefabcdefabcdefabcdefabcdef\n+123\n'
   patches = make(text1, text2)
   expect(stringify(patches)).toBe(expectedPatch)

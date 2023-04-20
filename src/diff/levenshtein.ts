@@ -1,16 +1,17 @@
-import { Diff, DiffType } from './diff.js'
+import {type Diff, DiffType} from './diff.js'
 
 /**
  * Compute the Levenshtein distance; the number of inserted, deleted or
  * substituted characters.
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
- * @return {number} Number of changes.
+ * @param diffs - Array of diff tuples.
+ * @returns Number of changes.
+ * @internal
  */
-export function levenshtein(diffs: Diff[]) {
+export function levenshtein(diffs: Diff[]): number {
   let leven = 0
   let insertions = 0
   let deletions = 0
-  // tslint:disable-next-line:prefer-for-of
+
   for (let x = 0; x < diffs.length; x++) {
     const op = diffs[x][0]
     const data = diffs[x][1]
@@ -27,6 +28,8 @@ export function levenshtein(diffs: Diff[]) {
         insertions = 0
         deletions = 0
         break
+      default:
+        throw new Error('Unknown diff operation.')
     }
   }
   leven += Math.max(insertions, deletions)

@@ -1,5 +1,4 @@
-/* tslint:disable:no-bitwise */
-
+/* eslint-disable no-bitwise */
 interface BitapOptions {
   threshold: number
   distance: number
@@ -24,7 +23,7 @@ const DEFAULT_OPTIONS: BitapOptions = {
 }
 
 function applyDefaults(options: Partial<BitapOptions>): BitapOptions {
-  return { ...DEFAULT_OPTIONS, ...options }
+  return {...DEFAULT_OPTIONS, ...options}
 }
 
 // The number of bits in an int.
@@ -33,18 +32,19 @@ const MAX_BITS = 32
 /**
  * Locate the best instance of 'pattern' in 'text' near 'loc' using the
  * Bitap algorithm.
- * @param {string} text The text to search.
- * @param {string} pattern The pattern to search for.
- * @param {number} loc The location to search around.
- * @return {number} Best match index or -1.
- * @private
+ *
+ * @param text - The text to search.
+ * @param pattern - The pattern to search for.
+ * @param loc - The location to search around.
+ * @returns Best match index or -1.
+ * @internal
  */
 export function bitap_(
   text: string,
   pattern: string,
   loc: number,
-  opts: Partial<BitapOptions> = {},
-) {
+  opts: Partial<BitapOptions> = {}
+): number {
   if (pattern.length > MAX_BITS) {
     throw new Error('Pattern too long for this browser.')
   }
@@ -57,10 +57,11 @@ export function bitap_(
   /**
    * Compute and return the score for a match with e errors and x location.
    * Accesses loc and pattern through being a closure.
-   * @param {number} e Number of errors in match.
-   * @param {number} x Location of match.
-   * @return {number} Overall score for match (0.0 = good, 1.0 = bad).
-   * @private
+   *
+   * @param e - Number of errors in match.
+   * @param x - Location of match.
+   * @returns Overall - score for match (0.0 = good, 1.0 = bad).
+   * @internal
    */
   function bitapScore_(e: number, x: number) {
     const accuracy = e / pattern.length
@@ -157,9 +158,10 @@ export function bitap_(
 
 /**
  * Initialise the alphabet for the Bitap algorithm.
- * @param {string} pattern The text to encode.
- * @return {!Object} Hash of character locations.
- * @private
+ *
+ * @param pattern - The text to encode.
+ * @returns Hash of character locations.
+ * @internal
  */
 export function alphabet_(pattern: string): Alphabet {
   const s: Alphabet = {}

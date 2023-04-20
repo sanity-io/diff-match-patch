@@ -1,5 +1,6 @@
-import { DiffType } from '../diff.js'
-import { levenshtein } from '../levenshtein.js'
+import {test, expect} from 'vitest'
+import {DiffType} from '../diff.js'
+import {levenshtein} from '../levenshtein.js'
 
 test('levenshtein', () => {
   // Levenshtein with trailing equality.
@@ -8,7 +9,7 @@ test('levenshtein', () => {
       [DiffType.DELETE, 'abc'],
       [DiffType.INSERT, '1234'],
       [DiffType.EQUAL, 'xyz'],
-    ]),
+    ])
   ).toBe(4)
   // Levenshtein with leading equality.
   expect(
@@ -16,7 +17,7 @@ test('levenshtein', () => {
       [DiffType.EQUAL, 'xyz'],
       [DiffType.DELETE, 'abc'],
       [DiffType.INSERT, '1234'],
-    ]),
+    ])
   ).toBe(4)
 
   // Levenshtein with middle equality.
@@ -25,6 +26,6 @@ test('levenshtein', () => {
       [DiffType.DELETE, 'abc'],
       [DiffType.EQUAL, 'xyz'],
       [DiffType.INSERT, '1234'],
-    ]),
+    ])
   ).toBe(7)
 })

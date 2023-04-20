@@ -1,14 +1,15 @@
-import { Diff, DiffType } from './diff.js'
+import {Diff, DiffType} from './diff.js'
 
 /**
- * loc is a location in text1, compute and return the equivalent location in
- * text2.
+ * loc is a location in textA, compute and return the equivalent location in
+ * textB.
  * e.g. 'The cat' vs 'The big cat', 1->1, 5->8
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
- * @param {number} loc Location within text1.
- * @return {number} Location within text2.
+ *
+ * @param diffs - Array of diff tuples.
+ * @param loc - Location within textA.
+ * @returns Location within textB.
  */
-export function xIndex(diffs: Diff[], loc: number) {
+export function xIndex(diffs: Diff[], loc: number): number {
   let chars1 = 0
   let chars2 = 0
   let lastChars1 = 0

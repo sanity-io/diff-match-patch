@@ -1,7 +1,8 @@
-import { Diff, DiffType } from '../diff.js'
-import { diffText1, diffText2 } from '../diffText.js'
-import { fromDelta } from '../fromDelta.js'
-import { toDelta } from '../toDelta.js'
+import {test, expect} from 'vitest'
+import {Diff, DiffType} from '../diff.js'
+import {diffText1, diffText2} from '../diffText.js'
+import {fromDelta} from '../fromDelta.js'
+import {toDelta} from '../toDelta.js'
 
 test('diffText1, diffText2', () => {
   // Compute the source and destination texts.
@@ -42,7 +43,7 @@ test('delta', () => {
 
   // Generates error (19 !==  20).
   try {
-    fromDelta(text1 + 'x', delta)
+    fromDelta(`${text1}x`, delta)
     expect(null).toBe(Error)
   } catch (e) {
     // Exception expected.
@@ -50,13 +51,11 @@ test('delta', () => {
 
   // Generates error (19 !==  18).
   expect(() => fromDelta(text1.substring(1), delta)).toThrowError(
-    'Delta length (19) does not equal source text length (18)',
+    'Delta length (19) does not equal source text length (18)'
   )
 
   // Generates error (%c3%xy invalid Unicode).
-  expect(() => fromDelta('', '+%c3%xy')).toThrowError(
-    'Illegal escape in fromDelta: %c3%xy',
-  )
+  expect(() => fromDelta('', '+%c3%xy')).toThrowError('Illegal escape in fromDelta: %c3%xy')
 
   // Test deltas with special characters.
   diffs = [
@@ -74,9 +73,7 @@ test('delta', () => {
   expect(diffs).toEqual(fromDelta(text1, delta))
 
   // Verify pool of unchanged characters.
-  diffs = [
-    [DiffType.INSERT, "A-Z a-z 0-9 - _ . ! ~ * ' ( ) ; / ? : @ & = + $ , # "],
-  ]
+  diffs = [[DiffType.INSERT, "A-Z a-z 0-9 - _ . ! ~ * ' ( ) ; / ? : @ & = + $ , # "]]
   const text2 = diffText2(diffs)
   expect(text2).toBe("A-Z a-z 0-9 - _ . ! ~ * ' ( ) ; / ? : @ & = + $ , # ")
 

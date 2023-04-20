@@ -1,14 +1,14 @@
-import { Diff } from './diff.js'
+import {Diff} from './diff.js'
 
 /**
  * Rehydrate the text in a diff from a string of line hashes to real lines of
  * text.
- * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
- * @param {!Array.<string>} lineArray Array of unique strings.
- * @private
+ *
+ * @param diffs - Array of diff tuples.
+ * @param lineArray - Array of unique strings.
+ * @internal
  */
 export function charsToLines_(diffs: Diff[], lineArray: string[]): void {
-  // tslint:disable-next-line:prefer-for-of
   for (let x = 0; x < diffs.length; x++) {
     const chars = diffs[x][1]
     const text = []

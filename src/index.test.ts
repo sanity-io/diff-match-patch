@@ -1,3 +1,4 @@
+import {test, expect} from 'vitest'
 import {
   // Diff
   makeDiff,
@@ -37,7 +38,7 @@ test('diff api', () => {
       [DiffType.EQUAL, 'xyz'],
       [DiffType.DELETE, 'cd'],
       [DiffType.INSERT, '34'],
-    ]),
+    ])
   ).toEqual([
     [DiffType.DELETE, 'abxyzcd'],
     [DiffType.INSERT, '12xyz34'],
@@ -45,9 +46,7 @@ test('diff api', () => {
 })
 
 test('match api', () => {
-  expect(
-    match('I am the very model of a modern major general.', ' that berry ', 5),
-  ).toBe(4)
+  expect(match('I am the very model of a modern major general.', ' that berry ', 5)).toBe(4)
 })
 
 test('patch api', () => {
@@ -73,10 +72,7 @@ test('patch api', () => {
   expect(newValue).toBe('to this')
   expect(success).toEqual([true])
 
-  const [newValueFromString, stringifiedSuccess] = applyPatches(
-    stringified,
-    'from this',
-  )
+  const [newValueFromString, stringifiedSuccess] = applyPatches(stringified, 'from this')
   expect(newValueFromString).toBe('to this')
   expect(stringifiedSuccess).toEqual([true])
 })

@@ -1,6 +1,7 @@
-import { charsToLines_ } from '../charsToLines.js'
-import { Diff, DiffType } from '../diff.js'
-import { linesToChars_ } from '../linesToChars.js'
+import {test, expect} from 'vitest'
+import {charsToLines_} from '../charsToLines.js'
+import {Diff, DiffType} from '../diff.js'
+import {linesToChars_} from '../linesToChars.js'
 
 test('charsToLines', () => {
   // Convert chars up to lines.
@@ -16,10 +17,10 @@ test('charsToLines', () => {
 
   // More than 256 to reveal any 8-bit limitations.
   const n = 300
-  let lineList = []
-  const charList = []
+  let lineList: string[] = []
+  const charList: string[] = []
   for (let i = 1; i < n + 1; i++) {
-    lineList[i - 1] = i + '\n'
+    lineList[i - 1] = `${i}\n`
     charList[i - 1] = String.fromCharCode(i)
   }
   expect(lineList.length).toBe(n)
@@ -34,7 +35,7 @@ test('charsToLines', () => {
   // More than 65536 to verify any 16-bit limitation.
   lineList = []
   for (let i = 0; i < 66000; i++) {
-    lineList[i] = i + '\n'
+    lineList[i] = `${i}\n`
   }
   chars = lineList.join('')
   const results = linesToChars_(chars, '')

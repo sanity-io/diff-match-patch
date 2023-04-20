@@ -1,9 +1,6 @@
-import {
-  cleanupSemantic,
-  cleanupEfficiency,
-  cleanupSemanticLossless,
-} from '../cleanup'
-import { Diff, DiffType } from '../diff.js'
+import {test, expect} from 'vitest'
+import {cleanupSemantic, cleanupEfficiency, cleanupSemanticLossless} from '../cleanup'
+import {Diff, DiffType} from '../diff.js'
 
 test('cleanupSemanticLossless', () => {
   // Slide diffs to match logical boundaries.

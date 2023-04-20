@@ -1,7 +1,9 @@
-import { Diff } from '../diff/diff.js'
+import {type Diff} from '../diff/diff.js'
 
 /**
- * Class representing one patch operation.
+ * Object representing one patch operation.
+ *
+ * @public
  */
 export interface Patch {
   diffs: Diff[]
@@ -11,14 +13,36 @@ export interface Patch {
   length2: number
 }
 
+/**
+ * Clones a patch object.
+ *
+ * @param patch - The patch to clone
+ * @returns Cloned object
+ * @private
+ */
 export function clone(patch: Patch): Patch {
-  return { ...patch, diffs: patch.diffs.map((diff) => ({ ...diff })) }
+  return {...patch, diffs: patch.diffs.map((diff) => ({...diff}))}
 }
 
+/**
+ * Performs a deep copy of a patch array.
+ *
+ * @param patches - Patches to clone
+ * @returns Cloned array
+ * @internal
+ */
 export function deepCopy(patches: Patch[]): Patch[] {
   return patches.map(clone)
 }
 
+/**
+ * Create a new, empty, patch object.
+ *
+ * @param start1 - The index to start the "from" at
+ * @param start2 - The index to start the "to" at
+ * @returns New patch object
+ * @internal
+ */
 export function createPatchObject(start1: number, start2: number): Patch {
   return {
     diffs: [],
