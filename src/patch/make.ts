@@ -2,6 +2,7 @@ import {cleanupSemantic, cleanupEfficiency} from '../diff/cleanup.js'
 import {diff, Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {diffText1} from '../diff/diffText.js'
 import {isLowSurrogate} from '../utils/surrogatePairs.js'
+import {adjustIndiciesToUtf8} from '../utils/utf8Indices.js'
 import {MAX_BITS} from './constants.js'
 import {createPatchObject, Patch} from './createPatchObject.js'
 
@@ -166,7 +167,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
     patches.push(patch)
   }
 
-  return patches
+  return adjustIndiciesToUtf8(patches, textA)
 }
 
 /**
