@@ -1,9 +1,10 @@
 import { cleanupSemantic, cleanupEfficiency } from '../diff/cleanup.js'
-import { diff, Diff, DiffType } from '../diff/diff.js'
+import { diff, type Diff, DiffType } from '../diff/diff.js'
 import { diffText1 } from '../diff/diffText.js'
 import { isLowSurrogate } from '../utils/surrogatePairs.js'
+import { adjustIndiciesToUtf8 } from '../utils/utf8Indices.js'
 import { MAX_BITS } from './constants.js'
-import { createPatchObject, Patch } from './createPatchObject.js'
+import { createPatchObject, type Patch } from './createPatchObject.js'
 
 export interface MakePatchOptions {
   // Chunk size for context length.
@@ -163,7 +164,7 @@ function _make(
     patches.push(patch)
   }
 
-  return patches
+  return adjustIndiciesToUtf8(patches, text1)
 }
 
 /**
