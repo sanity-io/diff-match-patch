@@ -1,4 +1,4 @@
 {
-  "extends": "@sanity/semantic-release-preset",
+  "extends": "./.releaserc.cjs",
   "branches": ["main"]
 }
