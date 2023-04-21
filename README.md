@@ -1,5 +1,7 @@
 # @sanity/diff-match-patch
 
+[![npm version](https://img.shields.io/npm/v/@sanity/diff-match-patch.svg?style=flat-square)](https://www.npmjs.com/package/@sanity/diff-match-patch)[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@sanity/diff-match-patch?style=flat-square)](https://bundlephobia.com/result?p=@sanity/diff-match-patch)[![npm weekly downloads](https://img.shields.io/npm/dw/@sanity/diff-match-patch.svg?style=flat-square)](https://www.npmjs.com/package/@sanity/diff-match-patch)
+
 A TypeScript fork of the JavaScript version of [google/diff-match-patch](https://github.com/google/diff-match-patch), that includes a few long-standing pull requests, fixing [certain bugs](#significant-changes-in-fork) and with an API more familiar to the JavaScript ecosystem.
 
 ## Installing
