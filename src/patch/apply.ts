@@ -6,15 +6,11 @@ import {diffText1, diffText2} from '../diff/diffText.js'
 import {levenshtein} from '../diff/levenshtein.js'
 import {xIndex} from '../diff/xIndex.js'
 import {match} from '../match/match.js'
+import {adjustIndiciesToUcs2} from '../utils/utf8Indices.js'
 import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
 import {deepCopy, Patch} from './createPatchObject.js'
 import {parse} from './parse.js'
 import {splitMax} from './splitMax.js'
-
-// When deleting a large block of text (over ~64 characters), how close do
-// the contents have to be to match the expected contents. (0.0 = perfection,
-// 1.0 = very loose).  Note that Match_Threshold controls how closely the
-// end points of a delete need to match.
 
 /**
  * Options for applying a patch.
@@ -27,19 +23,12 @@ export interface ApplyPatchOptions {
    */
   margin: number
 
+  /**
+   * When deleting a large block of text (over ~64 characters),
+   * how close do the contents have to be to match the expected contents.
+   * (0.0 = perfection, 1.0 = very loose).
+   */
   deleteThreshold: number
-}
-
-const DEFAULT_OPTS = {
-  margin: DEFAULT_MARGIN,
-  deleteThreshold: 0.4,
-}
-
-function getDefaultOpts(opts: Partial<ApplyPatchOptions> = {}): ApplyPatchOptions {
-  return {
-    ...DEFAULT_OPTS,
-    ...opts,
-  }
 }
 
 /**
@@ -71,13 +60,18 @@ export function apply(
   }
 
   // Deep copy the patches so that no changes are made to originals.
-  const parsed = typeof patches === 'string' ? parse(patches) : deepCopy(patches)
-  const options = getDefaultOpts(opts)
+  const parsed = adjustIndiciesToUcs2(
+    typeof patches === 'string' ? parse(patches) : deepCopy(patches),
+    text
+  )
 
-  const nullPadding = addPadding(parsed, options.margin)
+  const margin = opts.margin || DEFAULT_MARGIN
+  const deleteThreshold = opts.deleteThreshold || 0.4
+
+  const nullPadding = addPadding(parsed, margin)
   text = nullPadding + text + nullPadding
 
-  splitMax(parsed, options.margin)
+  splitMax(parsed, margin)
   // delta keeps track of the offset between the expected and actual location
   // of the previous patch.  If there are patches expected at positions 10 and
   // 20, but the first patch was found at 12, delta is 2 and the second patch
@@ -132,10 +126,7 @@ export function apply(
         // Imperfect match.  Run a diff to get a framework of equivalent
         // indices.
         let diffs = diff(text1, text2, {checkLines: false})
-        if (
-          text1.length > MAX_BITS &&
-          levenshtein(diffs) / text1.length > options.deleteThreshold
-        ) {
+        if (text1.length > MAX_BITS && levenshtein(diffs) / text1.length > deleteThreshold) {
           // The end points match, but the content is unacceptably bad.
           results[x] = false
         } else {
