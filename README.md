@@ -39,7 +39,7 @@ const patches = makePatches('from this', 'to this')
 const patch = stringifyPatches(patches)
 
 // Apply the patch (either the unidiff-formatted or the internal array representation)
-const newValue = applyPatches('from this', patches)
+const [newValue] = applyPatches(patch, 'from this')
 ```
 
 ### Creating diffs
@@ -58,6 +58,18 @@ import {match} from '@sanity/diff-match-patch'
 
 // Find position in text for the given pattern, at the approximate location given
 const position = match('some text to match against', 'match', 9)
+```
+
+### Applying patches
+
+```ts
+import {applyPatches} from '@sanity/diff-match-patch'
+
+const [newValue, results] = applyPatches(patch, 'source text')
+const matches = results.filter(matched => matched === true).length
+const misses = results.length - matches
+console.log('Patch applied with %d matches and %d misses', matches, misses)
+console.log('New value: %s', newValue)
 ```
 
 ## Algorithms
