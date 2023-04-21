@@ -4,6 +4,7 @@ import { diffText1, diffText2 } from '../diff/diffText.js'
 import { levenshtein } from '../diff/levenshtein.js'
 import { xIndex } from '../diff/xIndex.js'
 import { match } from '../match/match.js'
+import { adjustIndiciesToUcs2 } from '../utils/utf8Indices.js'
 import { DEFAULT_MARGIN, MAX_BITS } from './constants.js'
 import { deepCopy, Patch } from './createPatchObject.js'
 import { parse } from './parse.js'
@@ -59,6 +60,7 @@ export function apply(
   const options = getDefaultOpts(opts)
   // Deep copy the patches so that no changes are made to originals.
   patches = deepCopy(patches)
+  patches = adjustIndiciesToUcs2(patches, text)
 
   const nullPadding = addPadding(patches, options.margin)
   text = nullPadding + text + nullPadding
