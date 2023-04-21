@@ -1,4 +1,4 @@
-import {Diff, DiffType} from './diff.js'
+import {DIFF_DELETE, DIFF_INSERT, Diff} from './diff.js'
 
 /**
  * Compute and return the source text (all equalities and deletions).
@@ -10,7 +10,7 @@ import {Diff, DiffType} from './diff.js'
 export function diffText1(diffs: Diff[]): string {
   const text = []
   for (let x = 0; x < diffs.length; x++) {
-    if (diffs[x][0] !== DiffType.INSERT) {
+    if (diffs[x][0] !== DIFF_INSERT) {
       text[x] = diffs[x][1]
     }
   }
@@ -27,7 +27,7 @@ export function diffText1(diffs: Diff[]): string {
 export function diffText2(diffs: Diff[]): string {
   const text = []
   for (let x = 0; x < diffs.length; x++) {
-    if (diffs[x][0] !== DiffType.DELETE) {
+    if (diffs[x][0] !== DIFF_DELETE) {
       text[x] = diffs[x][1]
     }
   }

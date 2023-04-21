@@ -1,4 +1,4 @@
-import {type Diff, DiffType} from './diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, type Diff} from './diff.js'
 
 /**
  * Crush the diff into an encoded string which describes the operations
@@ -15,13 +15,13 @@ export function toDelta(diffs: Diff[]): string {
   for (let x = 0; x < diffs.length; x++) {
     const [diffType, diff] = diffs[x]
     switch (diffType) {
-      case DiffType.INSERT:
+      case DIFF_INSERT:
         text.push(`+${encodeURI(diff)}`)
         break
-      case DiffType.DELETE:
+      case DIFF_DELETE:
         text.push(`-${diff.length}`)
         break
-      case DiffType.EQUAL:
+      case DIFF_EQUAL:
         text.push(`=${diff.length}`)
         break
       default:

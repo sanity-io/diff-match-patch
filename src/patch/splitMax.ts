@@ -1,4 +1,4 @@
-import {DiffType} from '../diff/diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {diffText1, diffText2} from '../diff/diffText.js'
 import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
 import {createPatchObject, Patch} from './createPatchObject.js'
@@ -31,12 +31,12 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
       if (precontext !== '') {
         patch.length1 = precontext.length
         patch.length2 = precontext.length
-        patch.diffs.push([DiffType.EQUAL, precontext])
+        patch.diffs.push([DIFF_EQUAL, precontext])
       }
       while (bigpatch.diffs.length !== 0 && patch.length1 < patchSize - margin) {
         const diffType = bigpatch.diffs[0][0]
         let diffText = bigpatch.diffs[0][1]
-        if (diffType === DiffType.INSERT) {
+        if (diffType === DIFF_INSERT) {
           // Insertions are harmless.
           patch.length2 += diffText.length
           start2 += diffText.length
@@ -46,9 +46,9 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
           }
           empty = false
         } else if (
-          diffType === DiffType.DELETE &&
+          diffType === DIFF_DELETE &&
           patch.diffs.length === 1 &&
-          patch.diffs[0][0] === DiffType.EQUAL &&
+          patch.diffs[0][0] === DIFF_EQUAL &&
           diffText.length > 2 * patchSize
         ) {
           // This is a large deletion.  Let it pass in one chunk.
@@ -62,7 +62,7 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
           diffText = diffText.substring(0, patchSize - patch.length1 - margin)
           patch.length1 += diffText.length
           start1 += diffText.length
-          if (diffType === DiffType.EQUAL) {
+          if (diffType === DIFF_EQUAL) {
             patch.length2 += diffText.length
             start2 += diffText.length
           } else {
@@ -84,10 +84,10 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
       if (postcontext !== '') {
         patch.length1 += postcontext.length
         patch.length2 += postcontext.length
-        if (patch.diffs.length !== 0 && patch.diffs[patch.diffs.length - 1][0] === DiffType.EQUAL) {
+        if (patch.diffs.length !== 0 && patch.diffs[patch.diffs.length - 1][0] === DIFF_EQUAL) {
           patch.diffs[patch.diffs.length - 1][1] += postcontext
         } else {
-          patch.diffs.push([DiffType.EQUAL, postcontext])
+          patch.diffs.push([DIFF_EQUAL, postcontext])
         }
       }
       if (!empty) {

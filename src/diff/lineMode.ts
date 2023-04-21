@@ -1,6 +1,6 @@
 import {charsToLines_} from './charsToLines.js'
 import {cleanupSemantic} from './cleanup.js'
-import {_diff, Diff, DiffType, InternalDiffOptions} from './diff.js'
+import {_diff, Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, InternalDiffOptions} from './diff.js'
 import {linesToChars_} from './linesToChars.js'
 
 /**
@@ -37,7 +37,7 @@ export function lineMode_(textA: string, textB: string, opts: InternalDiffOption
 
   // Rediff any replacement blocks, this time character-by-character.
   // Add a dummy entry at the end.
-  diffs.push([DiffType.EQUAL, ''])
+  diffs.push([DIFF_EQUAL, ''])
   let pointer = 0
   let countDelete = 0
   let countInsert = 0
@@ -45,15 +45,15 @@ export function lineMode_(textA: string, textB: string, opts: InternalDiffOption
   let textInsert = ''
   while (pointer < diffs.length) {
     switch (diffs[pointer][0]) {
-      case DiffType.INSERT:
+      case DIFF_INSERT:
         countInsert++
         textInsert += diffs[pointer][1]
         break
-      case DiffType.DELETE:
+      case DIFF_DELETE:
         countDelete++
         textDelete += diffs[pointer][1]
         break
-      case DiffType.EQUAL:
+      case DIFF_EQUAL:
         // Upon reaching an equality, check for prior redundancies.
         if (countDelete >= 1 && countInsert >= 1) {
           // Delete the offending records and add the merged ones.

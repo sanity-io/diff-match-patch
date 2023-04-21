@@ -1,5 +1,5 @@
 import {test, expect} from 'vitest'
-import {Diff, diff, DiffType} from '../diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff, diff} from '../diff.js'
 
 test('diff', () => {
   // Perform a trivial diff.
@@ -7,46 +7,46 @@ test('diff', () => {
   expect(diff('', '', {checkLines: false})).toEqual([])
 
   // Equality.
-  expect(diff('abc', 'abc', {checkLines: false})).toEqual([[DiffType.EQUAL, 'abc']])
+  expect(diff('abc', 'abc', {checkLines: false})).toEqual([[DIFF_EQUAL, 'abc']])
 
   // Simple insertion.
   expect(diff('abc', 'ab123c', {checkLines: false})).toEqual([
-    [DiffType.EQUAL, 'ab'],
-    [DiffType.INSERT, '123'],
-    [DiffType.EQUAL, 'c'],
+    [DIFF_EQUAL, 'ab'],
+    [DIFF_INSERT, '123'],
+    [DIFF_EQUAL, 'c'],
   ])
 
   // Simple deletion.
   expect(diff('a123bc', 'abc', {checkLines: false})).toEqual([
-    [DiffType.EQUAL, 'a'],
-    [DiffType.DELETE, '123'],
-    [DiffType.EQUAL, 'bc'],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_DELETE, '123'],
+    [DIFF_EQUAL, 'bc'],
   ])
 
   // Two insertions.
   expect(diff('abc', 'a123b456c', {checkLines: false})).toEqual([
-    [DiffType.EQUAL, 'a'],
-    [DiffType.INSERT, '123'],
-    [DiffType.EQUAL, 'b'],
-    [DiffType.INSERT, '456'],
-    [DiffType.EQUAL, 'c'],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_INSERT, '123'],
+    [DIFF_EQUAL, 'b'],
+    [DIFF_INSERT, '456'],
+    [DIFF_EQUAL, 'c'],
   ])
 
   // Two deletions.
   expect(diff('a123b456c', 'abc', {checkLines: false})).toEqual([
-    [DiffType.EQUAL, 'a'],
-    [DiffType.DELETE, '123'],
-    [DiffType.EQUAL, 'b'],
-    [DiffType.DELETE, '456'],
-    [DiffType.EQUAL, 'c'],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_DELETE, '123'],
+    [DIFF_EQUAL, 'b'],
+    [DIFF_DELETE, '456'],
+    [DIFF_EQUAL, 'c'],
   ])
 
   // Perform a real diff.
   // switch off timeut
   // Simple cases.
   expect(diff('a', 'b', {checkLines: false, timeout: 0})).toEqual([
-    [DiffType.DELETE, 'a'],
-    [DiffType.INSERT, 'b'],
+    [DIFF_DELETE, 'a'],
+    [DIFF_INSERT, 'b'],
   ])
 
   expect(
@@ -54,47 +54,47 @@ test('diff', () => {
       checkLines: false,
     })
   ).toEqual([
-    [DiffType.DELETE, 'Apple'],
-    [DiffType.INSERT, 'Banana'],
-    [DiffType.EQUAL, 's are a'],
-    [DiffType.INSERT, 'lso'],
-    [DiffType.EQUAL, ' fruit.'],
+    [DIFF_DELETE, 'Apple'],
+    [DIFF_INSERT, 'Banana'],
+    [DIFF_EQUAL, 's are a'],
+    [DIFF_INSERT, 'lso'],
+    [DIFF_EQUAL, ' fruit.'],
   ])
 
   expect(diff('ax\t', '\u0680x\0', {checkLines: false})).toEqual([
-    [DiffType.DELETE, 'a'],
-    [DiffType.INSERT, '\u0680'],
-    [DiffType.EQUAL, 'x'],
-    [DiffType.DELETE, '\t'],
-    [DiffType.INSERT, '\0'],
+    [DIFF_DELETE, 'a'],
+    [DIFF_INSERT, '\u0680'],
+    [DIFF_EQUAL, 'x'],
+    [DIFF_DELETE, '\t'],
+    [DIFF_INSERT, '\0'],
   ])
 
   // Overlaps.
   expect(diff('1ayb2', 'abxab', {checkLines: false})).toEqual([
-    [DiffType.DELETE, '1'],
-    [DiffType.EQUAL, 'a'],
-    [DiffType.DELETE, 'y'],
-    [DiffType.EQUAL, 'b'],
-    [DiffType.DELETE, '2'],
-    [DiffType.INSERT, 'xab'],
+    [DIFF_DELETE, '1'],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_DELETE, 'y'],
+    [DIFF_EQUAL, 'b'],
+    [DIFF_DELETE, '2'],
+    [DIFF_INSERT, 'xab'],
   ])
 
   expect(diff('abcy', 'xaxcxabc', {checkLines: false})).toEqual([
-    [DiffType.INSERT, 'xaxcx'],
-    [DiffType.EQUAL, 'abc'],
-    [DiffType.DELETE, 'y'],
+    [DIFF_INSERT, 'xaxcx'],
+    [DIFF_EQUAL, 'abc'],
+    [DIFF_DELETE, 'y'],
   ])
 
   expect([
-    [DiffType.DELETE, 'ABCD'],
-    [DiffType.EQUAL, 'a'],
-    [DiffType.DELETE, '='],
-    [DiffType.INSERT, '-'],
-    [DiffType.EQUAL, 'bcd'],
-    [DiffType.DELETE, '='],
-    [DiffType.INSERT, '-'],
-    [DiffType.EQUAL, 'efghijklmnopqrs'],
-    [DiffType.DELETE, 'EFGHIJKLMNOefg'],
+    [DIFF_DELETE, 'ABCD'],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_DELETE, '='],
+    [DIFF_INSERT, '-'],
+    [DIFF_EQUAL, 'bcd'],
+    [DIFF_DELETE, '='],
+    [DIFF_INSERT, '-'],
+    [DIFF_EQUAL, 'efghijklmnopqrs'],
+    [DIFF_DELETE, 'EFGHIJKLMNOefg'],
   ]).toEqual(
     diff('ABCDa=bcd=efghijklmnopqrsEFGHIJKLMNOefg', 'a-bcd-efghijklmnopqrs', {
       checkLines: false,
@@ -107,11 +107,11 @@ test('diff', () => {
       checkLines: false,
     })
   ).toEqual([
-    [DiffType.INSERT, ' '],
-    [DiffType.EQUAL, 'a'],
-    [DiffType.INSERT, 'nd'],
-    [DiffType.EQUAL, ' [[Pennsylvania]]'],
-    [DiffType.DELETE, ' and [[New'],
+    [DIFF_INSERT, ' '],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_INSERT, 'nd'],
+    [DIFF_EQUAL, ' [[Pennsylvania]]'],
+    [DIFF_DELETE, ' and [[New'],
   ])
 
   let a =
@@ -166,10 +166,10 @@ function diffRebuildsText(diffs: Diff[]) {
   let text2 = ''
   // tslint:disable-next-line:prefer-for-of
   for (let x = 0; x < diffs.length; x++) {
-    if (diffs[x][0] !== DiffType.INSERT) {
+    if (diffs[x][0] !== DIFF_INSERT) {
       text1 += diffs[x][1]
     }
-    if (diffs[x][0] !== DiffType.DELETE) {
+    if (diffs[x][0] !== DIFF_DELETE) {
       text2 += diffs[x][1]
     }
   }

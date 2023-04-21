@@ -1,18 +1,18 @@
 import {test, expect} from 'vitest'
 import {charsToLines_} from '../charsToLines.js'
-import {Diff, DiffType} from '../diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff} from '../diff.js'
 import {linesToChars_} from '../linesToChars.js'
 
 test('charsToLines', () => {
   // Convert chars up to lines.
   let diffs: Diff[] = [
-    [DiffType.EQUAL, '\x01\x02\x01'],
-    [DiffType.INSERT, '\x02\x01\x02'],
+    [DIFF_EQUAL, '\x01\x02\x01'],
+    [DIFF_INSERT, '\x02\x01\x02'],
   ]
   charsToLines_(diffs, ['', 'alpha\n', 'beta\n'])
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'alpha\nbeta\nalpha\n'],
-    [DiffType.INSERT, 'beta\nalpha\nbeta\n'],
+    [DIFF_EQUAL, 'alpha\nbeta\nalpha\n'],
+    [DIFF_INSERT, 'beta\nalpha\nbeta\n'],
   ])
 
   // More than 256 to reveal any 8-bit limitations.
@@ -28,9 +28,9 @@ test('charsToLines', () => {
   let chars = charList.join('')
   expect(chars.length).toBe(n)
   lineList.unshift('')
-  diffs = [[DiffType.DELETE, chars]]
+  diffs = [[DIFF_DELETE, chars]]
   charsToLines_(diffs, lineList)
-  expect(diffs).toEqual([[DiffType.DELETE, lines]])
+  expect(diffs).toEqual([[DIFF_DELETE, lines]])
 
   // More than 65536 to verify any 16-bit limitation.
   lineList = []
@@ -39,7 +39,7 @@ test('charsToLines', () => {
   }
   chars = lineList.join('')
   const results = linesToChars_(chars, '')
-  diffs = [[DiffType.INSERT, results.chars1]]
+  diffs = [[DIFF_INSERT, results.chars1]]
   charsToLines_(diffs, results.lineArray)
   expect(diffs[0][1]).toEqual(chars)
 })

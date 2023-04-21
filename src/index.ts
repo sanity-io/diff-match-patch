@@ -1,5 +1,13 @@
 // Diff
-export {diff as makeDiff, DiffType, type Diff, type DiffOptions} from './diff/diff.js'
+export {
+  diff as makeDiff,
+  DIFF_DELETE,
+  DIFF_EQUAL,
+  DIFF_INSERT,
+  type DiffType,
+  type Diff,
+  type DiffOptions,
+} from './diff/diff.js'
 export {cleanupSemantic, cleanupEfficiency} from './diff/cleanup.js'
 
 // Match

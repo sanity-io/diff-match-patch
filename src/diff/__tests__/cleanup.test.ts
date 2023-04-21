@@ -1,6 +1,6 @@
 import {test, expect} from 'vitest'
 import {cleanupSemantic, cleanupEfficiency, cleanupSemanticLossless} from '../cleanup'
-import {Diff, DiffType} from '../diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff} from '../diff.js'
 
 test('cleanupSemanticLossless', () => {
   // Slide diffs to match logical boundaries.
@@ -11,91 +11,91 @@ test('cleanupSemanticLossless', () => {
 
   // Blank lines.
   diffs = [
-    [DiffType.EQUAL, 'AAA\r\n\r\nBBB'],
-    [DiffType.INSERT, '\r\nDDD\r\n\r\nBBB'],
-    [DiffType.EQUAL, '\r\nEEE'],
+    [DIFF_EQUAL, 'AAA\r\n\r\nBBB'],
+    [DIFF_INSERT, '\r\nDDD\r\n\r\nBBB'],
+    [DIFF_EQUAL, '\r\nEEE'],
   ]
   diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'AAA\r\n\r\n'],
-    [DiffType.INSERT, 'BBB\r\nDDD\r\n\r\n'],
-    [DiffType.EQUAL, 'BBB\r\nEEE'],
+    [DIFF_EQUAL, 'AAA\r\n\r\n'],
+    [DIFF_INSERT, 'BBB\r\nDDD\r\n\r\n'],
+    [DIFF_EQUAL, 'BBB\r\nEEE'],
   ])
 
   // Line boundaries.
   diffs = [
-    [DiffType.EQUAL, 'AAA\r\nBBB'],
-    [DiffType.INSERT, ' DDD\r\nBBB'],
-    [DiffType.EQUAL, ' EEE'],
+    [DIFF_EQUAL, 'AAA\r\nBBB'],
+    [DIFF_INSERT, ' DDD\r\nBBB'],
+    [DIFF_EQUAL, ' EEE'],
   ]
   diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'AAA\r\n'],
-    [DiffType.INSERT, 'BBB DDD\r\n'],
-    [DiffType.EQUAL, 'BBB EEE'],
+    [DIFF_EQUAL, 'AAA\r\n'],
+    [DIFF_INSERT, 'BBB DDD\r\n'],
+    [DIFF_EQUAL, 'BBB EEE'],
   ])
 
   // Word boundaries.
   diffs = [
-    [DiffType.EQUAL, 'The c'],
-    [DiffType.INSERT, 'ow and the c'],
-    [DiffType.EQUAL, 'at.'],
+    [DIFF_EQUAL, 'The c'],
+    [DIFF_INSERT, 'ow and the c'],
+    [DIFF_EQUAL, 'at.'],
   ]
   diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'The '],
-    [DiffType.INSERT, 'cow and the '],
-    [DiffType.EQUAL, 'cat.'],
+    [DIFF_EQUAL, 'The '],
+    [DIFF_INSERT, 'cow and the '],
+    [DIFF_EQUAL, 'cat.'],
   ])
 
   // Alphanumeric boundaries.
   diffs = [
-    [DiffType.EQUAL, 'The-c'],
-    [DiffType.INSERT, 'ow-and-the-c'],
-    [DiffType.EQUAL, 'at.'],
+    [DIFF_EQUAL, 'The-c'],
+    [DIFF_INSERT, 'ow-and-the-c'],
+    [DIFF_EQUAL, 'at.'],
   ]
   diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'The-'],
-    [DiffType.INSERT, 'cow-and-the-'],
-    [DiffType.EQUAL, 'cat.'],
+    [DIFF_EQUAL, 'The-'],
+    [DIFF_INSERT, 'cow-and-the-'],
+    [DIFF_EQUAL, 'cat.'],
   ])
 
   // Hitting the start.
   diffs = [
-    [DiffType.EQUAL, 'a'],
-    [DiffType.DELETE, 'a'],
-    [DiffType.EQUAL, 'ax'],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_DELETE, 'a'],
+    [DIFF_EQUAL, 'ax'],
   ]
   diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'a'],
-    [DiffType.EQUAL, 'aax'],
+    [DIFF_DELETE, 'a'],
+    [DIFF_EQUAL, 'aax'],
   ])
 
   // Hitting the end.
   diffs = [
-    [DiffType.EQUAL, 'xa'],
-    [DiffType.DELETE, 'a'],
-    [DiffType.EQUAL, 'a'],
+    [DIFF_EQUAL, 'xa'],
+    [DIFF_DELETE, 'a'],
+    [DIFF_EQUAL, 'a'],
   ]
   diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'xaa'],
-    [DiffType.DELETE, 'a'],
+    [DIFF_EQUAL, 'xaa'],
+    [DIFF_DELETE, 'a'],
   ])
 
   // Sentence boundaries.
   diffs = [
-    [DiffType.EQUAL, 'The xxx. The '],
-    [DiffType.INSERT, 'zzz. The '],
-    [DiffType.EQUAL, 'yyy.'],
+    [DIFF_EQUAL, 'The xxx. The '],
+    [DIFF_INSERT, 'zzz. The '],
+    [DIFF_EQUAL, 'yyy.'],
   ]
   diffs = cleanupSemanticLossless(diffs)
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'The xxx.'],
-    [DiffType.INSERT, ' The zzz.'],
-    [DiffType.EQUAL, ' The yyy.'],
+    [DIFF_EQUAL, 'The xxx.'],
+    [DIFF_INSERT, ' The zzz.'],
+    [DIFF_EQUAL, ' The yyy.'],
   ])
 })
 
@@ -108,143 +108,143 @@ test('cleanupSemantic', () => {
 
   // No elimination #1.
   diffs = [
-    [DiffType.DELETE, 'ab'],
-    [DiffType.INSERT, 'cd'],
-    [DiffType.EQUAL, '12'],
-    [DiffType.DELETE, 'e'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_INSERT, 'cd'],
+    [DIFF_EQUAL, '12'],
+    [DIFF_DELETE, 'e'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'ab'],
-    [DiffType.INSERT, 'cd'],
-    [DiffType.EQUAL, '12'],
-    [DiffType.DELETE, 'e'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_INSERT, 'cd'],
+    [DIFF_EQUAL, '12'],
+    [DIFF_DELETE, 'e'],
   ])
 
   // No elimination #2.
   diffs = [
-    [DiffType.DELETE, 'abc'],
-    [DiffType.INSERT, 'ABC'],
-    [DiffType.EQUAL, '1234'],
-    [DiffType.DELETE, 'wxyz'],
+    [DIFF_DELETE, 'abc'],
+    [DIFF_INSERT, 'ABC'],
+    [DIFF_EQUAL, '1234'],
+    [DIFF_DELETE, 'wxyz'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abc'],
-    [DiffType.INSERT, 'ABC'],
-    [DiffType.EQUAL, '1234'],
-    [DiffType.DELETE, 'wxyz'],
+    [DIFF_DELETE, 'abc'],
+    [DIFF_INSERT, 'ABC'],
+    [DIFF_EQUAL, '1234'],
+    [DIFF_DELETE, 'wxyz'],
   ])
 
   // Simple elimination.
   diffs = [
-    [DiffType.DELETE, 'a'],
-    [DiffType.EQUAL, 'b'],
-    [DiffType.DELETE, 'c'],
+    [DIFF_DELETE, 'a'],
+    [DIFF_EQUAL, 'b'],
+    [DIFF_DELETE, 'c'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abc'],
-    [DiffType.INSERT, 'b'],
+    [DIFF_DELETE, 'abc'],
+    [DIFF_INSERT, 'b'],
   ])
 
   // Backpass elimination.
   diffs = [
-    [DiffType.DELETE, 'ab'],
-    [DiffType.EQUAL, 'cd'],
-    [DiffType.DELETE, 'e'],
-    [DiffType.EQUAL, 'f'],
-    [DiffType.INSERT, 'g'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_EQUAL, 'cd'],
+    [DIFF_DELETE, 'e'],
+    [DIFF_EQUAL, 'f'],
+    [DIFF_INSERT, 'g'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abcdef'],
-    [DiffType.INSERT, 'cdfg'],
+    [DIFF_DELETE, 'abcdef'],
+    [DIFF_INSERT, 'cdfg'],
   ])
 
   // Multiple eliminations.
   diffs = [
-    [DiffType.INSERT, '1'],
-    [DiffType.EQUAL, 'A'],
-    [DiffType.DELETE, 'B'],
-    [DiffType.INSERT, '2'],
-    [DiffType.EQUAL, '_'],
-    [DiffType.INSERT, '1'],
-    [DiffType.EQUAL, 'A'],
-    [DiffType.DELETE, 'B'],
-    [DiffType.INSERT, '2'],
+    [DIFF_INSERT, '1'],
+    [DIFF_EQUAL, 'A'],
+    [DIFF_DELETE, 'B'],
+    [DIFF_INSERT, '2'],
+    [DIFF_EQUAL, '_'],
+    [DIFF_INSERT, '1'],
+    [DIFF_EQUAL, 'A'],
+    [DIFF_DELETE, 'B'],
+    [DIFF_INSERT, '2'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'AB_AB'],
-    [DiffType.INSERT, '1A2_1A2'],
+    [DIFF_DELETE, 'AB_AB'],
+    [DIFF_INSERT, '1A2_1A2'],
   ])
 
   // Word boundaries.
   diffs = [
-    [DiffType.EQUAL, 'The c'],
-    [DiffType.DELETE, 'ow and the c'],
-    [DiffType.EQUAL, 'at.'],
+    [DIFF_EQUAL, 'The c'],
+    [DIFF_DELETE, 'ow and the c'],
+    [DIFF_EQUAL, 'at.'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.EQUAL, 'The '],
-    [DiffType.DELETE, 'cow and the '],
-    [DiffType.EQUAL, 'cat.'],
+    [DIFF_EQUAL, 'The '],
+    [DIFF_DELETE, 'cow and the '],
+    [DIFF_EQUAL, 'cat.'],
   ])
 
   // No overlap elimination.
   diffs = [
-    [DiffType.DELETE, 'abcxx'],
-    [DiffType.INSERT, 'xxdef'],
+    [DIFF_DELETE, 'abcxx'],
+    [DIFF_INSERT, 'xxdef'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abcxx'],
-    [DiffType.INSERT, 'xxdef'],
+    [DIFF_DELETE, 'abcxx'],
+    [DIFF_INSERT, 'xxdef'],
   ])
 
   // Overlap elimination.
   diffs = [
-    [DiffType.DELETE, 'abcxxx'],
-    [DiffType.INSERT, 'xxxdef'],
+    [DIFF_DELETE, 'abcxxx'],
+    [DIFF_INSERT, 'xxxdef'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abc'],
-    [DiffType.EQUAL, 'xxx'],
-    [DiffType.INSERT, 'def'],
+    [DIFF_DELETE, 'abc'],
+    [DIFF_EQUAL, 'xxx'],
+    [DIFF_INSERT, 'def'],
   ])
 
   // Reverse overlap elimination.
   diffs = [
-    [DiffType.DELETE, 'xxxabc'],
-    [DiffType.INSERT, 'defxxx'],
+    [DIFF_DELETE, 'xxxabc'],
+    [DIFF_INSERT, 'defxxx'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.INSERT, 'def'],
-    [DiffType.EQUAL, 'xxx'],
-    [DiffType.DELETE, 'abc'],
+    [DIFF_INSERT, 'def'],
+    [DIFF_EQUAL, 'xxx'],
+    [DIFF_DELETE, 'abc'],
   ])
 
   // Two overlap eliminations.
   diffs = [
-    [DiffType.DELETE, 'abcd1212'],
-    [DiffType.INSERT, '1212efghi'],
-    [DiffType.EQUAL, '----'],
-    [DiffType.DELETE, 'A3'],
-    [DiffType.INSERT, '3BC'],
+    [DIFF_DELETE, 'abcd1212'],
+    [DIFF_INSERT, '1212efghi'],
+    [DIFF_EQUAL, '----'],
+    [DIFF_DELETE, 'A3'],
+    [DIFF_INSERT, '3BC'],
   ]
   diffs = cleanupSemantic(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abcd'],
-    [DiffType.EQUAL, '1212'],
-    [DiffType.INSERT, 'efghi'],
-    [DiffType.EQUAL, '----'],
-    [DiffType.DELETE, 'A'],
-    [DiffType.EQUAL, '3'],
-    [DiffType.INSERT, 'BC'],
+    [DIFF_DELETE, 'abcd'],
+    [DIFF_EQUAL, '1212'],
+    [DIFF_INSERT, 'efghi'],
+    [DIFF_EQUAL, '----'],
+    [DIFF_DELETE, 'A'],
+    [DIFF_EQUAL, '3'],
+    [DIFF_INSERT, 'BC'],
   ])
 })
 
@@ -257,75 +257,75 @@ test('cleanupEfficiency', () => {
 
   // No elimination.
   diffs = [
-    [DiffType.DELETE, 'ab'],
-    [DiffType.INSERT, '12'],
-    [DiffType.EQUAL, 'wxyz'],
-    [DiffType.DELETE, 'cd'],
-    [DiffType.INSERT, '34'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_INSERT, '12'],
+    [DIFF_EQUAL, 'wxyz'],
+    [DIFF_DELETE, 'cd'],
+    [DIFF_INSERT, '34'],
   ]
   diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'ab'],
-    [DiffType.INSERT, '12'],
-    [DiffType.EQUAL, 'wxyz'],
-    [DiffType.DELETE, 'cd'],
-    [DiffType.INSERT, '34'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_INSERT, '12'],
+    [DIFF_EQUAL, 'wxyz'],
+    [DIFF_DELETE, 'cd'],
+    [DIFF_INSERT, '34'],
   ])
 
   // Four-edit elimination.
   diffs = [
-    [DiffType.DELETE, 'ab'],
-    [DiffType.INSERT, '12'],
-    [DiffType.EQUAL, 'xyz'],
-    [DiffType.DELETE, 'cd'],
-    [DiffType.INSERT, '34'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_INSERT, '12'],
+    [DIFF_EQUAL, 'xyz'],
+    [DIFF_DELETE, 'cd'],
+    [DIFF_INSERT, '34'],
   ]
   diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abxyzcd'],
-    [DiffType.INSERT, '12xyz34'],
+    [DIFF_DELETE, 'abxyzcd'],
+    [DIFF_INSERT, '12xyz34'],
   ])
 
   // Three-edit elimination.
   diffs = [
-    [DiffType.INSERT, '12'],
-    [DiffType.EQUAL, 'x'],
-    [DiffType.DELETE, 'cd'],
-    [DiffType.INSERT, '34'],
+    [DIFF_INSERT, '12'],
+    [DIFF_EQUAL, 'x'],
+    [DIFF_DELETE, 'cd'],
+    [DIFF_INSERT, '34'],
   ]
   diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'xcd'],
-    [DiffType.INSERT, '12x34'],
+    [DIFF_DELETE, 'xcd'],
+    [DIFF_INSERT, '12x34'],
   ])
 
   // Backpass elimination.
   diffs = [
-    [DiffType.DELETE, 'ab'],
-    [DiffType.INSERT, '12'],
-    [DiffType.EQUAL, 'xy'],
-    [DiffType.INSERT, '34'],
-    [DiffType.EQUAL, 'z'],
-    [DiffType.DELETE, 'cd'],
-    [DiffType.INSERT, '56'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_INSERT, '12'],
+    [DIFF_EQUAL, 'xy'],
+    [DIFF_INSERT, '34'],
+    [DIFF_EQUAL, 'z'],
+    [DIFF_DELETE, 'cd'],
+    [DIFF_INSERT, '56'],
   ]
   diffs = cleanupEfficiency(diffs)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abxyzcd'],
-    [DiffType.INSERT, '12xy34z56'],
+    [DIFF_DELETE, 'abxyzcd'],
+    [DIFF_INSERT, '12xy34z56'],
   ])
 
   // High cost elimination.
   diffs = [
-    [DiffType.DELETE, 'ab'],
-    [DiffType.INSERT, '12'],
-    [DiffType.EQUAL, 'wxyz'],
-    [DiffType.DELETE, 'cd'],
-    [DiffType.INSERT, '34'],
+    [DIFF_DELETE, 'ab'],
+    [DIFF_INSERT, '12'],
+    [DIFF_EQUAL, 'wxyz'],
+    [DIFF_DELETE, 'cd'],
+    [DIFF_INSERT, '34'],
   ]
   diffs = cleanupEfficiency(diffs, 5)
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'abwxyzcd'],
-    [DiffType.INSERT, '12wxyz34'],
+    [DIFF_DELETE, 'abwxyzcd'],
+    [DIFF_INSERT, '12wxyz34'],
   ])
 })

@@ -1,5 +1,5 @@
 import {test, expect} from 'vitest'
-import {Diff, DiffType} from '../diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff} from '../diff.js'
 import {diffText1, diffText2} from '../diffText.js'
 import {fromDelta} from '../fromDelta.js'
 import {toDelta} from '../toDelta.js'
@@ -7,13 +7,13 @@ import {toDelta} from '../toDelta.js'
 test('diffText1, diffText2', () => {
   // Compute the source and destination texts.
   const diffs: Diff[] = [
-    [DiffType.EQUAL, 'jump'],
-    [DiffType.DELETE, 's'],
-    [DiffType.INSERT, 'ed'],
-    [DiffType.EQUAL, ' over '],
-    [DiffType.DELETE, 'the'],
-    [DiffType.INSERT, 'a'],
-    [DiffType.EQUAL, ' lazy'],
+    [DIFF_EQUAL, 'jump'],
+    [DIFF_DELETE, 's'],
+    [DIFF_INSERT, 'ed'],
+    [DIFF_EQUAL, ' over '],
+    [DIFF_DELETE, 'the'],
+    [DIFF_INSERT, 'a'],
+    [DIFF_EQUAL, ' lazy'],
   ]
   expect(diffText1(diffs)).toBe('jumps over the lazy')
 
@@ -23,14 +23,14 @@ test('diffText1, diffText2', () => {
 test('delta', () => {
   // Convert a diff into delta string.
   let diffs: Diff[] = [
-    [DiffType.EQUAL, 'jump'],
-    [DiffType.DELETE, 's'],
-    [DiffType.INSERT, 'ed'],
-    [DiffType.EQUAL, ' over '],
-    [DiffType.DELETE, 'the'],
-    [DiffType.INSERT, 'a'],
-    [DiffType.EQUAL, ' lazy'],
-    [DiffType.INSERT, 'old dog'],
+    [DIFF_EQUAL, 'jump'],
+    [DIFF_DELETE, 's'],
+    [DIFF_INSERT, 'ed'],
+    [DIFF_EQUAL, ' over '],
+    [DIFF_DELETE, 'the'],
+    [DIFF_INSERT, 'a'],
+    [DIFF_EQUAL, ' lazy'],
+    [DIFF_INSERT, 'old dog'],
   ]
   let text1 = diffText1(diffs)
   expect(text1).toBe('jumps over the lazy')
@@ -59,9 +59,9 @@ test('delta', () => {
 
   // Test deltas with special characters.
   diffs = [
-    [DiffType.EQUAL, '\u0680 \x00 \t %'],
-    [DiffType.DELETE, '\u0681 \x01 \n ^'],
-    [DiffType.INSERT, '\u0682 \x02 \\ |'],
+    [DIFF_EQUAL, '\u0680 \x00 \t %'],
+    [DIFF_DELETE, '\u0681 \x01 \n ^'],
+    [DIFF_INSERT, '\u0682 \x02 \\ |'],
   ]
   text1 = diffText1(diffs)
   expect(text1).toBe('\u0680 \x00 \t %\u0681 \x01 \n ^')
@@ -73,7 +73,7 @@ test('delta', () => {
   expect(diffs).toEqual(fromDelta(text1, delta))
 
   // Verify pool of unchanged characters.
-  diffs = [[DiffType.INSERT, "A-Z a-z 0-9 - _ . ! ~ * ' ( ) ; / ? : @ & = + $ , # "]]
+  diffs = [[DIFF_INSERT, "A-Z a-z 0-9 - _ . ! ~ * ' ( ) ; / ? : @ & = + $ , # "]]
   const text2 = diffText2(diffs)
   expect(text2).toBe("A-Z a-z 0-9 - _ . ! ~ * ' ( ) ; / ? : @ & = + $ , # ")
 
@@ -88,7 +88,7 @@ test('delta', () => {
   for (let i = 0; i < 14; i++) {
     a += a
   }
-  diffs = [[DiffType.INSERT, a]]
+  diffs = [[DIFF_INSERT, a]]
   delta = toDelta(diffs)
   expect(delta).toBe(`+${a}`)
 })

@@ -1,4 +1,4 @@
-import {DiffType} from '../diff/diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {Patch} from './createPatchObject.js'
 
 /**
@@ -41,13 +41,13 @@ export function stringifyPatch(patch: Patch): string {
   // Escape the body of the patch with %xx notation.
   for (let x = 0; x < patch.diffs.length; x++) {
     switch (patch.diffs[x][0]) {
-      case DiffType.INSERT:
+      case DIFF_INSERT:
         op = '+'
         break
-      case DiffType.DELETE:
+      case DIFF_DELETE:
         op = '-'
         break
-      case DiffType.EQUAL:
+      case DIFF_EQUAL:
         op = ' '
         break
       default:

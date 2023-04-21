@@ -1,5 +1,5 @@
 import {test, expect} from 'vitest'
-import {diff, DiffType} from '../../diff/diff.js'
+import {DIFF_DELETE, DIFF_INSERT, diff} from '../../diff/diff.js'
 import {make} from '../make.js'
 import {parse} from '../parse.js'
 import {stringify} from '../stringify.js'
@@ -41,8 +41,8 @@ test('make', () => {
 
   // Character decoding.
   diffs = [
-    [DiffType.DELETE, "`1234567890-=[]\\;',./"],
-    [DiffType.INSERT, '~!@#$%^&*()_+{}|:"<>?'],
+    [DIFF_DELETE, "`1234567890-=[]\\;',./"],
+    [DIFF_INSERT, '~!@#$%^&*()_+{}|:"<>?'],
   ]
   expect(diffs).toEqual(
     parse(

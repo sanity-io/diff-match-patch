@@ -1,5 +1,5 @@
 import {test, expect} from 'vitest'
-import {DiffType} from '../diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
 import {xIndex} from '../xIndex.js'
 
 test('xIndex', () => {
@@ -8,9 +8,9 @@ test('xIndex', () => {
   expect(
     xIndex(
       [
-        [DiffType.DELETE, 'a'],
-        [DiffType.INSERT, '1234'],
-        [DiffType.EQUAL, 'xyz'],
+        [DIFF_DELETE, 'a'],
+        [DIFF_INSERT, '1234'],
+        [DIFF_EQUAL, 'xyz'],
       ],
       2
     )
@@ -20,9 +20,9 @@ test('xIndex', () => {
   expect(
     xIndex(
       [
-        [DiffType.EQUAL, 'a'],
-        [DiffType.DELETE, '1234'],
-        [DiffType.EQUAL, 'xyz'],
+        [DIFF_EQUAL, 'a'],
+        [DIFF_DELETE, '1234'],
+        [DIFF_EQUAL, 'xyz'],
       ],
       3
     )

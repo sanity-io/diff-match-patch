@@ -1,6 +1,6 @@
 import {test, expect} from 'vitest'
 import {bisect_} from '../bisect.js'
-import {DiffType} from '../diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
 
 test('bisect', () => {
   // Normal.
@@ -10,16 +10,16 @@ test('bisect', () => {
   // the insertion and deletion pairs are swapped.
   // If the order changes, tweak this test as required.
   expect(bisect_(a, b, Number.MAX_VALUE)).toEqual([
-    [DiffType.DELETE, 'c'],
-    [DiffType.INSERT, 'm'],
-    [DiffType.EQUAL, 'a'],
-    [DiffType.DELETE, 't'],
-    [DiffType.INSERT, 'p'],
+    [DIFF_DELETE, 'c'],
+    [DIFF_INSERT, 'm'],
+    [DIFF_EQUAL, 'a'],
+    [DIFF_DELETE, 't'],
+    [DIFF_INSERT, 'p'],
   ])
 
   // Timeout.
   expect(bisect_(a, b, 0)).toEqual([
-    [DiffType.DELETE, 'cat'],
-    [DiffType.INSERT, 'map'],
+    [DIFF_DELETE, 'cat'],
+    [DIFF_INSERT, 'map'],
   ])
 })

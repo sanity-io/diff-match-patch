@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import {Diff, DiffType} from './diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff} from './diff.js'
 
 /**
  * Given the original text1, and an encoded string which describes the
@@ -23,7 +23,7 @@ export function fromDelta(text1: string, delta: string): Diff[] {
     switch (tokens[x].charAt(0)) {
       case '+':
         try {
-          diffs[diffsLength++] = [DiffType.INSERT, decodeURI(param)]
+          diffs[diffsLength++] = [DIFF_INSERT, decodeURI(param)]
         } catch (ex) {
           // Malformed URI sequence.
           throw new Error(`Illegal escape in fromDelta: ${param}`)
@@ -38,9 +38,9 @@ export function fromDelta(text1: string, delta: string): Diff[] {
         }
         const text = text1.substring(pointer, (pointer += n))
         if (tokens[x].charAt(0) === '=') {
-          diffs[diffsLength++] = [DiffType.EQUAL, text]
+          diffs[diffsLength++] = [DIFF_EQUAL, text]
         } else {
-          diffs[diffsLength++] = [DiffType.DELETE, text]
+          diffs[diffsLength++] = [DIFF_DELETE, text]
         }
         break
       default:

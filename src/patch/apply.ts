@@ -1,7 +1,7 @@
 /* eslint-disable max-depth */
 /* eslint-disable max-statements */
 import {cleanupSemanticLossless} from '../diff/cleanup.js'
-import {diff, DiffType} from '../diff/diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff} from '../diff/diff.js'
 import {diffText1, diffText2} from '../diff/diffText.js'
 import {levenshtein} from '../diff/levenshtein.js'
 import {xIndex} from '../diff/xIndex.js'
@@ -144,20 +144,20 @@ export function apply(
           let index2 = 0
           for (let y = 0; y < parsed[x].diffs.length; y++) {
             const mod = parsed[x].diffs[y]
-            if (mod[0] !== DiffType.EQUAL) {
+            if (mod[0] !== DIFF_EQUAL) {
               index2 = xIndex(diffs, index1)
             }
-            if (mod[0] === DiffType.INSERT) {
+            if (mod[0] === DIFF_INSERT) {
               // Insertion
               text =
                 text.substring(0, startLoc + index2) + mod[1] + text.substring(startLoc + index2)
-            } else if (mod[0] === DiffType.DELETE) {
+            } else if (mod[0] === DIFF_DELETE) {
               // Deletion
               text =
                 text.substring(0, startLoc + index2) +
                 text.substring(startLoc + xIndex(diffs, index1 + mod[1].length))
             }
-            if (mod[0] !== DiffType.DELETE) {
+            if (mod[0] !== DIFF_DELETE) {
               index1 += mod[1].length
             }
           }
@@ -194,9 +194,9 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): s
   // Add some padding on start of first diff.
   let patch = patches[0]
   let diffs = patch.diffs
-  if (diffs.length === 0 || diffs[0][0] !== DiffType.EQUAL) {
+  if (diffs.length === 0 || diffs[0][0] !== DIFF_EQUAL) {
     // Add nullPadding equality.
-    diffs.unshift([DiffType.EQUAL, nullPadding])
+    diffs.unshift([DIFF_EQUAL, nullPadding])
     patch.start1 -= paddingLength // Should be 0.
     patch.start2 -= paddingLength // Should be 0.
     patch.length1 += paddingLength
@@ -214,9 +214,9 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): s
   // Add some padding on end of last diff.
   patch = patches[patches.length - 1]
   diffs = patch.diffs
-  if (diffs.length === 0 || diffs[diffs.length - 1][0] !== DiffType.EQUAL) {
+  if (diffs.length === 0 || diffs[diffs.length - 1][0] !== DIFF_EQUAL) {
     // Add nullPadding equality.
-    diffs.push([DiffType.EQUAL, nullPadding])
+    diffs.push([DIFF_EQUAL, nullPadding])
     patch.length1 += paddingLength
     patch.length2 += paddingLength
   } else if (paddingLength > diffs[diffs.length - 1][1].length) {

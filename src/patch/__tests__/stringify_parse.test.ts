@@ -1,5 +1,5 @@
 import {test, expect} from 'vitest'
-import {DiffType} from '../../diff/diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../../diff/diff.js'
 import {createPatchObject} from '../createPatchObject.js'
 import {parse} from '../parse.js'
 import {stringify, stringifyPatch} from '../stringify.js'
@@ -18,13 +18,13 @@ test('stringifyPatch', () => {
   p.length1 = 18
   p.length2 = 17
   p.diffs = [
-    [DiffType.EQUAL, 'jump'],
-    [DiffType.DELETE, 's'],
-    [DiffType.INSERT, 'ed'],
-    [DiffType.EQUAL, ' over '],
-    [DiffType.DELETE, 'the'],
-    [DiffType.INSERT, 'a'],
-    [DiffType.EQUAL, '\nlaz'],
+    [DIFF_EQUAL, 'jump'],
+    [DIFF_DELETE, 's'],
+    [DIFF_INSERT, 'ed'],
+    [DIFF_EQUAL, ' over '],
+    [DIFF_DELETE, 'the'],
+    [DIFF_INSERT, 'a'],
+    [DIFF_EQUAL, '\nlaz'],
   ]
   const strp = stringifyPatch(p)
   expect(strp).toEqual('@@ -21,18 +22,17 @@\n jump\n-s\n+ed\n  over \n-the\n+a\n %0Alaz\n')

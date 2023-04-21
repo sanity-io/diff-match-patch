@@ -1,4 +1,4 @@
-import {DiffType} from '../diff/diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {createPatchObject, Patch} from './createPatchObject.js'
 
 /**
@@ -55,13 +55,13 @@ export function parse(textline: string): Patch[] {
       }
       if (sign === '-') {
         // Deletion.
-        patch.diffs.push([DiffType.DELETE, line])
+        patch.diffs.push([DIFF_DELETE, line])
       } else if (sign === '+') {
         // Insertion.
-        patch.diffs.push([DiffType.INSERT, line])
+        patch.diffs.push([DIFF_INSERT, line])
       } else if (sign === ' ') {
         // Minor equality.
-        patch.diffs.push([DiffType.EQUAL, line])
+        patch.diffs.push([DIFF_EQUAL, line])
       } else if (sign === '@') {
         // Start of next patch.
         break

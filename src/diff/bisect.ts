@@ -1,4 +1,4 @@
-import {_diff, Diff, DiffType} from './diff.js'
+import {_diff, Diff, DIFF_DELETE, DIFF_INSERT} from './diff.js'
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
@@ -118,8 +118,8 @@ export function bisect_(text1: string, text2: string, deadline: number): Diff[] 
   }
   // Number of diffs equals number of characters, no commonality at all.
   return [
-    [DiffType.DELETE, text1],
-    [DiffType.INSERT, text2],
+    [DIFF_DELETE, text1],
+    [DIFF_INSERT, text2],
   ]
 }
 

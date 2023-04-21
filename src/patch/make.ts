@@ -1,5 +1,5 @@
 import {cleanupSemantic, cleanupEfficiency} from '../diff/cleanup.js'
-import {diff, Diff, DiffType} from '../diff/diff.js'
+import {diff, Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {diffText1} from '../diff/diffText.js'
 import {isLowSurrogate} from '../utils/surrogatePairs.js'
 import {MAX_BITS} from './constants.js'
@@ -106,27 +106,27 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
     const diffType = diffs[x][0]
     const diffText = diffs[x][1]
 
-    if (!patchDiffLength && diffType !== DiffType.EQUAL) {
+    if (!patchDiffLength && diffType !== DIFF_EQUAL) {
       // A new patch starts here.
       patch.start1 = charCount1
       patch.start2 = charCount2
     }
 
     switch (diffType) {
-      case DiffType.INSERT:
+      case DIFF_INSERT:
         patch.diffs[patchDiffLength++] = diffs[x]
         patch.length2 += diffText.length
         postpatchText =
           postpatchText.substring(0, charCount2) + diffText + postpatchText.substring(charCount2)
         break
-      case DiffType.DELETE:
+      case DIFF_DELETE:
         patch.length1 += diffText.length
         patch.diffs[patchDiffLength++] = diffs[x]
         postpatchText =
           postpatchText.substring(0, charCount2) +
           postpatchText.substring(charCount2 + diffText.length)
         break
-      case DiffType.EQUAL:
+      case DIFF_EQUAL:
         if (diffText.length <= 2 * options.margin && patchDiffLength && diffs.length !== x + 1) {
           // Small equality inside a patch.
           patch.diffs[patchDiffLength++] = diffs[x]
@@ -153,10 +153,10 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
     }
 
     // Update the current character count.
-    if (diffType !== DiffType.INSERT) {
+    if (diffType !== DIFF_INSERT) {
       charCount1 += diffText.length
     }
-    if (diffType !== DiffType.DELETE) {
+    if (diffType !== DIFF_DELETE) {
       charCount2 += diffText.length
     }
   }
@@ -207,7 +207,7 @@ export function addContext_(patch: Patch, text: string, opts: MakePatchOptions):
 
   const prefix = text.substring(prefixStart, patch.start2)
   if (prefix) {
-    patch.diffs.unshift([DiffType.EQUAL, prefix])
+    patch.diffs.unshift([DIFF_EQUAL, prefix])
   }
 
   // Add the suffix.
@@ -220,7 +220,7 @@ export function addContext_(patch: Patch, text: string, opts: MakePatchOptions):
 
   const suffix = text.substring(patch.start2 + patch.length1, suffixEnd)
   if (suffix) {
-    patch.diffs.push([DiffType.EQUAL, suffix])
+    patch.diffs.push([DIFF_EQUAL, suffix])
   }
 
   // Roll back the start points.

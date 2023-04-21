@@ -2,9 +2,11 @@ import {test, expect} from 'vitest'
 import {
   // Diff
   makeDiff,
-  DiffType,
   cleanupSemantic,
   cleanupEfficiency,
+  DIFF_DELETE,
+  DIFF_INSERT,
+  DIFF_EQUAL,
 
   // Match
   match,
@@ -18,30 +20,30 @@ import {
 test('diff api', () => {
   const diffs = makeDiff('from this', 'to this')
   expect(diffs).toEqual([
-    [DiffType.DELETE, 'fr'],
-    [DiffType.INSERT, 't'],
-    [DiffType.EQUAL, 'o'],
-    [DiffType.DELETE, 'm'],
-    [DiffType.EQUAL, ' this'],
+    [DIFF_DELETE, 'fr'],
+    [DIFF_INSERT, 't'],
+    [DIFF_EQUAL, 'o'],
+    [DIFF_DELETE, 'm'],
+    [DIFF_EQUAL, ' this'],
   ])
 
   expect(cleanupSemantic(diffs)).toEqual([
-    [DiffType.DELETE, 'from'],
-    [DiffType.INSERT, 'to'],
-    [DiffType.EQUAL, ' this'],
+    [DIFF_DELETE, 'from'],
+    [DIFF_INSERT, 'to'],
+    [DIFF_EQUAL, ' this'],
   ])
 
   expect(
     cleanupEfficiency([
-      [DiffType.DELETE, 'ab'],
-      [DiffType.INSERT, '12'],
-      [DiffType.EQUAL, 'xyz'],
-      [DiffType.DELETE, 'cd'],
-      [DiffType.INSERT, '34'],
+      [DIFF_DELETE, 'ab'],
+      [DIFF_INSERT, '12'],
+      [DIFF_EQUAL, 'xyz'],
+      [DIFF_DELETE, 'cd'],
+      [DIFF_INSERT, '34'],
     ])
   ).toEqual([
-    [DiffType.DELETE, 'abxyzcd'],
-    [DiffType.INSERT, '12xyz34'],
+    [DIFF_DELETE, 'abxyzcd'],
+    [DIFF_INSERT, '12xyz34'],
   ])
 })
 
@@ -54,9 +56,9 @@ test('patch api', () => {
   expect(patches).toEqual([
     {
       diffs: [
-        [DiffType.DELETE, 'from'],
-        [DiffType.INSERT, 'to'],
-        [DiffType.EQUAL, ' thi'],
+        [DIFF_DELETE, 'from'],
+        [DIFF_INSERT, 'to'],
+        [DIFF_EQUAL, ' thi'],
       ],
       length1: 8,
       length2: 6,

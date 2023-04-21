@@ -1,4 +1,4 @@
-import {Diff, DiffType} from './diff.js'
+import {DIFF_DELETE, DIFF_INSERT, Diff} from './diff.js'
 
 /**
  * loc is a location in textA, compute and return the equivalent location in
@@ -16,11 +16,11 @@ export function xIndex(diffs: Diff[], loc: number): number {
   let lastChars2 = 0
   let x
   for (x = 0; x < diffs.length; x++) {
-    if (diffs[x][0] !== DiffType.INSERT) {
+    if (diffs[x][0] !== DIFF_INSERT) {
       // Equality or deletion.
       chars1 += diffs[x][1].length
     }
-    if (diffs[x][0] !== DiffType.DELETE) {
+    if (diffs[x][0] !== DIFF_DELETE) {
       // Equality or insertion.
       chars2 += diffs[x][1].length
     }
@@ -32,7 +32,7 @@ export function xIndex(diffs: Diff[], loc: number): number {
     lastChars2 = chars2
   }
   // Was the location was deleted?
-  if (diffs.length !== x && diffs[x][0] === DiffType.DELETE) {
+  if (diffs.length !== x && diffs[x][0] === DIFF_DELETE) {
     return lastChars2
   }
   // Add the remaining character length.

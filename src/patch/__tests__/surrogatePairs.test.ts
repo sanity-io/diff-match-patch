@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest'
-import {diff, DiffType} from '../../diff/diff.js'
+import {diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../../diff/diff.js'
 import {toDelta} from '../../diff/toDelta.js'
 import {Patch} from '../createPatchObject.js'
 import {apply} from '../apply.js'
@@ -100,38 +100,38 @@ test('surrogate pairs: random edits', () => {
 describe('surrogate pairs splitting', () => {
   test('insert similar surrogate pair at beginning', () => {
     expect(diff('\ud83c\udd70\ud83c\udd71', '\ud83c\udd71\ud83c\udd70\ud83c\udd71')).toEqual([
-      [DiffType.INSERT, '\ud83c\udd71'],
-      [DiffType.EQUAL, '\ud83c\udd70\ud83c\udd71'],
+      [DIFF_INSERT, '\ud83c\udd71'],
+      [DIFF_EQUAL, '\ud83c\udd70\ud83c\udd71'],
     ])
   })
 
   test('inserting similar surrogate pair in the middle', () => {
     expect(diff('\ud83c\udd70\ud83c\udd71', '\ud83c\udd70\ud83c\udd70\ud83c\udd71')).toEqual([
-      [DiffType.EQUAL, '\ud83c\udd70'],
-      [DiffType.INSERT, '\ud83c\udd70'],
-      [DiffType.EQUAL, '\ud83c\udd71'],
+      [DIFF_EQUAL, '\ud83c\udd70'],
+      [DIFF_INSERT, '\ud83c\udd70'],
+      [DIFF_EQUAL, '\ud83c\udd71'],
     ])
   })
 
   test('deleting similar surrogate pair at the beginning', () => {
     expect(diff('\ud83c\udd71\ud83c\udd70\ud83c\udd71', '\ud83c\udd70\ud83c\udd71')).toEqual([
-      [DiffType.DELETE, '\ud83c\udd71'],
-      [DiffType.EQUAL, '\ud83c\udd70\ud83c\udd71'],
+      [DIFF_DELETE, '\ud83c\udd71'],
+      [DIFF_EQUAL, '\ud83c\udd70\ud83c\udd71'],
     ])
   })
 
   test('deleting similar surrogate pair in the middle', () => {
     expect(diff('\ud83c\udd70\ud83c\udd72\ud83c\udd71', '\ud83c\udd70\ud83c\udd71')).toEqual([
-      [DiffType.EQUAL, '\ud83c\udd70'],
-      [DiffType.DELETE, '\ud83c\udd72'],
-      [DiffType.EQUAL, '\ud83c\udd71'],
+      [DIFF_EQUAL, '\ud83c\udd70'],
+      [DIFF_DELETE, '\ud83c\udd72'],
+      [DIFF_EQUAL, '\ud83c\udd71'],
     ])
   })
 
   test('swap surrogate pair', () => {
     expect(diff('\ud83c\udd70', '\ud83c\udd71')).toEqual([
-      [DiffType.DELETE, '\ud83c\udd70'],
-      [DiffType.INSERT, '\ud83c\udd71'],
+      [DIFF_DELETE, '\ud83c\udd70'],
+      [DIFF_INSERT, '\ud83c\udd71'],
     ])
   })
 

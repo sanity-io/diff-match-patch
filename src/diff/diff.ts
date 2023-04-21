@@ -5,20 +5,40 @@ import {commonSuffix} from './commonSuffix.js'
 import {compute_} from './compute.js'
 
 /**
- * The data structure representing a diff is an array of tuples:
- * [[DiffType.DELETE, 'Hello'], [DiffType.INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
- * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
+ * Diff type for deleted text.
  *
  * @public
  */
-export enum DiffType {
-  DELETE = -1,
-  INSERT = 1,
-  EQUAL = 0,
-}
+export const DIFF_DELETE = -1
 
 /**
- * Tuple holding the type of the diff and the associated text.
+ * Diff type for inserted text.
+ *
+ * @public
+ */
+export const DIFF_INSERT = 1
+
+/**
+ * Diff type for text that is equal.
+ *
+ * @public
+ */
+export const DIFF_EQUAL = 0
+
+/**
+ * The three different types of changes possible in a diff:
+ * - `DIFF_DELETE`: a deletion of text
+ * - `DIFF_INSERT`: an insertion of text
+ * - `DIFF_EQUAL` : an equal text
+ *
+ * @public
+ */
+export type DiffType = typeof DIFF_DELETE | typeof DIFF_INSERT | typeof DIFF_EQUAL
+
+/**
+ * The data structure representing a diff is an array of tuples:
+ * [[DIFF_DELETE, 'Hello'], [DIFF_INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
+ * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
  *
  * @public
  */
@@ -127,17 +147,17 @@ function deisolateChar(diffs: Diff[], i: number, dir: 1 | -1) {
       continue
     }
 
-    if (op === DiffType.INSERT) {
+    if (op === DIFF_INSERT) {
       if (insertIdx === null) {
         insertIdx = j
       }
       continue
-    } else if (op === DiffType.DELETE) {
+    } else if (op === DIFF_DELETE) {
       if (deleteIdx === null) {
         deleteIdx = j
       }
       continue
-    } else if (op === DiffType.EQUAL) {
+    } else if (op === DIFF_EQUAL) {
       if (insertIdx === null && deleteIdx === null) {
         // This means that there was two consecutive EQUAL. Kinda weird, but easy to handle.
         const [rest, char] = splitChar(diffs[i][1], dir)
@@ -152,7 +172,7 @@ function deisolateChar(diffs: Diff[], i: number, dir: 1 | -1) {
   if (insertIdx !== null && deleteIdx !== null && hasSharedChar(diffs, insertIdx, deleteIdx, dir)) {
     // Special case.
     const [insertText, insertChar] = splitChar(diffs[insertIdx][1], inv)
-    const [deleteText, _] = splitChar(diffs[deleteIdx][1], inv)
+    const [deleteText] = splitChar(diffs[deleteIdx][1], inv)
     diffs[insertIdx][1] = insertText
     diffs[deleteIdx][1] = deleteText
     diffs[i][1] = combineChar(diffs[i][1], insertChar, dir)
@@ -163,7 +183,7 @@ function deisolateChar(diffs: Diff[], i: number, dir: 1 | -1) {
   diffs[i][1] = text
 
   if (insertIdx === null) {
-    diffs.splice(j, 0, [DiffType.INSERT, char])
+    diffs.splice(j, 0, [DIFF_INSERT, char])
 
     // We need to adjust deleteIdx here since it's been shifted
     if (deleteIdx !== null && deleteIdx >= j) deleteIdx++
@@ -172,7 +192,7 @@ function deisolateChar(diffs: Diff[], i: number, dir: 1 | -1) {
   }
 
   if (deleteIdx === null) {
-    diffs.splice(j, 0, [DiffType.DELETE, char])
+    diffs.splice(j, 0, [DIFF_DELETE, char])
   } else {
     diffs[deleteIdx][1] = combineChar(diffs[deleteIdx][1], char, inv)
   }
@@ -188,11 +208,11 @@ function adjustDiffForSurrogatePairs(diffs: Diff[]) {
     const firstChar = diffText[0]
     const lastChar = diffText[diffText.length - 1]
 
-    if (isHighSurrogate(lastChar) && diffType === DiffType.EQUAL) {
+    if (isHighSurrogate(lastChar) && diffType === DIFF_EQUAL) {
       deisolateChar(diffs, i, 1)
     }
 
-    if (isLowSurrogate(firstChar) && diffType === DiffType.EQUAL) {
+    if (isLowSurrogate(firstChar) && diffType === DIFF_EQUAL) {
       deisolateChar(diffs, i, -1)
     }
   }
@@ -245,7 +265,7 @@ export function _diff(textA: string, textB: string, options: InternalDiffOptions
 
   // Check for equality (speedup).
   if (text1 === text2) {
-    return text1 ? [[DiffType.EQUAL, text1]] : []
+    return text1 ? [[DIFF_EQUAL, text1]] : []
   }
 
   // Trim off common prefix (speedup).
@@ -265,10 +285,10 @@ export function _diff(textA: string, textB: string, options: InternalDiffOptions
 
   // Restore the prefix and suffix.
   if (commonprefix) {
-    diffs.unshift([DiffType.EQUAL, commonprefix])
+    diffs.unshift([DIFF_EQUAL, commonprefix])
   }
   if (commonsuffix) {
-    diffs.push([DiffType.EQUAL, commonsuffix])
+    diffs.push([DIFF_EQUAL, commonsuffix])
   }
   diffs = cleanupMerge(diffs)
   return diffs

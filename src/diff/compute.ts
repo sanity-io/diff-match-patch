@@ -1,5 +1,5 @@
 import {bisect_} from './bisect.js'
-import {Diff, DiffType, InternalDiffOptions, _diff} from './diff.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff, InternalDiffOptions, _diff} from './diff.js'
 import {halfMatch_} from './halfMatch.js'
 import {lineMode_} from './lineMode.js'
 
@@ -21,12 +21,12 @@ export function compute_(text1: string, text2: string, opts: InternalDiffOptions
 
   if (!text1) {
     // Just add some text (speedup).
-    return [[DiffType.INSERT, text2]]
+    return [[DIFF_INSERT, text2]]
   }
 
   if (!text2) {
     // Just delete some text (speedup).
-    return [[DiffType.DELETE, text1]]
+    return [[DIFF_DELETE, text1]]
   }
 
   const longtext = text1.length > text2.length ? text1 : text2
@@ -35,14 +35,14 @@ export function compute_(text1: string, text2: string, opts: InternalDiffOptions
   if (i !== -1) {
     // Shorter text is inside the longer text (speedup).
     diffs = [
-      [DiffType.INSERT, longtext.substring(0, i)],
-      [DiffType.EQUAL, shorttext],
-      [DiffType.INSERT, longtext.substring(i + shorttext.length)],
+      [DIFF_INSERT, longtext.substring(0, i)],
+      [DIFF_EQUAL, shorttext],
+      [DIFF_INSERT, longtext.substring(i + shorttext.length)],
     ]
     // Swap insertions for deletions if diff is reversed.
     if (text1.length > text2.length) {
-      diffs[0][0] = DiffType.DELETE
-      diffs[2][0] = DiffType.DELETE
+      diffs[0][0] = DIFF_DELETE
+      diffs[2][0] = DIFF_DELETE
     }
     return diffs
   }
@@ -51,8 +51,8 @@ export function compute_(text1: string, text2: string, opts: InternalDiffOptions
     // Single character string.
     // After the previous speedup, the character can't be an equality.
     return [
-      [DiffType.DELETE, text1],
-      [DiffType.INSERT, text2],
+      [DIFF_DELETE, text1],
+      [DIFF_INSERT, text2],
     ]
   }
 
@@ -69,7 +69,7 @@ export function compute_(text1: string, text2: string, opts: InternalDiffOptions
     const diffsA = _diff(text1A, text2A, opts)
     const diffsB = _diff(text1B, text2B, opts)
     // Merge the results.
-    return diffsA.concat([[DiffType.EQUAL, midCommon]], diffsB)
+    return diffsA.concat([[DIFF_EQUAL, midCommon]], diffsB)
   }
 
   if (opts.checkLines && text1.length > 100 && text2.length > 100) {
