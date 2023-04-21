@@ -2,7 +2,13 @@
 
 A TypeScript fork of the JavaScript version of [google/diff-match-patch](https://github.com/google/diff-match-patch), that includes a few long-standing pull requests, fixing [certain bugs](#significant-changes-in-fork) and with an API more familiar to the JavaScript ecosystem.
 
-### What is diff-match-patch?
+## Installing
+
+```
+npm install --save @sanity/diff-match-patch
+```
+
+## What is diff-match-patch?
 
 The Diff Match and Patch libraries offer robust algorithms to perform the
 operations required for synchronizing plain text.
@@ -19,9 +25,9 @@ operations required for synchronizing plain text.
 
 Originally built in 2006 to power Google Docs, this library is now available in C++, C#, Dart, Java, JavaScript, Lua, Objective C, and Python.
 
-### API
+## API
 
-#### Creating and applying patches
+### Creating and applying patches
 
 ```ts
 import {makePatches, applyPatches, stringifyPatches} from '@sanity/diff-match-patch'
@@ -36,7 +42,7 @@ const patch = stringifyPatches(patches)
 const newValue = applyPatches('from this', patches)
 ```
 
-#### Creating diffs
+### Creating diffs
 
 ```ts
 import {makeDiff} from '@sanity/diff-match-patch'
@@ -45,7 +51,7 @@ import {makeDiff} from '@sanity/diff-match-patch'
 const diff = makeDiff('from this', 'to this')
 ```
 
-#### Matching text
+### Matching text
 
 ```ts
 import {match} from '@sanity/diff-match-patch'
@@ -54,13 +60,13 @@ import {match} from '@sanity/diff-match-patch'
 const position = match('some text to match against', 'match', 9)
 ```
 
-### Algorithms
+## Algorithms
 
 This library implements [Myer's diff algorithm](https://neil.fraser.name/writing/diff/myers.pdf) which is generally considered to be the best general-purpose diff. A layer of [pre-diff speedups and post-diff cleanups](https://neil.fraser.name/writing/diff/) surround the diff algorithm, improving both performance and output quality.
 
 This library also implements a [Bitap matching algorithm](https://neil.fraser.name/writing/patch/bitap.ps) at the heart of a [flexible matching and patching strategy](https://neil.fraser.name/writing/patch/).
 
-### Significant changes in fork
+## Significant changes in fork
 
 This fork has a few modifications to [the original](https://github.com/google/diff-match-patch):
 
