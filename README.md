@@ -1,8 +1,8 @@
 # @sanity/diff-match-patch
 
-A TypeScript fork of the JavaScript version of [google/diff-match-patch](https://github.com/google/diff-match-patch), that includes a few long-standing pull requests, fixing [certain bugs](#significant-changes) and with an API more familiar to the JavaScript ecosystem.
+A TypeScript fork of the JavaScript version of [google/diff-match-patch](https://github.com/google/diff-match-patch), that includes a few long-standing pull requests, fixing [certain bugs](#significant-changes-in-fork) and with an API more familiar to the JavaScript ecosystem.
 
-### What is it?
+### What is diff-match-patch?
 
 The Diff Match and Patch libraries offer robust algorithms to perform the
 operations required for synchronizing plain text.
@@ -60,10 +60,18 @@ This library implements [Myer's diff algorithm](https://neil.fraser.name/writing
 
 This library also implements a [Bitap matching algorithm](https://neil.fraser.name/writing/patch/bitap.ps) at the heart of a [flexible matching and patching strategy](https://neil.fraser.name/writing/patch/).
 
-### Significant changes
+### Significant changes in fork
 
 This fork has a few modifications to [the original](https://github.com/google/diff-match-patch):
 
-- API has changed - individual methods are exposed as importable functions instead of being attached to a `DiffMatchPatch` prototype
-- Includes a fix for surrogate pair handling, by [Dennis Snell](https://github.com/google/diff-match-patch/pull/80)
+- Written in TypeScript, and shipped with CommonJS and ES module builds
+- API has changed - individual methods are exposed as importable functions instead of being attached to a `DiffMatchPatch` prototype. Enables better tree-shaking.
+- Includes a fix for surrogate pair handling
+- Includes a fix for indicies calculated using UCS-2 instead of UTF-8
 - Uses modern tooling for code compilation and testing
+
+## License
+
+Apache-2.0
+Copyright 2018 The diff-match-patch Authors
+https://github.com/google/diff-match-patch
