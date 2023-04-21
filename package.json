@@ -21,6 +21,13 @@
   "engines": {
     "node": ">=14.18"
   },
+  "files": [
+    "dist",
+    "!dist/stats.html",
+    "src",
+    "!src/**/*.test.ts",
+    "AUTHORS"
+  ],
   "scripts": {
     "clean": "rimraf dist coverage",
     "build": "pkg-utils build && pkg-utils --strict",
