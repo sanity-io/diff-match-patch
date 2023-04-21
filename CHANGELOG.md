@@ -14,9 +14,6 @@ All notable changes to this project will be documented in this file. See
 - **patch:** Generated indices are now different, meaning patches
   generated with this change won't apply cleanly in older versions, and
   vice-versa.
-
-Co-authored-by: Magnus Holm <judofyr@gmail.com>
-
 - use constants for diff types instead of typescript enum
 - Exports are now optimized to allow more environments to use the
   module, regardless of them prefering ESM or CJS modules. That potentially
