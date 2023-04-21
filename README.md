@@ -72,6 +72,43 @@ console.log('Patch applied with %d matches and %d misses', matches, misses)
 console.log('New value: %s', newValue)
 ```
 
+## Migrating from `diff-match-patch`
+
+The original library that this is a fork of has a different API, meaning this fork is not a drop-in replacement. Here's a breakdown of the most common operations and their API differences:
+
+### Creating diffs
+
+```diff
+-import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch'
+-const dmp = new DiffMatchPatch()
+-const diffs = dmp.diff_main('from this', 'to this')
+-dmp.diff_cleanupSemantic(diffs)
++import {makeDiff, cleanupSemantic} from '@sanity/diff-match-patch'
++const diffs = cleanupSemantic(makeDiff('from this', 'to this'))
+```
+
+### Make patches
+
+```diff
+-import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch'
+-const dmp = new DiffMatchPatch()
+-const rawPatch = dmp.patch_make('from this', 'to this')
+-const patch = rawPatch.map(p => p.toString()).join('')
++import {makePatches, stringifyPatches} from '@sanity/diff-match-patch'
++const patch = stringifyPatches(makePatches('from this', 'to this'))
+```
+
+### Apply patches
+
+```diff
+-import {diff_match_patch as DiffMatchPatch} from 'diff-match-patch'
+-const dmp = new DiffMatchPatch()
+-const patch = dmp.patch_fromText('some-text-patch')
+-const [newValue] = dmp.patch_apply(patch, 'source text')
++import {applyPatches} from '@sanity/diff-match-patch'
++const [newValue] = applyPatches('some-text-patch', 'source text')
+```
+
 ## Algorithms
 
 This library implements [Myer's diff algorithm](https://neil.fraser.name/writing/diff/myers.pdf) which is generally considered to be the best general-purpose diff. A layer of [pre-diff speedups and post-diff cleanups](https://neil.fraser.name/writing/diff/) surround the diff algorithm, improving both performance and output quality.
