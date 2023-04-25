@@ -12,8 +12,7 @@ npm install --save @sanity/diff-match-patch
 
 ## What is diff-match-patch?
 
-The Diff Match and Patch libraries offer robust algorithms to perform the
-operations required for synchronizing plain text.
+The Diff Match and Patch libraries offer robust algorithms to perform the operations required for synchronizing plain text.
 
 1. Diff:
    - Compare two blocks of plain text and efficiently return a list of differences.
@@ -32,7 +31,7 @@ Originally built in 2006 to power Google Docs, this library is now available in 
 ### Creating and applying patches
 
 ```ts
-import {makePatches, applyPatches, stringifyPatches} from '@sanity/diff-match-patch'
+import {makePatches, applyPatches, stringifyPatches, parsePatches} from '@sanity/diff-match-patch'
 
 // Make array of diffs in internal array format, eg tuples of `[DiffType, string]`
 const patches = makePatches('from this', 'to this')
@@ -40,8 +39,11 @@ const patches = makePatches('from this', 'to this')
 // Make unidiff-formatted (string) patch
 const patch = stringifyPatches(patches)
 
-// Apply the patch (either the unidiff-formatted or the internal array representation)
-const [newValue] = applyPatches(patch, 'from this')
+// Apply the patch (array representation)
+const [newValue] = applyPatches(patches, 'from this')
+
+// Apply the patch (unidiff-formatted)
+const [alsoNewValue] = applyPatches(parsePatch(patch), 'from this')
 ```
 
 ### Creating diffs
@@ -68,7 +70,7 @@ const position = match('some text to match against', 'match', 9)
 import {applyPatches} from '@sanity/diff-match-patch'
 
 const [newValue, results] = applyPatches(patch, 'source text')
-const matches = results.filter(matched => matched === true).length
+const matches = results.filter((matched) => matched === true).length
 const misses = results.length - matches
 console.log('Patch applied with %d matches and %d misses', matches, misses)
 console.log('New value: %s', newValue)
@@ -107,8 +109,8 @@ The original library that this is a fork of has a different API, meaning this fo
 -const dmp = new DiffMatchPatch()
 -const patch = dmp.patch_fromText('some-text-patch')
 -const [newValue] = dmp.patch_apply(patch, 'source text')
-+import {applyPatches} from '@sanity/diff-match-patch'
-+const [newValue] = applyPatches('some-text-patch', 'source text')
++import {applyPatches, parsePatch} from '@sanity/diff-match-patch'
++const [newValue] = applyPatches(parsePatch('some-text-patch'), 'source text')
 ```
 
 ## Algorithms

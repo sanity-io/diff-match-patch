@@ -149,7 +149,8 @@ describe('surrogate pairs splitting', () => {
     expect(result).toBe(target)
 
     const strPatch = stringify(patch)
-    result = apply(strPatch, source)[0]
+    const parsed = parse(strPatch)
+    result = apply(parsed, source)[0]
     expect(result).toBe(target)
   })
 })

@@ -1,6 +1,7 @@
 import {describe, test, expect} from 'vitest'
 import {apply} from '../apply.js'
 import {make} from '../make.js'
+import {parse} from '../parse.js'
 import {stringify} from '../stringify.js'
 
 const sourceText = `速ヒマヤレ誌相ルなあね日諸せ変評ホ真攻同潔ク作先た員勝どそ際接レゅ自17浅ッ実情スヤ籍認ス重力務鳥の。8平はートご多乗12青國暮整ル通国うれけこ能新ロコラハ元横ミ休探ミソ梓批ざょにね薬展むい本隣ば禁抗ワアミ部真えくト提知週むすほ。査ル人形ルおじつ政謙減セヲモ読見れレぞえ録精てざ定第ぐゆとス務接産ヤ写馬エモス聞氏サヘマ有午ごね客岡ヘロ修彩枝雨父のけリド。
@@ -20,7 +21,7 @@ describe('utf8 indicies', () => {
       "
     `)
 
-    const [result] = apply(patch, source)
+    const [result] = apply(parse(patch), source)
     expect(result).toEqual(target)
   })
 
@@ -38,7 +39,7 @@ describe('utf8 indicies', () => {
       "
     `)
 
-    const [result] = apply(patch, source)
+    const [result] = apply(parse(patch), source)
     expect(result).toEqual(target)
   })
 })

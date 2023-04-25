@@ -1,4 +1,5 @@
-import type { Patch } from '../index.js'
+import {cloneDiff} from '../diff/clone.js'
+import type {Patch} from '../index.js'
 
 /**
  * Takes a `patches` array as produced by diff-match-patch and adjusts the
@@ -81,7 +82,7 @@ export function adjustIndiciesToUcs2(patches: Patch[], base: string): Patch[] {
   const adjusted: Patch[] = []
   for (const patch of patches) {
     adjusted.push({
-      diffs: patch.diffs,
+      diffs: patch.diffs.map((diff) => cloneDiff(diff)),
       start1: advanceTo(patch.start1),
       start2: advanceTo(patch.start2),
       length1: patch.length1,

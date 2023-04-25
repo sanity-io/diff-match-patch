@@ -12,8 +12,9 @@ import {
   match,
 
   // Patch
-  makePatches,
   applyPatches,
+  makePatches,
+  parsePatch,
   stringifyPatches,
 } from './index'
 
@@ -74,7 +75,10 @@ test('patch api', () => {
   expect(newValue).toBe('to this')
   expect(success).toEqual([true])
 
-  const [newValueFromString, stringifiedSuccess] = applyPatches(stringified, 'from this')
+  const [newValueFromString, stringifiedSuccess] = applyPatches(
+    parsePatch(stringified),
+    'from this'
+  )
   expect(newValueFromString).toBe('to this')
   expect(stringifiedSuccess).toEqual([true])
 })

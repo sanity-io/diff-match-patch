@@ -8,8 +8,7 @@ import {xIndex} from '../diff/xIndex.js'
 import {match} from '../match/match.js'
 import {adjustIndiciesToUcs2} from '../utils/utf8Indices.js'
 import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
-import {deepCopy, Patch} from './createPatchObject.js'
-import {parse} from './parse.js'
+import {Patch} from './createPatchObject.js'
 import {splitMax} from './splitMax.js'
 
 /**
@@ -41,8 +40,8 @@ export interface ApplyPatchOptions {
 export type PatchResult = [string, boolean[]]
 
 /**
- * Merge a set of patches onto the text.  Return a patched text, as well
- * as a list of true/false values indicating which patches were applied.
+ * Merge a set of patches onto the text. Returns patched text, as well as a
+ * list of true/false values indicating which patches were applied.
  *
  * @param patches - Array of Patch objects.
  * @param text - Old text.
@@ -50,20 +49,21 @@ export type PatchResult = [string, boolean[]]
  * @public
  */
 export function apply(
-  patches: Patch[] | string,
+  patches: Patch[],
   originalText: string,
   opts: Partial<ApplyPatchOptions> = {}
 ): PatchResult {
+  if (typeof patches === 'string') {
+    throw new Error('Patches must be an array - pass the patch to `parsePatch()` first')
+  }
+
   let text = originalText
   if (patches.length === 0) {
     return [text, []]
   }
 
-  // Deep copy the patches so that no changes are made to originals.
-  const parsed = adjustIndiciesToUcs2(
-    typeof patches === 'string' ? parse(patches) : deepCopy(patches),
-    text
-  )
+  // Note: adjustment also deep-copies patches so that no changes are made to the originals.
+  const parsed = adjustIndiciesToUcs2(patches, text)
 
   const margin = opts.margin || DEFAULT_MARGIN
   const deleteThreshold = opts.deleteThreshold || 0.4
