@@ -5,6 +5,20 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0](https://github.com/sanity-io/diff-match-patch/compare/v1.0.0...v2.0.0) (2023-04-25)
+
+### ⚠ BREAKING CHANGES
+
+- The `applyPatches()` method previously allowed passing a
+  unidiff-formatted patch directly. This lead to bugs where the arguments were
+  switched, eg `patches` was passed to `previousValue` argument and vice-versa.
+  With this change, the user has to explicitly parse the patch first using
+  `parsePatch()`, then pass it to `applyPatches()`.
+
+### Features
+
+- do not allow passing unparsed patch to `applyPatches()` ([299b63b](https://github.com/sanity-io/diff-match-patch/commit/299b63b5dc3584bfd2548676ff33bea8a696367d))
+
 ## [1.0.0](https://github.com/sanity-io/diff-match-patch/compare/v0.0.8...v1.0.0) (2023-04-21)
 
 ### ⚠ BREAKING CHANGES

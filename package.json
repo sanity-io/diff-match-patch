@@ -1,6 +1,6 @@
 {
   "name": "@sanity/diff-match-patch",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Robust diff, match and patch algorithms to perform operations required for synchronizing plain text",
   "sideEffects": false,
   "type": "module",
