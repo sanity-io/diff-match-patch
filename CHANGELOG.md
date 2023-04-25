@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/sanity-io/diff-match-patch/compare/v2.0.0...v2.1.0) (2023-04-25)
+
+### Features
+
+- expose utf-8/ucs-2 adjustment fns as beta ([4b2d163](https://github.com/sanity-io/diff-match-patch/commit/4b2d163b2e6e79088e59c8699309a545a275b0c0))
+
 ## [2.0.0](https://github.com/sanity-io/diff-match-patch/compare/v1.0.0...v2.0.0) (2023-04-25)
 
 ### ⚠ BREAKING CHANGES
