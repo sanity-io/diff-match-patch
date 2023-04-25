@@ -5,6 +5,11 @@ import type {Patch} from '../index.js'
  * Takes a `patches` array as produced by diff-match-patch and adjusts the
  * `start1` and `start2` properties so that they refer to UTF-8 index instead
  * of a UCS-2 index.
+ *
+ * @param patches - The patches to adjust
+ * @param base - The base string to use for counting bytes
+ * @returns A new array of patches with adjusted indicies
+ * @beta
  */
 export function adjustIndiciesToUtf8(patches: Patch[], base: string): Patch[] {
   let byteOffset = 0
@@ -35,7 +40,7 @@ export function adjustIndiciesToUtf8(patches: Patch[], base: string): Patch[] {
   const adjusted: Patch[] = []
   for (const patch of patches) {
     adjusted.push({
-      diffs: patch.diffs,
+      diffs: patch.diffs.map((diff) => cloneDiff(diff)),
       start1: advanceTo(patch.start1),
       start2: advanceTo(patch.start2),
       length1: patch.length1,
@@ -50,6 +55,11 @@ export function adjustIndiciesToUtf8(patches: Patch[], base: string): Patch[] {
  * Takes a `patches` array as produced by diff-match-patch and adjusts the
  * `start1` and `start2` properties so that they refer to UCS-2 index instead
  * of a UTF-8 index.
+ *
+ * @param patches - The patches to adjust
+ * @param base - The base string to use for counting bytes
+ * @returns A new array of patches with adjusted indicies
+ * @beta
  */
 export function adjustIndiciesToUcs2(patches: Patch[], base: string): Patch[] {
   let byteOffset = 0

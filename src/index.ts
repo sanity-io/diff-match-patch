@@ -19,3 +19,6 @@ export {make as makePatches, type MakePatchOptions} from './patch/make.js'
 export {apply as applyPatches, type PatchResult, type ApplyPatchOptions} from './patch/apply.js'
 export {stringify as stringifyPatches, stringifyPatch} from './patch/stringify.js'
 export {parse as parsePatch} from './patch/parse.js'
+
+// UTF-8 / UCS-2 utils (beta)
+export {adjustIndiciesToUcs2, adjustIndiciesToUtf8} from './utils/utf8Indices.js'
