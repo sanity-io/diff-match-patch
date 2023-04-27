@@ -1,6 +1,8 @@
 import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {createPatchObject, Patch} from './createPatchObject.js'
 
+const patchHeader = /^@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@$/
+
 /**
  * Parse a textual representation of patches and return a list of Patch objects.
  *
@@ -15,7 +17,6 @@ export function parse(textline: string): Patch[] {
   }
   const text = textline.split('\n')
   let textPointer = 0
-  const patchHeader = /^@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@$/
   while (textPointer < text.length) {
     const m = text[textPointer].match(patchHeader)
     if (!m) {
