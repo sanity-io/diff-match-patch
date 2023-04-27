@@ -1,5 +1,5 @@
 import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
-import {createPatchObject, Patch} from './createPatchObject.js'
+import {createPatchObject, type Patch} from './createPatchObject.js'
 
 const patchHeader = /^@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@$/
 
@@ -11,18 +11,21 @@ const patchHeader = /^@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@$/
  * @public
  */
 export function parse(textline: string): Patch[] {
-  const patches: Patch[] = []
   if (!textline) {
-    return patches
+    return []
   }
-  const text = textline.split('\n')
+
+  const patches: Patch[] = []
+  const lines = textline.split('\n')
+
   let textPointer = 0
-  while (textPointer < text.length) {
-    const m = text[textPointer].match(patchHeader)
+  while (textPointer < lines.length) {
+    const m = lines[textPointer].match(patchHeader)
     if (!m) {
-      throw new Error(`Invalid patch string: ${text[textPointer]}`)
+      throw new Error(`Invalid patch string: ${lines[textPointer]}`)
     }
-    const patch = createPatchObject(parseInt(m[1], 10), parseInt(m[3], 10))
+
+    const patch = createPatchObject(toInt(m[1]), toInt(m[3]))
     patches.push(patch)
     if (m[2] === '') {
       patch.start1--
@@ -31,7 +34,7 @@ export function parse(textline: string): Patch[] {
       patch.length1 = 0
     } else {
       patch.start1--
-      patch.length1 = parseInt(m[2], 10)
+      patch.length1 = toInt(m[2])
     }
 
     if (m[4] === '') {
@@ -41,15 +44,15 @@ export function parse(textline: string): Patch[] {
       patch.length2 = 0
     } else {
       patch.start2--
-      patch.length2 = parseInt(m[4], 10)
+      patch.length2 = toInt(m[4])
     }
     textPointer++
 
-    while (textPointer < text.length) {
-      const sign = text[textPointer].charAt(0)
+    while (textPointer < lines.length) {
+      const sign = lines[textPointer].charAt(0)
       let line
       try {
-        line = decodeURI(text[textPointer].substring(1))
+        line = decodeURI(lines[textPointer].substring(1))
       } catch (ex) {
         // Malformed URI sequence.
         throw new Error(`Illegal escape in parse: ${line}`)
@@ -76,4 +79,8 @@ export function parse(textline: string): Patch[] {
     }
   }
   return patches
+}
+
+function toInt(num: string): number {
+  return parseInt(num, 10)
 }
