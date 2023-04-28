@@ -6,7 +6,7 @@
  * @returns The number of characters common to the end of each string.
  * @internal
  */
-export function commonSuffix(text1: string, text2: string): number {
+export function getCommonSuffix(text1: string, text2: string): number {
   // Quick check for common null cases.
   if (!text1 || !text2 || text1[text1.length - 1] !== text2[text2.length - 1]) {
     return 0

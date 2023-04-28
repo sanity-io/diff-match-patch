@@ -1,8 +1,8 @@
 import {cloneDiff} from './clone.js'
-import {commonOverlap_} from './commonOverlap.js'
-import {commonPrefix} from './commonPrefix.js'
-import {commonSuffix} from './commonSuffix.js'
-import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff} from './diff.js'
+import {getCommonOverlap} from './commonOverlap.js'
+import {getCommonPrefix} from './commonPrefix.js'
+import {getCommonSuffix} from './commonSuffix.js'
+import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, type Diff} from './diff.js'
 
 /**
  * Reduce the number of edits by eliminating semantically trivial equalities.
@@ -87,8 +87,8 @@ export function cleanupSemantic(rawDiffs: Diff[]): Diff[] {
     if (diffs[pointer - 1][0] === DIFF_DELETE && diffs[pointer][0] === DIFF_INSERT) {
       const deletion = diffs[pointer - 1][1]
       const insertion = diffs[pointer][1]
-      const overlapLength1 = commonOverlap_(deletion, insertion)
-      const overlapLength2 = commonOverlap_(insertion, deletion)
+      const overlapLength1 = getCommonOverlap(deletion, insertion)
+      const overlapLength2 = getCommonOverlap(insertion, deletion)
       if (overlapLength1 >= overlapLength2) {
         if (overlapLength1 >= deletion.length / 2 || overlapLength1 >= insertion.length / 2) {
           // Overlap found.  Insert an equality and trim the surrounding edits.
@@ -195,7 +195,7 @@ export function cleanupSemanticLossless(rawDiffs: Diff[]): Diff[] {
       let equality2 = diffs[pointer + 1][1]
 
       // First, shift the edit as far left as possible.
-      const commonOffset = commonSuffix(equality1, edit)
+      const commonOffset = getCommonSuffix(equality1, edit)
       if (commonOffset) {
         const commonString = edit.substring(edit.length - commonOffset)
         equality1 = equality1.substring(0, equality1.length - commonOffset)
@@ -283,7 +283,7 @@ export function cleanupMerge(rawDiffs: Diff[]): Diff[] {
         if (countDelete + countInsert > 1) {
           if (countDelete !== 0 && countInsert !== 0) {
             // Factor out any common prefixies.
-            commonlength = commonPrefix(textInsert, textDelete)
+            commonlength = getCommonPrefix(textInsert, textDelete)
             if (commonlength !== 0) {
               if (
                 pointer - countDelete - countInsert > 0 &&
@@ -301,7 +301,7 @@ export function cleanupMerge(rawDiffs: Diff[]): Diff[] {
               textDelete = textDelete.substring(commonlength)
             }
             // Factor out any common suffixies.
-            commonlength = commonSuffix(textInsert, textDelete)
+            commonlength = getCommonSuffix(textInsert, textDelete)
             if (commonlength !== 0) {
               diffs[pointer][1] =
                 textInsert.substring(textInsert.length - commonlength) + diffs[pointer][1]

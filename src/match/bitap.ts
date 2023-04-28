@@ -39,7 +39,7 @@ const MAX_BITS = 32
  * @returns Best match index or -1.
  * @internal
  */
-export function bitap_(
+export function bitap(
   text: string,
   pattern: string,
   loc: number,
@@ -52,7 +52,7 @@ export function bitap_(
   const options = applyDefaults(opts)
 
   // Initialise the alphabet.
-  const s = alphabet_(pattern)
+  const s = getAlphabetFromPattern(pattern)
 
   /**
    * Compute and return the score for a match with e errors and x location.
@@ -63,7 +63,7 @@ export function bitap_(
    * @returns Overall - score for match (0.0 = good, 1.0 = bad).
    * @internal
    */
-  function bitapScore_(e: number, x: number) {
+  function getBitapScore(e: number, x: number) {
     const accuracy = e / pattern.length
     const proximity = Math.abs(loc - x)
     if (!options.distance) {
@@ -78,11 +78,11 @@ export function bitap_(
   // Is there a nearby exact match? (speedup)
   let bestLoc = text.indexOf(pattern, loc)
   if (bestLoc !== -1) {
-    scoreThreshold = Math.min(bitapScore_(0, bestLoc), scoreThreshold)
+    scoreThreshold = Math.min(getBitapScore(0, bestLoc), scoreThreshold)
     // What about in the other direction? (speedup)
     bestLoc = text.lastIndexOf(pattern, loc + pattern.length)
     if (bestLoc !== -1) {
-      scoreThreshold = Math.min(bitapScore_(0, bestLoc), scoreThreshold)
+      scoreThreshold = Math.min(getBitapScore(0, bestLoc), scoreThreshold)
     }
   }
 
@@ -101,7 +101,7 @@ export function bitap_(
     binMin = 0
     binMid = binMax
     while (binMin < binMid) {
-      if (bitapScore_(d, loc + binMid) <= scoreThreshold) {
+      if (getBitapScore(d, loc + binMid) <= scoreThreshold) {
         binMin = binMid
       } else {
         binMax = binMid
@@ -130,7 +130,7 @@ export function bitap_(
           lastRd[j + 1]
       }
       if (rd[j] & matchmask) {
-        const score = bitapScore_(d, j - 1)
+        const score = getBitapScore(d, j - 1)
         // This match will almost certainly be better than any existing match.
         // But check anyway.
         if (score <= scoreThreshold) {
@@ -148,7 +148,7 @@ export function bitap_(
       }
     }
     // No hope for a (better) match at greater error levels.
-    if (bitapScore_(d + 1, loc) > scoreThreshold) {
+    if (getBitapScore(d + 1, loc) > scoreThreshold) {
       break
     }
     lastRd = rd
@@ -163,7 +163,7 @@ export function bitap_(
  * @returns Hash of character locations.
  * @internal
  */
-export function alphabet_(pattern: string): Alphabet {
+function getAlphabetFromPattern(pattern: string): Alphabet {
   const s: Alphabet = {}
   for (let i = 0; i < pattern.length; i++) {
     s[pattern.charAt(i)] = 0

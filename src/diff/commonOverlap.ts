@@ -7,7 +7,7 @@
  *   and the start of the second string.
  * @internal
  */
-export function commonOverlap_(textA: string, textB: string): number {
+export function getCommonOverlap(textA: string, textB: string): number {
   let text1 = textA
   let text2 = textB
 

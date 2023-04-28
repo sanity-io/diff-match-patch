@@ -1,5 +1,5 @@
-import {commonPrefix} from './commonPrefix.js'
-import {commonSuffix} from './commonSuffix.js'
+import {getCommonPrefix} from './commonPrefix.js'
+import {getCommonSuffix} from './commonSuffix.js'
 
 type HalfMatch = [string, string, string, string, string]
 
@@ -15,7 +15,7 @@ type HalfMatch = [string, string, string, string, string]
  *     text2 and the common middle.  Or null if there was no match.
  * @internal
  */
-function halfMatchI_(longtext: string, shorttext: string, i: number): null | HalfMatch {
+function halfMatchI(longtext: string, shorttext: string, i: number): null | HalfMatch {
   // Start with a 1/4 length substring at position i as a seed.
   const seed = longtext.substring(i, i + Math.floor(longtext.length / 4))
   let j = -1
@@ -26,8 +26,8 @@ function halfMatchI_(longtext: string, shorttext: string, i: number): null | Hal
   let bestShorttextB
 
   while ((j = shorttext.indexOf(seed, j + 1)) !== -1) {
-    const prefixLength = commonPrefix(longtext.substring(i), shorttext.substring(j))
-    const suffixLength = commonSuffix(longtext.substring(0, i), shorttext.substring(0, j))
+    const prefixLength = getCommonPrefix(longtext.substring(i), shorttext.substring(j))
+    const suffixLength = getCommonSuffix(longtext.substring(0, i), shorttext.substring(0, j))
     if (bestCommon.length < suffixLength + prefixLength) {
       bestCommon =
         shorttext.substring(j - suffixLength, j) + shorttext.substring(j, j + prefixLength)
@@ -62,7 +62,7 @@ function halfMatchI_(longtext: string, shorttext: string, i: number): null | Hal
  *     of shorttext and the common middle.  Or null if there was no match.
  * @internal
  */
-export function halfMatch_(text1: string, text2: string, timeout = 1): null | HalfMatch {
+export function findHalfMatch(text1: string, text2: string, timeout = 1): null | HalfMatch {
   if (timeout <= 0) {
     // Don't risk returning a non-optimal diff if we have unlimited time.
     return null
@@ -75,9 +75,9 @@ export function halfMatch_(text1: string, text2: string, timeout = 1): null | Ha
   }
 
   // First check if the second quarter is the seed for a half-match.
-  const hm1 = halfMatchI_(longtext, shorttext, Math.ceil(longtext.length / 4))
+  const hm1 = halfMatchI(longtext, shorttext, Math.ceil(longtext.length / 4))
   // Check again based on the third quarter.
-  const hm2 = halfMatchI_(longtext, shorttext, Math.ceil(longtext.length / 2))
+  const hm2 = halfMatchI(longtext, shorttext, Math.ceil(longtext.length / 2))
 
   let hm
   if (hm1 && hm2) {

@@ -1,8 +1,8 @@
 import {isHighSurrogate, isLowSurrogate} from '../utils/surrogatePairs.js'
 import {cleanupMerge} from './cleanup.js'
-import {commonPrefix} from './commonPrefix.js'
-import {commonSuffix} from './commonSuffix.js'
-import {compute_} from './compute.js'
+import {getCommonPrefix} from './commonPrefix.js'
+import {getCommonSuffix} from './commonSuffix.js'
+import {computeDiff} from './compute.js'
 
 /**
  * Diff type for deleted text.
@@ -64,6 +64,75 @@ export interface InternalDiffOptions {
    * Time when the diff should be complete by.
    */
   deadline: number
+}
+
+/**
+ * Find the differences between two texts.  Simplifies the problem by stripping
+ * any common prefix or suffix off the texts before diffing.
+ *
+ * @param textA - Old string to be diffed.
+ * @param textA - New string to be diffed.
+ * @returns Array of diff tuples.
+ * @public
+ */
+export function diff(
+  textA: null | string,
+  textB: null | string,
+  opts?: Partial<DiffOptions>
+): Diff[] {
+  // Check for null inputs.
+  if (textA === null || textB === null) {
+    throw new Error('Null input. (diff)')
+  }
+
+  const diffs = doDiff(textA, textB, createInternalOpts(opts || {}))
+  adjustDiffForSurrogatePairs(diffs)
+  return diffs
+}
+
+/**
+ * Find the differences between two texts.  Simplifies the problem by stripping
+ * any common prefix or suffix off the texts before diffing.
+ *
+ * @param textA - Old string to be diffed.
+ * @param textB - New string to be diffed.
+ * @returns Array of diff tuples.
+ * @internal
+ */
+export function doDiff(textA: string, textB: string, options: InternalDiffOptions): Diff[] {
+  // Don't reassign fn params
+  let text1 = textA
+  let text2 = textB
+
+  // Check for equality (speedup).
+  if (text1 === text2) {
+    return text1 ? [[DIFF_EQUAL, text1]] : []
+  }
+
+  // Trim off common prefix (speedup).
+  let commonlength = getCommonPrefix(text1, text2)
+  const commonprefix = text1.substring(0, commonlength)
+  text1 = text1.substring(commonlength)
+  text2 = text2.substring(commonlength)
+
+  // Trim off common suffix (speedup).
+  commonlength = getCommonSuffix(text1, text2)
+  const commonsuffix = text1.substring(text1.length - commonlength)
+  text1 = text1.substring(0, text1.length - commonlength)
+  text2 = text2.substring(0, text2.length - commonlength)
+
+  // Compute the diff on the middle block.
+  let diffs = computeDiff(text1, text2, options)
+
+  // Restore the prefix and suffix.
+  if (commonprefix) {
+    diffs.unshift([DIFF_EQUAL, commonprefix])
+  }
+  if (commonsuffix) {
+    diffs.push([DIFF_EQUAL, commonsuffix])
+  }
+  diffs = cleanupMerge(diffs)
+  return diffs
 }
 
 function createDeadLine(timeout: undefined | number): number {
@@ -223,73 +292,4 @@ function adjustDiffForSurrogatePairs(diffs: Diff[]) {
       diffs.splice(i, 1)
     }
   }
-}
-
-/**
- * Find the differences between two texts.  Simplifies the problem by stripping
- * any common prefix or suffix off the texts before diffing.
- *
- * @param textA - Old string to be diffed.
- * @param textA - New string to be diffed.
- * @returns Array of diff tuples.
- * @public
- */
-export function diff(
-  textA: null | string,
-  textB: null | string,
-  opts?: Partial<DiffOptions>
-): Diff[] {
-  // Check for null inputs.
-  if (textA === null || textB === null) {
-    throw new Error('Null input. (diff)')
-  }
-
-  const diffs = _diff(textA, textB, createInternalOpts(opts || {}))
-  adjustDiffForSurrogatePairs(diffs)
-  return diffs
-}
-
-/**
- * Find the differences between two texts.  Simplifies the problem by stripping
- * any common prefix or suffix off the texts before diffing.
- *
- * @param textA - Old string to be diffed.
- * @param textB - New string to be diffed.
- * @returns Array of diff tuples.
- * @internal
- */
-export function _diff(textA: string, textB: string, options: InternalDiffOptions): Diff[] {
-  // Don't reassign fn params
-  let text1 = textA
-  let text2 = textB
-
-  // Check for equality (speedup).
-  if (text1 === text2) {
-    return text1 ? [[DIFF_EQUAL, text1]] : []
-  }
-
-  // Trim off common prefix (speedup).
-  let commonlength = commonPrefix(text1, text2)
-  const commonprefix = text1.substring(0, commonlength)
-  text1 = text1.substring(commonlength)
-  text2 = text2.substring(commonlength)
-
-  // Trim off common suffix (speedup).
-  commonlength = commonSuffix(text1, text2)
-  const commonsuffix = text1.substring(text1.length - commonlength)
-  text1 = text1.substring(0, text1.length - commonlength)
-  text2 = text2.substring(0, text2.length - commonlength)
-
-  // Compute the diff on the middle block.
-  let diffs = compute_(text1, text2, options)
-
-  // Restore the prefix and suffix.
-  if (commonprefix) {
-    diffs.unshift([DIFF_EQUAL, commonprefix])
-  }
-  if (commonsuffix) {
-    diffs.push([DIFF_EQUAL, commonsuffix])
-  }
-  diffs = cleanupMerge(diffs)
-  return diffs
 }

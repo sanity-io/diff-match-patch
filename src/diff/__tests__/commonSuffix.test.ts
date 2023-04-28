@@ -1,14 +1,17 @@
-import {test, expect} from 'vitest'
-import {commonSuffix} from '../commonSuffix.js'
+import {describe, test, expect} from 'vitest'
+import {getCommonSuffix} from '../commonSuffix.js'
 
-test('commonSuffix', () => {
-  // Detect any common suffix.
-  // Null case.
-  expect(commonSuffix('abc', 'xyz')).toBe(0)
+// Detect any common suffix.
+describe('commonSuffix', () => {
+  test('Null case', () => {
+    expect(getCommonSuffix('abc', 'xyz')).toBe(0)
+  })
 
-  // Non-null case.
-  expect(commonSuffix('abcdef1234', 'xyz1234')).toBe(4)
+  test('Non-null case', () => {
+    expect(getCommonSuffix('abcdef1234', 'xyz1234')).toBe(4)
+  })
 
-  // Whole case.
-  expect(commonSuffix('1234', 'xyz1234')).toBe(4)
+  test('Whole case', () => {
+    expect(getCommonSuffix('1234', 'xyz1234')).toBe(4)
+  })
 })

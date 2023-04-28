@@ -1,4 +1,4 @@
-import {_diff, Diff, DIFF_DELETE, DIFF_INSERT} from './diff.js'
+import {doDiff, DIFF_DELETE, DIFF_INSERT, type Diff} from './diff.js'
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
@@ -10,7 +10,7 @@ import {_diff, Diff, DIFF_DELETE, DIFF_INSERT} from './diff.js'
  * @returns Array of diff tuples.
  * @internal
  */
-export function bisect_(text1: string, text2: string, deadline: number): Diff[] {
+export function bisect(text1: string, text2: string, deadline: number): Diff[] {
   // Cache the text lengths to prevent multiple calls.
   const text1Length = text1.length
   const text2Length = text2.length
@@ -70,7 +70,7 @@ export function bisect_(text1: string, text2: string, deadline: number): Diff[] 
           const x2 = text1Length - v2[k2Offset]
           if (x1 >= x2) {
             // Overlap detected.
-            return bisectSplit_(text1, text2, x1, y1, deadline)
+            return bisectSplit(text1, text2, x1, y1, deadline)
           }
         }
       }
@@ -110,7 +110,7 @@ export function bisect_(text1: string, text2: string, deadline: number): Diff[] 
           x2 = text1Length - x2
           if (x1 >= x2) {
             // Overlap detected.
-            return bisectSplit_(text1, text2, x1, y1, deadline)
+            return bisectSplit(text1, text2, x1, y1, deadline)
           }
         }
       }
@@ -135,21 +135,15 @@ export function bisect_(text1: string, text2: string, deadline: number): Diff[] 
  * @returns Array of diff tuples.
  * @internal
  */
-function bisectSplit_(
-  text1: string,
-  text2: string,
-  x: number,
-  y: number,
-  deadline: number
-): Diff[] {
+function bisectSplit(text1: string, text2: string, x: number, y: number, deadline: number): Diff[] {
   const text1a = text1.substring(0, x)
   const text2a = text2.substring(0, y)
   const text1b = text1.substring(x)
   const text2b = text2.substring(y)
 
   // Compute both diffs serially.
-  const diffs = _diff(text1a, text2a, {checkLines: false, deadline})
-  const diffsb = _diff(text1b, text2b, {checkLines: false, deadline})
+  const diffs = doDiff(text1a, text2a, {checkLines: false, deadline})
+  const diffsb = doDiff(text1b, text2b, {checkLines: false, deadline})
 
   return diffs.concat(diffsb)
 }

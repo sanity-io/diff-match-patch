@@ -6,7 +6,7 @@
  * @returns The number of characters common to the start of each string.
  * @internal
  */
-export function commonPrefix(text1: string, text2: string): number {
+export function getCommonPrefix(text1: string, text2: string): number {
   // Quick check for common null cases.
   if (!text1 || !text2 || text1[0] !== text2[0]) {
     return 0

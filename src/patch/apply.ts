@@ -9,8 +9,8 @@ import {match} from '../match/match.js'
 import {adjustIndiciesToUcs2} from '../utils/utf8Indices.js'
 import {addPadding} from './addPadding.js'
 import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
-import type {Patch} from './createPatchObject.js'
 import {splitMax} from './splitMax.js'
+import type {Patch} from './createPatchObject.js'
 
 /**
  * Options for applying a patch.

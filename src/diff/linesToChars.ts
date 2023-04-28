@@ -9,7 +9,7 @@
  *   strings is intentionally blank.
  * @internal
  */
-export function linesToChars_(
+export function linesToChars(
   textA: string,
   textB: string
 ): {

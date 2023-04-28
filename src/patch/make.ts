@@ -1,10 +1,10 @@
 import {cleanupSemantic, cleanupEfficiency} from '../diff/cleanup.js'
-import {diff, Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
+import {diff, type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {diffText1} from '../diff/diffText.js'
 import {isLowSurrogate} from '../utils/surrogatePairs.js'
 import {adjustIndiciesToUtf8, countUtf8Bytes} from '../utils/utf8Indices.js'
 import {MAX_BITS} from './constants.js'
-import {createPatchObject, Patch} from './createPatchObject.js'
+import {createPatchObject, type Patch} from './createPatchObject.js'
 
 /**
  * Options for patch generation.
@@ -142,7 +142,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
         } else if (diffTextLength >= 2 * options.margin) {
           // Time for a new patch.
           if (patchDiffLength) {
-            addContext_(patch, prepatchText, options)
+            addContext(patch, prepatchText, options)
             patches.push(patch)
             patch = createPatchObject(-1, -1)
             patchDiffLength = 0
@@ -169,7 +169,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
   }
   // Pick up the leftover patch if not empty.
   if (patchDiffLength) {
-    addContext_(patch, prepatchText, options)
+    addContext(patch, prepatchText, options)
     patches.push(patch)
   }
 
@@ -185,7 +185,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
  * @param opts
  * @internal
  */
-export function addContext_(patch: Patch, text: string, opts: MakePatchOptions): void {
+export function addContext(patch: Patch, text: string, opts: MakePatchOptions): void {
   if (text.length === 0) {
     return
   }

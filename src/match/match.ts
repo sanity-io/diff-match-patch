@@ -1,4 +1,4 @@
-import {bitap_} from './bitap.js'
+import {bitap} from './bitap.js'
 
 /**
  * Locate the best instance of 'pattern' in 'text' near 'loc'.
@@ -28,5 +28,5 @@ export function match(text: string, pattern: string, searchLocation: number): nu
   }
 
   // Do a fuzzy compare.
-  return bitap_(text, pattern, loc)
+  return bitap(text, pattern, loc)
 }

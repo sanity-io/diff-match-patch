@@ -1,14 +1,13 @@
-import {Diff} from './diff.js'
+import type {Diff} from './diff.js'
 
 /**
- * Rehydrate the text in a diff from a string of line hashes to real lines of
- * text.
+ * Rehydrate the text in a diff from a string of line hashes to real lines of text.
  *
  * @param diffs - Array of diff tuples.
  * @param lineArray - Array of unique strings.
  * @internal
  */
-export function charsToLines_(diffs: Diff[], lineArray: string[]): void {
+export function charsToLines(diffs: Diff[], lineArray: string[]): void {
   for (let x = 0; x < diffs.length; x++) {
     const chars = diffs[x][1]
     const text = []

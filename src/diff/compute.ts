@@ -1,7 +1,14 @@
-import {bisect_} from './bisect.js'
-import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff, InternalDiffOptions, _diff} from './diff.js'
-import {halfMatch_} from './halfMatch.js'
-import {lineMode_} from './lineMode.js'
+import {
+  doDiff,
+  DIFF_DELETE,
+  DIFF_EQUAL,
+  DIFF_INSERT,
+  type Diff,
+  type InternalDiffOptions,
+} from './diff.js'
+import {bisect} from './bisect.js'
+import {findHalfMatch} from './halfMatch.js'
+import {doLineModeDiff} from './lineMode.js'
 
 /**
  * Find the differences between two texts.  Assumes that the texts do not
@@ -16,7 +23,7 @@ import {lineMode_} from './lineMode.js'
  * @returns Array of diff tuples.
  * @internal
  */
-export function compute_(text1: string, text2: string, opts: InternalDiffOptions): Diff[] {
+export function computeDiff(text1: string, text2: string, opts: InternalDiffOptions): Diff[] {
   let diffs: Diff[]
 
   if (!text1) {
@@ -57,7 +64,7 @@ export function compute_(text1: string, text2: string, opts: InternalDiffOptions
   }
 
   // Check to see if the problem can be split in two.
-  const halfMatch = halfMatch_(text1, text2)
+  const halfMatch = findHalfMatch(text1, text2)
   if (halfMatch) {
     // A half-match was found, sort out the return data.
     const text1A = halfMatch[0]
@@ -66,15 +73,15 @@ export function compute_(text1: string, text2: string, opts: InternalDiffOptions
     const text2B = halfMatch[3]
     const midCommon = halfMatch[4]
     // Send both pairs off for separate processing.
-    const diffsA = _diff(text1A, text2A, opts)
-    const diffsB = _diff(text1B, text2B, opts)
+    const diffsA = doDiff(text1A, text2A, opts)
+    const diffsB = doDiff(text1B, text2B, opts)
     // Merge the results.
     return diffsA.concat([[DIFF_EQUAL, midCommon]], diffsB)
   }
 
   if (opts.checkLines && text1.length > 100 && text2.length > 100) {
-    return lineMode_(text1, text2, opts)
+    return doLineModeDiff(text1, text2, opts)
   }
 
-  return bisect_(text1, text2, opts.deadline)
+  return bisect(text1, text2, opts.deadline)
 }
