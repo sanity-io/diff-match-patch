@@ -5,6 +5,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/sanity-io/diff-match-patch/compare/v2.1.0...v3.0.0) (2023-04-28)
+
+### ⚠ BREAKING CHANGES
+
+- Generated patches will now also generate _lengths_ that are in
+  UTF-8 lengths, instead of in UCS-2 lengths. This brings it to parity with other
+  unicode-aware libraries.
+
+### Bug Fixes
+
+- generate and parse as utf8 lengths ([a586ec8](https://github.com/sanity-io/diff-match-patch/commit/a586ec88be03fa4bf775462c95c01072763dcb56))
+
 ## [2.1.0](https://github.com/sanity-io/diff-match-patch/compare/v2.0.0...v2.1.0) (2023-04-25)
 
 ### Features
