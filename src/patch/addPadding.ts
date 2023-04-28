@@ -34,8 +34,8 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): s
     patch.start2 -= paddingLength // Should be 0.
     patch.length1 += paddingLength
     patch.length2 += paddingLength
-    patch.byteLength1 += paddingLength
-    patch.byteLength2 += paddingLength
+    patch.utf8Length1 += paddingLength
+    patch.utf8Length2 += paddingLength
   } else if (paddingLength > diffs[0][1].length) {
     // Grow first equality.
     const extraLength = paddingLength - diffs[0][1].length
@@ -44,8 +44,8 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): s
     patch.start2 -= extraLength
     patch.length1 += extraLength
     patch.length2 += extraLength
-    patch.byteLength1 += extraLength
-    patch.byteLength2 += extraLength
+    patch.utf8Length1 += extraLength
+    patch.utf8Length2 += extraLength
   }
 
   // Add some padding on end of last diff.
@@ -56,16 +56,16 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): s
     diffs.push([DIFF_EQUAL, nullPadding])
     patch.length1 += paddingLength
     patch.length2 += paddingLength
-    patch.byteLength1 += paddingLength
-    patch.byteLength2 += paddingLength
+    patch.utf8Length1 += paddingLength
+    patch.utf8Length2 += paddingLength
   } else if (paddingLength > diffs[diffs.length - 1][1].length) {
     // Grow last equality.
     const extraLength = paddingLength - diffs[diffs.length - 1][1].length
     diffs[diffs.length - 1][1] += nullPadding.substring(0, extraLength)
     patch.length1 += extraLength
     patch.length2 += extraLength
-    patch.byteLength1 += extraLength
-    patch.byteLength2 += extraLength
+    patch.utf8Length1 += extraLength
+    patch.utf8Length2 += extraLength
   }
 
   return nullPadding

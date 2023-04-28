@@ -11,8 +11,8 @@ export interface Patch {
   start2: number
   length1: number
   length2: number
-  byteLength1: number
-  byteLength2: number
+  utf8Length1: number
+  utf8Length2: number
 }
 
 /**
@@ -52,7 +52,7 @@ export function createPatchObject(start1: number, start2: number): Patch {
     start2,
     length1: 0,
     length2: 0,
-    byteLength1: 0,
-    byteLength2: 0,
+    utf8Length1: 0,
+    utf8Length2: 0,
   }
 }

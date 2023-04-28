@@ -119,13 +119,13 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
       case DIFF_INSERT:
         patch.diffs[patchDiffLength++] = diffs[x]
         patch.length2 += diffTextLength
-        patch.byteLength2 += diffByteLength
+        patch.utf8Length2 += diffByteLength
         postpatchText =
           postpatchText.substring(0, charCount2) + diffText + postpatchText.substring(charCount2)
         break
       case DIFF_DELETE:
         patch.length1 += diffTextLength
-        patch.byteLength1 += diffByteLength
+        patch.utf8Length1 += diffByteLength
         patch.diffs[patchDiffLength++] = diffs[x]
         postpatchText =
           postpatchText.substring(0, charCount2) +
@@ -137,8 +137,8 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
           patch.diffs[patchDiffLength++] = diffs[x]
           patch.length1 += diffTextLength
           patch.length2 += diffTextLength
-          patch.byteLength1 += diffByteLength
-          patch.byteLength2 += diffByteLength
+          patch.utf8Length1 += diffByteLength
+          patch.utf8Length2 += diffByteLength
         } else if (diffTextLength >= 2 * options.margin) {
           // Time for a new patch.
           if (patchDiffLength) {
@@ -237,6 +237,6 @@ export function addContext_(patch: Patch, text: string, opts: MakePatchOptions):
   // Extend the lengths.
   patch.length1 += prefix.length + suffix.length
   patch.length2 += prefix.length + suffix.length
-  patch.byteLength1 += prefix.length + suffix.length
-  patch.byteLength2 += prefix.length + suffix.length
+  patch.utf8Length1 += prefix.length + suffix.length
+  patch.utf8Length2 += prefix.length + suffix.length
 }

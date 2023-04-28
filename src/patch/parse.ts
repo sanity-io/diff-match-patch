@@ -31,27 +31,31 @@ export function parse(textline: string): Patch[] {
     if (m[2] === '') {
       patch.start1--
       patch.length1 = 1
-      patch.byteLength1 = 1
+      patch.utf8Length1 = 1
     } else if (m[2] === '0') {
       patch.length1 = 0
-      patch.byteLength1 = 0
+      patch.utf8Length1 = 0
     } else {
       patch.start1--
-      patch.length1 = toInt(m[2])
-      patch.byteLength1 = patch.length1
+      // The patch itself will contain the UTF-8 length
+      patch.utf8Length1 = toInt(m[2])
+      // We start with UCS-2 length set to the same, but we adjust for it later
+      patch.length1 = patch.utf8Length1
     }
 
     if (m[4] === '') {
       patch.start2--
       patch.length2 = 1
-      patch.byteLength2 = 1
+      patch.utf8Length2 = 1
     } else if (m[4] === '0') {
       patch.length2 = 0
-      patch.byteLength2 = 0
+      patch.utf8Length2 = 0
     } else {
       patch.start2--
-      patch.length2 = toInt(m[4])
-      patch.byteLength2 = patch.length2
+      // The patch itself will contain the UTF-8 length
+      patch.utf8Length2 = toInt(m[4])
+      // We start with UCS-2 length set to the same, but we adjust for it later
+      patch.length2 = patch.utf8Length2
     }
     textPointer++
 
@@ -78,6 +82,9 @@ export function parse(textline: string): Patch[] {
         throw new Error(`Illegal escape in parse: ${currentLine}`)
       }
 
+      // The number of bytes in a line does not equate to the number of "characters"
+      // returned by `string.length` - we have to subtract the diff here in order to
+      // make slicing/calculations work correctly
       const utf8Diff = countUtf8Bytes(line) - line.length
       if (sign === '-') {
         // Deletion.

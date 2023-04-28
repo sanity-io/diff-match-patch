@@ -32,9 +32,9 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
       if (preContext !== '') {
         const precontextByteCount = countUtf8Bytes(preContext)
         patch.length1 = preContext.length
-        patch.byteLength1 = precontextByteCount
+        patch.utf8Length1 = precontextByteCount
         patch.length2 = preContext.length
-        patch.byteLength2 = precontextByteCount
+        patch.utf8Length2 = precontextByteCount
         patch.diffs.push([DIFF_EQUAL, preContext])
       }
       while (bigpatch.diffs.length !== 0 && patch.length1 < patchSize - margin) {
@@ -44,7 +44,7 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
         if (diffType === DIFF_INSERT) {
           // Insertions are harmless.
           patch.length2 += diffText.length
-          patch.byteLength2 += diffTextByteCount
+          patch.utf8Length2 += diffTextByteCount
           start2 += diffText.length
           const diff = bigpatch.diffs.shift()
           if (diff) {
@@ -59,7 +59,7 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
         ) {
           // This is a large deletion.  Let it pass in one chunk.
           patch.length1 += diffText.length
-          patch.byteLength1 += diffTextByteCount
+          patch.utf8Length1 += diffTextByteCount
           start1 += diffText.length
           empty = false
           patch.diffs.push([diffType, diffText])
@@ -69,11 +69,11 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
           diffText = diffText.substring(0, patchSize - patch.length1 - margin)
           diffTextByteCount = countUtf8Bytes(diffText)
           patch.length1 += diffText.length
-          patch.byteLength1 += diffTextByteCount
+          patch.utf8Length1 += diffTextByteCount
           start1 += diffText.length
           if (diffType === DIFF_EQUAL) {
             patch.length2 += diffText.length
-            patch.byteLength2 += diffTextByteCount
+            patch.utf8Length2 += diffTextByteCount
             start2 += diffText.length
           } else {
             empty = false
@@ -95,8 +95,8 @@ export function splitMax(patches: Patch[], margin: number = DEFAULT_MARGIN): voi
       if (postContext !== '') {
         patch.length1 += postContext.length
         patch.length2 += postContext.length
-        patch.byteLength1 += postContextByteCount
-        patch.byteLength2 += postContextByteCount
+        patch.utf8Length1 += postContextByteCount
+        patch.utf8Length2 += postContextByteCount
         if (patch.diffs.length !== 0 && patch.diffs[patch.diffs.length - 1][0] === DIFF_EQUAL) {
           patch.diffs[patch.diffs.length - 1][1] += postContext
         } else {

@@ -20,24 +20,24 @@ export function stringify(patches: Patch[]): string {
  * @public
  */
 export function stringifyPatch(patch: Patch): string {
-  const {byteLength1, byteLength2, start1, start2, diffs} = patch
+  const {utf8Length1, utf8Length2, start1, start2, diffs} = patch
 
   let coords1: string
-  if (byteLength1 === 0) {
+  if (utf8Length1 === 0) {
     coords1 = `${start1},0`
-  } else if (byteLength1 === 1) {
+  } else if (utf8Length1 === 1) {
     coords1 = `${start1 + 1}`
   } else {
-    coords1 = `${start1 + 1},${byteLength1}`
+    coords1 = `${start1 + 1},${utf8Length1}`
   }
 
   let coords2: string
-  if (byteLength2 === 0) {
+  if (utf8Length2 === 0) {
     coords2 = `${start2},0`
-  } else if (byteLength2 === 1) {
+  } else if (utf8Length2 === 1) {
     coords2 = `${start2 + 1}`
   } else {
-    coords2 = `${start2 + 1},${byteLength2}`
+    coords2 = `${start2 + 1},${utf8Length2}`
   }
 
   const text = [`@@ -${coords1} +${coords2} @@\n`]
