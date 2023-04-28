@@ -1,5 +1,5 @@
 import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
-import {Patch} from './createPatchObject.js'
+import type {Patch} from './createPatchObject.js'
 
 /**
  * Create a textual representation of a patch list.
@@ -13,34 +13,39 @@ export function stringify(patches: Patch[]): string {
 }
 
 /**
- * Create a textual representation of a patch.
+ * Create a textual representation of a
  *
  * @param patch - Patch to stringify
  * @returns Text representation of patch
  * @public
  */
 export function stringifyPatch(patch: Patch): string {
-  let coords1
-  let coords2
-  if (patch.length1 === 0) {
-    coords1 = `${patch.start1},0`
-  } else if (patch.length1 === 1) {
-    coords1 = patch.start1 + 1
+  const {length1, length2, start1, start2, diffs} = patch
+
+  let coords1: string
+  if (length1 === 0) {
+    coords1 = `${start1},0`
+  } else if (length1 === 1) {
+    coords1 = `${start1 + 1}`
   } else {
-    coords1 = `${patch.start1 + 1},${patch.length1}`
+    coords1 = `${start1 + 1},${length1}`
   }
-  if (patch.length2 === 0) {
-    coords2 = `${patch.start2},0`
-  } else if (patch.length2 === 1) {
-    coords2 = patch.start2 + 1
+
+  let coords2: string
+  if (length2 === 0) {
+    coords2 = `${start2},0`
+  } else if (length2 === 1) {
+    coords2 = `${start2 + 1}`
   } else {
-    coords2 = `${patch.start2 + 1},${patch.length2}`
+    coords2 = `${start2 + 1},${length2}`
   }
+
   const text = [`@@ -${coords1} +${coords2} @@\n`]
   let op
+
   // Escape the body of the patch with %xx notation.
-  for (let x = 0; x < patch.diffs.length; x++) {
-    switch (patch.diffs[x][0]) {
+  for (let x = 0; x < diffs.length; x++) {
+    switch (diffs[x][0]) {
       case DIFF_INSERT:
         op = '+'
         break
@@ -53,7 +58,8 @@ export function stringifyPatch(patch: Patch): string {
       default:
         throw new Error('Unknown patch operation.')
     }
-    text[x + 1] = `${op + encodeURI(patch.diffs[x][1])}\n`
+    text[x + 1] = `${op + encodeURI(diffs[x][1])}\n`
   }
+
   return text.join('').replace(/%20/g, ' ')
 }

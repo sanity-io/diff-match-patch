@@ -8,7 +8,7 @@ import {xIndex} from '../diff/xIndex.js'
 import {match} from '../match/match.js'
 import {adjustIndiciesToUcs2} from '../utils/utf8Indices.js'
 import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
-import {Patch} from './createPatchObject.js'
+import type {Patch} from './createPatchObject.js'
 import {splitMax} from './splitMax.js'
 
 /**
@@ -123,8 +123,7 @@ export function apply(
           diffText2(parsed[x].diffs) +
           text.substring(startLoc + text1.length)
       } else {
-        // Imperfect match.  Run a diff to get a framework of equivalent
-        // indices.
+        // Imperfect match. Run a diff to get a framework of equivalent indices.
         let diffs = diff(text1, text2, {checkLines: false})
         if (text1.length > MAX_BITS && levenshtein(diffs) / text1.length > deleteThreshold) {
           // The end points match, but the content is unacceptably bad.
@@ -166,7 +165,8 @@ export function apply(
  * Intended to be called only from within patch_apply.
  *
  * @param patches - Array of Patch objects.
- * @returns The padding string added to each side.
+ * @param margin - The margin length to add.
+ * @returns The string, padded on each side.
  * @internal
  */
 export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): string {
