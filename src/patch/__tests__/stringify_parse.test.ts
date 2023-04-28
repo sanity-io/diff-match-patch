@@ -16,7 +16,9 @@ test('stringifyPatch', () => {
   // Patch Object.
   const p = createPatchObject(20, 21)
   p.length1 = 18
+  p.byteLength1 = 18
   p.length2 = 17
+  p.byteLength2 = 17
   p.diffs = [
     [DIFF_EQUAL, 'jump'],
     [DIFF_DELETE, 's'],

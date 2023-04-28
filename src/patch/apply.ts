@@ -107,6 +107,7 @@ export function apply(
       results[x] = false
       // Subtract the delta for this failed patch from subsequent patches.
       delta -= parsed[x].length2 - parsed[x].length1
+      // @todo byte count?
     } else {
       // Found a match.  :)
       results[x] = true

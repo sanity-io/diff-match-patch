@@ -1,4 +1,5 @@
 import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
+import {countUtf8Bytes} from '../utils/utf8Indices.js'
 import {createPatchObject, type Patch} from './createPatchObject.js'
 
 const patchHeader = /^@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@$/
@@ -30,47 +31,67 @@ export function parse(textline: string): Patch[] {
     if (m[2] === '') {
       patch.start1--
       patch.length1 = 1
+      patch.byteLength1 = 1
     } else if (m[2] === '0') {
       patch.length1 = 0
+      patch.byteLength1 = 0
     } else {
       patch.start1--
       patch.length1 = toInt(m[2])
+      patch.byteLength1 = patch.length1
     }
 
     if (m[4] === '') {
       patch.start2--
       patch.length2 = 1
+      patch.byteLength2 = 1
     } else if (m[4] === '0') {
       patch.length2 = 0
+      patch.byteLength2 = 0
     } else {
       patch.start2--
       patch.length2 = toInt(m[4])
+      patch.byteLength2 = patch.length2
     }
     textPointer++
 
     while (textPointer < lines.length) {
-      const sign = lines[textPointer].charAt(0)
-      let line
+      const currentLine = lines[textPointer]
+      const sign = currentLine.charAt(0)
+
+      if (sign === '@') {
+        // Start of next patch
+        break
+      }
+
+      if (sign === '') {
+        // Blank line? Ignore.
+        textPointer++
+        continue
+      }
+
+      let line: string
       try {
-        line = decodeURI(lines[textPointer].substring(1))
+        line = decodeURI(currentLine.substring(1))
       } catch (ex) {
         // Malformed URI sequence.
-        throw new Error(`Illegal escape in parse: ${line}`)
+        throw new Error(`Illegal escape in parse: ${currentLine}`)
       }
+
+      const utf8Diff = countUtf8Bytes(line) - line.length
       if (sign === '-') {
         // Deletion.
         patch.diffs.push([DIFF_DELETE, line])
+        patch.length1 -= utf8Diff
       } else if (sign === '+') {
         // Insertion.
         patch.diffs.push([DIFF_INSERT, line])
+        patch.length2 -= utf8Diff
       } else if (sign === ' ') {
         // Minor equality.
         patch.diffs.push([DIFF_EQUAL, line])
-      } else if (sign === '@') {
-        // Start of next patch.
-        break
-      } else if (sign === '') {
-        // Blank line?  Whatever.
+        patch.length1 -= utf8Diff
+        patch.length2 -= utf8Diff
       } else {
         // WTF?
         throw new Error(`Invalid patch mode "${sign}" in: ${line}`)

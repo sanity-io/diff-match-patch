@@ -61,6 +61,8 @@ test('patch api', () => {
         [DIFF_INSERT, 'to'],
         [DIFF_EQUAL, ' thi'],
       ],
+      byteLength1: 8,
+      byteLength2: 6,
       length1: 8,
       length2: 6,
       start1: 0,

@@ -45,6 +45,8 @@ export function adjustIndiciesToUtf8(patches: Patch[], base: string): Patch[] {
       start2: advanceTo(patch.start2),
       length1: patch.length1,
       length2: patch.length2,
+      byteLength1: patch.byteLength1,
+      byteLength2: patch.byteLength2,
     })
   }
 
@@ -97,6 +99,8 @@ export function adjustIndiciesToUcs2(patches: Patch[], base: string): Patch[] {
       start2: advanceTo(patch.start2),
       length1: patch.length1,
       length2: patch.length2,
+      byteLength1: patch.byteLength1,
+      byteLength2: patch.byteLength2,
     })
   }
 
@@ -109,4 +113,16 @@ function utf8len(codePoint: number): 1 | 2 | 3 | 4 {
   if (codePoint <= 0x07ff) return 2
   if (codePoint <= 0xffff) return 3
   return 4
+}
+
+export function countUtf8Bytes(str: string): number {
+  let bytes = 0
+  for (let i = 0; i < str.length; i++) {
+    const codePoint = str.codePointAt(i)
+    if (typeof codePoint === 'undefined') {
+      throw new Error('Failed to get codepoint')
+    }
+    bytes += utf8len(codePoint)
+  }
+  return bytes
 }

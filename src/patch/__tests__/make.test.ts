@@ -64,6 +64,18 @@ describe('make', () => {
     )
   })
 
+  test('Unicode character encoding', () => {
+    const patches = make('Dette blir gøy.', 'Dette blir kjipt.')
+    expect(stringify(patches)).toMatchInlineSnapshot(`
+      "@@ -8,9 +8,10 @@
+       lir 
+      -g%C3%B8y
+      +kjipt
+       .
+      "
+    `)
+  })
+
   test('Long string with repeats', () => {
     let textA = ''
     for (let x = 0; x < 100; x++) {
