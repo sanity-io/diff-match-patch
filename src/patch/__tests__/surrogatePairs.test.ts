@@ -1,46 +1,46 @@
 import {describe, expect, test} from 'vitest'
 import {diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../../diff/diff.js'
 import {toDelta} from '../../diff/toDelta.js'
-import {Patch} from '../createPatchObject.js'
 import {apply} from '../apply.js'
 import {make} from '../make.js'
 import {parse} from '../parse.js'
 import {stringify} from '../stringify.js'
 
-test('surrogate pairs', () => {
-  let p: Patch[]
-  let p2: Patch[]
-  let strp: string
+describe('surrogate pairs', () => {
+  test(`share the same high surrogate prefix`, () => {
+    const p = make('\u{1F30D}', '\u{1F308}')
+    const strp = stringify(p)
+    const p2 = parse(strp)
+    expect(p).toEqual(p2)
+  })
 
-  // These share the same high surrogate prefix
-  p = make('\u{1F30D}', '\u{1F308}')
-  strp = stringify(p)
-  p2 = parse(strp)
-  expect(p).toEqual(p2)
+  test(`share the same low surrogate suffix`, () => {
+    const p = make('\u{10120}', '\u{10520}')
+    const strp = stringify(p)
+    const p2 = parse(strp)
+    expect(p).toEqual(p2)
+  })
 
-  // These share the same low surrogate suffix
-  p = make('\u{10120}', '\u{10520}')
-  strp = stringify(p)
-  p2 = parse(strp)
-  expect(p).toEqual(p2)
+  test(`no common prefix, but later there's the same high surrogate char`, () => {
+    const p = make('abbb\u{1F30D}', 'cbbb\u{1F308}')
+    const strp = stringify(p)
+    const p2 = parse(strp)
+    expect(p).toEqual(p2)
+  })
 
-  // No common prefix, but later there's the same high surrogate char
-  p = make('abbb\u{1F30D}', 'cbbb\u{1F308}')
-  strp = stringify(p)
-  p2 = parse(strp)
-  expect(p).toEqual(p2)
+  test(`no common suffix, but earlier there's the same low surrogate char`, () => {
+    const p = make('\u{10120}aaac', '\u{10520}aaab')
+    const strp = stringify(p)
+    const p2 = parse(strp)
+    expect(p).toEqual(p2)
+  })
 
-  // No common suffix, but earlier there's the same low surrogate char
-  p = make('\u{10120}aaac', '\u{10520}aaab')
-  strp = stringify(p)
-  p2 = parse(strp)
-  expect(p).toEqual(p2)
-
-  // No common suffix, but earlier there's the same low surrogate char
-  p = make('abbb\u{10120}aaac', '\u{10520}aaab')
-  strp = stringify(p)
-  p2 = parse(strp)
-  expect(p).toEqual(p2)
+  test(`no common suffix, but earlier there's the same low surrogate char`, () => {
+    const p = make('abbb\u{10120}aaac', '\u{10520}aaab')
+    const strp = stringify(p)
+    const p2 = parse(strp)
+    expect(p).toEqual(p2)
+  })
 })
 
 test('surrogate pairs: random edits', () => {
