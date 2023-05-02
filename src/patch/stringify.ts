@@ -13,31 +13,31 @@ export function stringify(patches: Patch[]): string {
 }
 
 /**
- * Create a textual representation of a
+ * Create a textual representation of a patch.
  *
  * @param patch - Patch to stringify
  * @returns Text representation of patch
  * @public
  */
 export function stringifyPatch(patch: Patch): string {
-  const {utf8Length1, utf8Length2, start1, start2, diffs} = patch
+  const {utf8Length1, utf8Length2, utf8Start1, utf8Start2, diffs} = patch
 
   let coords1: string
   if (utf8Length1 === 0) {
-    coords1 = `${start1},0`
+    coords1 = `${utf8Start1},0`
   } else if (utf8Length1 === 1) {
-    coords1 = `${start1 + 1}`
+    coords1 = `${utf8Start1 + 1}`
   } else {
-    coords1 = `${start1 + 1},${utf8Length1}`
+    coords1 = `${utf8Start1 + 1},${utf8Length1}`
   }
 
   let coords2: string
   if (utf8Length2 === 0) {
-    coords2 = `${start2},0`
+    coords2 = `${utf8Start2},0`
   } else if (utf8Length2 === 1) {
-    coords2 = `${start2 + 1}`
+    coords2 = `${utf8Start2 + 1}`
   } else {
-    coords2 = `${start2 + 1},${utf8Length2}`
+    coords2 = `${utf8Start2 + 1},${utf8Length2}`
   }
 
   const text = [`@@ -${coords1} +${coords2} @@\n`]

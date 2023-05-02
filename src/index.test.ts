@@ -67,6 +67,8 @@ test('patch api', () => {
       length2: 6,
       start1: 0,
       start2: 0,
+      utf8Start1: 0,
+      utf8Start2: 0,
     },
   ])
 

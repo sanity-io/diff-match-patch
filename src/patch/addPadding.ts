@@ -22,6 +22,8 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): s
   for (const p of patches) {
     p.start1 += paddingLength
     p.start2 += paddingLength
+    p.utf8Start1 += paddingLength
+    p.utf8Start2 += paddingLength
   }
 
   // Add some padding on start of first diff.
@@ -32,16 +34,21 @@ export function addPadding(patches: Patch[], margin: number = DEFAULT_MARGIN): s
     diffs.unshift([DIFF_EQUAL, nullPadding])
     patch.start1 -= paddingLength // Should be 0.
     patch.start2 -= paddingLength // Should be 0.
+    patch.utf8Start1 -= paddingLength // Should be 0.
+    patch.utf8Start2 -= paddingLength // Should be 0.
     patch.length1 += paddingLength
     patch.length2 += paddingLength
     patch.utf8Length1 += paddingLength
     patch.utf8Length2 += paddingLength
   } else if (paddingLength > diffs[0][1].length) {
     // Grow first equality.
-    const extraLength = paddingLength - diffs[0][1].length
-    diffs[0][1] = nullPadding.substring(diffs[0][1].length) + diffs[0][1]
+    const firstDiffLength = diffs[0][1].length
+    const extraLength = paddingLength - firstDiffLength
+    diffs[0][1] = nullPadding.substring(firstDiffLength) + diffs[0][1]
     patch.start1 -= extraLength
     patch.start2 -= extraLength
+    patch.utf8Start1 -= extraLength
+    patch.utf8Start2 -= extraLength
     patch.length1 += extraLength
     patch.length2 += extraLength
     patch.utf8Length1 += extraLength

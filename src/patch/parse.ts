@@ -30,6 +30,7 @@ export function parse(textline: string): Patch[] {
     patches.push(patch)
     if (m[2] === '') {
       patch.start1--
+      patch.utf8Start1--
       patch.length1 = 1
       patch.utf8Length1 = 1
     } else if (m[2] === '0') {
@@ -37,6 +38,7 @@ export function parse(textline: string): Patch[] {
       patch.utf8Length1 = 0
     } else {
       patch.start1--
+      patch.utf8Start1--
       // The patch itself will contain the UTF-8 length
       patch.utf8Length1 = toInt(m[2])
       // We start with UCS-2 length set to the same, but we adjust for it later
@@ -45,6 +47,7 @@ export function parse(textline: string): Patch[] {
 
     if (m[4] === '') {
       patch.start2--
+      patch.utf8Start2--
       patch.length2 = 1
       patch.utf8Length2 = 1
     } else if (m[4] === '0') {
@@ -52,6 +55,7 @@ export function parse(textline: string): Patch[] {
       patch.utf8Length2 = 0
     } else {
       patch.start2--
+      patch.utf8Start2--
       // The patch itself will contain the UTF-8 length
       patch.utf8Length2 = toInt(m[4])
       // We start with UCS-2 length set to the same, but we adjust for it later

@@ -7,8 +7,12 @@ import type {Diff} from '../diff/diff.js'
  */
 export interface Patch {
   diffs: Diff[]
+
   start1: number
   start2: number
+  utf8Start1: number
+  utf8Start2: number
+
   length1: number
   length2: number
   utf8Length1: number
@@ -48,8 +52,12 @@ export function deepCopy(patches: Patch[]): Patch[] {
 export function createPatchObject(start1: number, start2: number): Patch {
   return {
     diffs: [],
+
     start1,
     start2,
+    utf8Start1: start1,
+    utf8Start2: start2,
+
     length1: 0,
     length2: 0,
     utf8Length1: 0,

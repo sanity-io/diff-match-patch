@@ -14,8 +14,8 @@ describe('commonOverLap', () => {
   test('No overlap', () => {
     expect(getCommonOverlap('123456', 'abcd')).toBe(0)
   })
-  //
-  test('// Overlap', () => {
+
+  test('Overlap', () => {
     expect(getCommonOverlap('123456xxx', 'xxxabcd')).toBe(3)
   })
 

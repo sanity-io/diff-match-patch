@@ -2,7 +2,7 @@ import {cleanupSemantic, cleanupEfficiency} from '../diff/cleanup.js'
 import {diff, type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {diffText1} from '../diff/diffText.js'
 import {isLowSurrogate} from '../utils/surrogatePairs.js'
-import {adjustIndiciesToUtf8, countUtf8Bytes} from '../utils/utf8Indices.js'
+import {countUtf8Bytes} from '../utils/utf8Indices.js'
 import {MAX_BITS} from './constants.js'
 import {createPatchObject, type Patch} from './createPatchObject.js'
 
@@ -94,18 +94,23 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
     return [] // Get rid of the null case.
   }
   const patches = []
+
   let patch = createPatchObject(0, 0)
   let patchDiffLength = 0 // Keeping our own length var is faster in JS.
   let charCount1 = 0 // Number of characters into the textA string.
   let charCount2 = 0 // Number of characters into the textB string.
+  let utf8Count1 = 0 // Number of utf-8 bytes into the textA string.
+  let utf8Count2 = 0 // Number of utf-8 bytes into the textB string.
+
   // Start with textA (prepatchText) and apply the diffs until we arrive at
   // textB (postpatchText).  We recreate the patches one by one to determine
   // context info.
   let prepatchText = textA
   let postpatchText = textA
+
   for (let x = 0; x < diffs.length; x++) {
-    const diffType = diffs[x][0]
-    const diffText = diffs[x][1]
+    const currentDiff = diffs[x]
+    const [diffType, diffText] = currentDiff
     const diffTextLength = diffText.length
     const diffByteLength = countUtf8Bytes(diffText)
 
@@ -113,11 +118,13 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
       // A new patch starts here.
       patch.start1 = charCount1
       patch.start2 = charCount2
+      patch.utf8Start1 = utf8Count1
+      patch.utf8Start2 = utf8Count2
     }
 
     switch (diffType) {
       case DIFF_INSERT:
-        patch.diffs[patchDiffLength++] = diffs[x]
+        patch.diffs[patchDiffLength++] = currentDiff
         patch.length2 += diffTextLength
         patch.utf8Length2 += diffByteLength
         postpatchText =
@@ -126,7 +133,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
       case DIFF_DELETE:
         patch.length1 += diffTextLength
         patch.utf8Length1 += diffByteLength
-        patch.diffs[patchDiffLength++] = diffs[x]
+        patch.diffs[patchDiffLength++] = currentDiff
         postpatchText =
           postpatchText.substring(0, charCount2) +
           postpatchText.substring(charCount2 + diffTextLength)
@@ -134,7 +141,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
       case DIFF_EQUAL:
         if (diffTextLength <= 2 * options.margin && patchDiffLength && diffs.length !== x + 1) {
           // Small equality inside a patch.
-          patch.diffs[patchDiffLength++] = diffs[x]
+          patch.diffs[patchDiffLength++] = currentDiff
           patch.length1 += diffTextLength
           patch.length2 += diffTextLength
           patch.utf8Length1 += diffByteLength
@@ -152,6 +159,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
             // just completed patch.
             prepatchText = postpatchText
             charCount1 = charCount2
+            utf8Count1 = utf8Count2
           }
         }
         break
@@ -162,18 +170,21 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
     // Update the current character count.
     if (diffType !== DIFF_INSERT) {
       charCount1 += diffTextLength
+      utf8Count1 += diffByteLength
     }
     if (diffType !== DIFF_DELETE) {
       charCount2 += diffTextLength
+      utf8Count2 += diffByteLength
     }
   }
+
   // Pick up the leftover patch if not empty.
   if (patchDiffLength) {
     addContext(patch, prepatchText, options)
     patches.push(patch)
   }
 
-  return adjustIndiciesToUtf8(patches, textA)
+  return patches
 }
 
 /**
@@ -217,6 +228,9 @@ export function addContext(patch: Patch, text: string, opts: MakePatchOptions): 
     patch.diffs.unshift([DIFF_EQUAL, prefix])
   }
 
+  const prefixLength = prefix.length
+  const prefixUtf8Length = countUtf8Bytes(prefix)
+
   // Add the suffix.
 
   // Avoid splitting inside a surrogate.
@@ -230,13 +244,18 @@ export function addContext(patch: Patch, text: string, opts: MakePatchOptions): 
     patch.diffs.push([DIFF_EQUAL, suffix])
   }
 
+  const suffixLength = suffix.length
+  const suffixUtf8Length = countUtf8Bytes(suffix)
+
   // Roll back the start points.
-  patch.start1 -= prefix.length
-  patch.start2 -= prefix.length
+  patch.start1 -= prefixLength
+  patch.start2 -= prefixLength
+  patch.utf8Start1 -= prefixUtf8Length
+  patch.utf8Start2 -= prefixUtf8Length
 
   // Extend the lengths.
-  patch.length1 += prefix.length + suffix.length
-  patch.length2 += prefix.length + suffix.length
-  patch.utf8Length1 += prefix.length + suffix.length
-  patch.utf8Length2 += prefix.length + suffix.length
+  patch.length1 += prefixLength + suffixLength
+  patch.length2 += prefixLength + suffixLength
+  patch.utf8Length1 += prefixUtf8Length + suffixUtf8Length
+  patch.utf8Length2 += prefixUtf8Length + suffixUtf8Length
 }
