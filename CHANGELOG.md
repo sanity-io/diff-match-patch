@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/sanity-io/diff-match-patch/compare/v3.0.0...v3.0.1) (2023-05-02)
+
+### Bug Fixes
+
+- handle ucs2 adjustment on shorter input string ([06d420a](https://github.com/sanity-io/diff-match-patch/commit/06d420a4a98fa1dab5232b070fcbe0b6369cce6d))
+
 ## [3.0.0](https://github.com/sanity-io/diff-match-patch/compare/v2.1.0...v3.0.0) (2023-04-28)
 
 ### ⚠ BREAKING CHANGES
