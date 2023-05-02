@@ -78,7 +78,7 @@ export function apply(
   // 20, but the first patch was found at 12, delta is 2 and the second patch
   // has an effective expected position of 22.
   let delta = 0
-  const results = []
+  const results: boolean[] = []
   for (let x = 0; x < parsed.length; x++) {
     const expectedLoc = parsed[x].start2 + delta
     const text1 = diffText1(parsed[x].diffs)

@@ -11,7 +11,7 @@ import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, type Diff} from './diff.js'
  * @internal
  */
 export function toDelta(diffs: Diff[]): string {
-  const text = []
+  const text: string[] = []
   for (let x = 0; x < diffs.length; x++) {
     const [diffType, diff] = diffs[x]
     switch (diffType) {

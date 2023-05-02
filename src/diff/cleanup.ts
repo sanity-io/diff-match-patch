@@ -15,7 +15,7 @@ export function cleanupSemantic(rawDiffs: Diff[]): Diff[] {
   let diffs: Diff[] = rawDiffs.map((diff) => cloneDiff(diff))
 
   let changes = false
-  const equalities = [] // Stack of indices where equalities are found.
+  const equalities: number[] = [] // Stack of indices where equalities are found.
   let equalitiesLength = 0 // Keeping our own length var is faster in JS.
   /** @type {?string} */
   let lastequality = null
@@ -397,7 +397,7 @@ function trueCount(...args: boolean[]) {
 export function cleanupEfficiency(rawDiffs: Diff[], editCost: number = 4): Diff[] {
   let diffs = rawDiffs.map((diff) => cloneDiff(diff))
   let changes = false
-  const equalities = [] // Stack of indices where equalities are found.
+  const equalities: number[] = [] // Stack of indices where equalities are found.
   let equalitiesLength = 0 // Keeping our own length var is faster in JS.
   /** @type {?string} */
   let lastequality = null

@@ -10,7 +10,7 @@ import type {Diff} from './diff.js'
 export function charsToLines(diffs: Diff[], lineArray: string[]): void {
   for (let x = 0; x < diffs.length; x++) {
     const chars = diffs[x][1]
-    const text = []
+    const text: string[] = []
     for (let y = 0; y < chars.length; y++) {
       text[y] = lineArray[chars.charCodeAt(y)]
     }

@@ -93,7 +93,7 @@ function _make(textA: string, diffs: Diff[], options: MakePatchOptions): Patch[]
   if (diffs.length === 0) {
     return [] // Get rid of the null case.
   }
-  const patches = []
+  const patches: Patch[] = []
 
   let patch = createPatchObject(0, 0)
   let patchDiffLength = 0 // Keeping our own length var is faster in JS.

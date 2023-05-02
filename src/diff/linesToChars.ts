@@ -17,7 +17,7 @@ export function linesToChars(
   chars2: string
   lineArray: string[]
 } {
-  const lineArray = [] // e.g. lineArray[4] === 'Hello\n'
+  const lineArray: string[] = [] // e.g. lineArray[4] === 'Hello\n'
   const lineHash: {[key: string]: number} = {} // e.g. lineHash['Hello\n'] === 4
 
   // '\x00' is a valid character, but various debuggers don't like it.

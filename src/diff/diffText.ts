@@ -8,7 +8,7 @@ import {DIFF_DELETE, DIFF_INSERT, type Diff} from './diff.js'
  * @private
  */
 export function diffText1(diffs: Diff[]): string {
-  const text = []
+  const text: string[] = []
   for (let x = 0; x < diffs.length; x++) {
     if (diffs[x][0] !== DIFF_INSERT) {
       text[x] = diffs[x][1]
@@ -25,7 +25,7 @@ export function diffText1(diffs: Diff[]): string {
  * @private
  */
 export function diffText2(diffs: Diff[]): string {
-  const text = []
+  const text: string[] = []
   for (let x = 0; x < diffs.length; x++) {
     if (diffs[x][0] !== DIFF_DELETE) {
       text[x] = diffs[x][1]
