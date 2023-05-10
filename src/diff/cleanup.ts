@@ -14,11 +14,11 @@ import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, type Diff} from './diff.js'
 export function cleanupSemantic(rawDiffs: Diff[]): Diff[] {
   let diffs: Diff[] = rawDiffs.map((diff) => cloneDiff(diff))
 
-  let changes = false
+  let hasChanges = false
   const equalities: number[] = [] // Stack of indices where equalities are found.
   let equalitiesLength = 0 // Keeping our own length var is faster in JS.
   /** @type {?string} */
-  let lastequality = null
+  let lastEquality = null
   // Always equal to diffs[equalities[equalitiesLength - 1]][1]
   let pointer = 0 // Index of current position.
   // Number of characters that changed prior to the equality.
@@ -35,7 +35,7 @@ export function cleanupSemantic(rawDiffs: Diff[]): Diff[] {
       lengthDeletions1 = lengthDeletions2
       lengthInsertions2 = 0
       lengthDeletions2 = 0
-      lastequality = diffs[pointer][1]
+      lastEquality = diffs[pointer][1]
     } else {
       // An insertion or deletion.
       if (diffs[pointer][0] === DIFF_INSERT) {
@@ -46,12 +46,12 @@ export function cleanupSemantic(rawDiffs: Diff[]): Diff[] {
       // Eliminate an equality that is smaller or equal to the edits on both
       // sides of it.
       if (
-        lastequality &&
-        lastequality.length <= Math.max(lengthInsertions1, lengthDeletions1) &&
-        lastequality.length <= Math.max(lengthInsertions2, lengthDeletions2)
+        lastEquality &&
+        lastEquality.length <= Math.max(lengthInsertions1, lengthDeletions1) &&
+        lastEquality.length <= Math.max(lengthInsertions2, lengthDeletions2)
       ) {
         // Duplicate record.
-        diffs.splice(equalities[equalitiesLength - 1], 0, [DIFF_DELETE, lastequality])
+        diffs.splice(equalities[equalitiesLength - 1], 0, [DIFF_DELETE, lastEquality])
         // Change second copy to insert.
         diffs[equalities[equalitiesLength - 1] + 1][0] = DIFF_INSERT
         // Throw away the equality we just deleted.
@@ -63,15 +63,15 @@ export function cleanupSemantic(rawDiffs: Diff[]): Diff[] {
         lengthDeletions1 = 0
         lengthInsertions2 = 0
         lengthDeletions2 = 0
-        lastequality = null
-        changes = true
+        lastEquality = null
+        hasChanges = true
       }
     }
     pointer++
   }
 
   // Normalize the diff.
-  if (changes) {
+  if (hasChanges) {
     diffs = cleanupMerge(diffs)
   }
   diffs = cleanupSemanticLossless(diffs)
@@ -344,7 +344,7 @@ export function cleanupMerge(rawDiffs: Diff[]): Diff[] {
   // Second pass: look for single edits surrounded on both sides by equalities
   // which can be shifted sideways to eliminate an equality.
   // e.g: A<ins>BA</ins>C -> <ins>AB</ins>AC
-  let changes = false
+  let hasChanges = false
   pointer = 1
   // Intentionally ignore the first and last element (don't need checking).
   while (pointer < diffs.length - 1) {
@@ -360,7 +360,7 @@ export function cleanupMerge(rawDiffs: Diff[]): Diff[] {
           diffs[pointer][1].substring(0, diffs[pointer][1].length - diffs[pointer - 1][1].length)
         diffs[pointer + 1][1] = diffs[pointer - 1][1] + diffs[pointer + 1][1]
         diffs.splice(pointer - 1, 1)
-        changes = true
+        hasChanges = true
       } else if (
         diffs[pointer][1].substring(0, diffs[pointer + 1][1].length) === diffs[pointer + 1][1]
       ) {
@@ -369,13 +369,13 @@ export function cleanupMerge(rawDiffs: Diff[]): Diff[] {
         diffs[pointer][1] =
           diffs[pointer][1].substring(diffs[pointer + 1][1].length) + diffs[pointer + 1][1]
         diffs.splice(pointer + 1, 1)
-        changes = true
+        hasChanges = true
       }
     }
     pointer++
   }
   // If shifts were made, the diff needs reordering and another shift sweep.
-  if (changes) {
+  if (hasChanges) {
     diffs = cleanupMerge(diffs)
   }
 
@@ -396,11 +396,10 @@ function trueCount(...args: boolean[]) {
  */
 export function cleanupEfficiency(rawDiffs: Diff[], editCost: number = 4): Diff[] {
   let diffs = rawDiffs.map((diff) => cloneDiff(diff))
-  let changes = false
+  let hasChanges = false
   const equalities: number[] = [] // Stack of indices where equalities are found.
   let equalitiesLength = 0 // Keeping our own length var is faster in JS.
-  /** @type {?string} */
-  let lastequality = null
+  let lastEquality: string | null = null
   // Always equal to diffs[equalities[equalitiesLength - 1]][1]
   let pointer = 0 // Index of current position.
   // Is there an insertion operation before the last equality.
@@ -419,11 +418,11 @@ export function cleanupEfficiency(rawDiffs: Diff[], editCost: number = 4): Diff[
         equalities[equalitiesLength++] = pointer
         preIns = postIns
         preDel = postDel
-        lastequality = diffs[pointer][1]
+        lastEquality = diffs[pointer][1]
       } else {
         // Not a candidate, and can never become one.
         equalitiesLength = 0
-        lastequality = null
+        lastEquality = null
       }
       postIns = false
       postDel = false
@@ -443,18 +442,18 @@ export function cleanupEfficiency(rawDiffs: Diff[], editCost: number = 4): Diff[
        * <ins>A</ins><del>B</del>X<del>C</del>
        */
       if (
-        lastequality &&
+        lastEquality &&
         ((preIns && preDel && postIns && postDel) ||
-          (lastequality.length < editCost / 2 && trueCount(preIns, preDel, postIns, postDel) === 3))
+          (lastEquality.length < editCost / 2 && trueCount(preIns, preDel, postIns, postDel) === 3))
       ) {
         // Duplicate record.
-        diffs.splice(equalities[equalitiesLength - 1], 0, [DIFF_DELETE, lastequality])
+        diffs.splice(equalities[equalitiesLength - 1], 0, [DIFF_DELETE, lastEquality])
         // Change second copy to insert.
         diffs[equalities[equalitiesLength - 1] + 1][0] = DIFF_INSERT
         equalitiesLength-- // Throw away the equality we just deleted;
-        lastequality = null
+        lastEquality = null
         if (preIns && preDel) {
-          // No changes made which could affect previous entry, keep going.
+          // No hasChanges made which could affect previous entry, keep going.
           postIns = true
           postDel = true
           equalitiesLength = 0
@@ -464,13 +463,13 @@ export function cleanupEfficiency(rawDiffs: Diff[], editCost: number = 4): Diff[
           postIns = false
           postDel = false
         }
-        changes = true
+        hasChanges = true
       }
     }
     pointer++
   }
 
-  if (changes) {
+  if (hasChanges) {
     diffs = cleanupMerge(diffs)
   }
 

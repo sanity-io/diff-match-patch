@@ -14,22 +14,22 @@ export function getCommonSuffix(text1: string, text2: string): number {
 
   // Binary search.
   // Performance analysis: http://neil.fraser.name/news/2007/10/09/
-  let pointermin = 0
-  let pointermax = Math.min(text1.length, text2.length)
-  let pointermid = pointermax
-  let pointerend = 0
-  while (pointermin < pointermid) {
+  let pointerMin = 0
+  let pointerMax = Math.min(text1.length, text2.length)
+  let pointerMid = pointerMax
+  let pointerEnd = 0
+  while (pointerMin < pointerMid) {
     if (
-      text1.substring(text1.length - pointermid, text1.length - pointerend) ===
-      text2.substring(text2.length - pointermid, text2.length - pointerend)
+      text1.substring(text1.length - pointerMid, text1.length - pointerEnd) ===
+      text2.substring(text2.length - pointerMid, text2.length - pointerEnd)
     ) {
-      pointermin = pointermid
-      pointerend = pointermin
+      pointerMin = pointerMid
+      pointerEnd = pointerMin
     } else {
-      pointermax = pointermid
+      pointerMax = pointerMid
     }
-    pointermid = Math.floor((pointermax - pointermin) / 2 + pointermin)
+    pointerMid = Math.floor((pointerMax - pointerMin) / 2 + pointerMin)
   }
 
-  return pointermid
+  return pointerMid
 }

@@ -80,7 +80,7 @@ export function parse(textline: string): Patch[] {
 
       let line: string
       try {
-        line = decodeURI(currentLine.substring(1))
+        line = decodeURI(currentLine.slice(1))
       } catch (ex) {
         // Malformed URI sequence.
         throw new Error(`Illegal escape in parse: ${currentLine}`)

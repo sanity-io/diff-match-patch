@@ -47,7 +47,7 @@ export function linesToChars(
       if (lineEnd === -1) {
         lineEnd = text.length - 1
       }
-      let line = text.substring(lineStart, lineEnd + 1)
+      let line = text.slice(lineStart, lineEnd + 1)
 
       if (lineHash.hasOwnProperty ? lineHash.hasOwnProperty(line) : lineHash[line] !== undefined) {
         chars += String.fromCharCode(lineHash[line])
@@ -55,7 +55,7 @@ export function linesToChars(
         if (lineArrayLength === maxLines) {
           // Bail out at 65535 because
           // String.fromCharCode(65536) == String.fromCharCode(0)
-          line = text.substring(lineStart)
+          line = text.slice(lineStart)
           lineEnd = text.length
         }
         chars += String.fromCharCode(lineArrayLength)
