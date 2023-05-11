@@ -29,6 +29,15 @@ export interface ApplyPatchOptions {
    * (0.0 = perfection, 1.0 = very loose).
    */
   deleteThreshold: number
+
+  /**
+   * When converting indices between UTF-8 and UCS-2, certain scenarios can occur
+   * where we go beyond the target offset. This can happen in particular with
+   * surrogate pairs/high codepoints, when the base string we are applying the
+   * patch to does not fully match the one that was used to generate the patch.
+   * Defaults to `false`.
+   */
+  allowExceedingIndices: boolean
 }
 
 /**
@@ -46,6 +55,7 @@ export type PatchResult = [string, boolean[]]
  *
  * @param patches - Array of Patch objects.
  * @param text - Old text.
+ * @param opts - Optional settings for the patch application.
  * @returns Two element Array, containing the new text and an array of boolean values.
  * @public
  */
@@ -64,7 +74,9 @@ export function apply(
   }
 
   // Note: adjustment also deep-copies patches so that no changes are made to the originals.
-  const parsed = adjustIndiciesToUcs2(patches, text)
+  const parsed = adjustIndiciesToUcs2(patches, text, {
+    allowExceedingIndices: opts.allowExceedingIndices,
+  })
 
   const margin = opts.margin || DEFAULT_MARGIN
   const deleteThreshold = opts.deleteThreshold || 0.4

@@ -21,6 +21,17 @@ export function countUtf8Bytes(str: string): number {
   return bytes
 }
 
+export interface AdjustmentOptions {
+  /**
+   * When converting indices between UTF-8 and UCS-2, certain scenarios can occur
+   * where we go beyond the target offset. This can happen in particular with
+   * surrogate pairs/high codepoints, when the base string we are applying the
+   * patch to does not fully match the one that was used to generate the patch.
+   * Defaults to `false`.
+   */
+  allowExceedingIndices?: boolean
+}
+
 /**
  * Takes a `patches` array as produced by diff-match-patch and adjusts the
  * `start1` and `start2` properties so that they refer to UCS-2 index instead
@@ -28,10 +39,15 @@ export function countUtf8Bytes(str: string): number {
  *
  * @param patches - The patches to adjust
  * @param base - The base string to use for counting bytes
+ * @param options - Options for the adjustment of indices
  * @returns A new array of patches with adjusted indicies
  * @beta
  */
-export function adjustIndiciesToUcs2(patches: Patch[], base: string): Patch[] {
+export function adjustIndiciesToUcs2(
+  patches: Patch[],
+  base: string,
+  options: AdjustmentOptions = {}
+): Patch[] {
   let byteOffset = 0
   let idx = 0 // index into the input.
 
@@ -54,7 +70,7 @@ export function adjustIndiciesToUcs2(patches: Patch[], base: string): Patch[] {
       }
     }
 
-    if (byteOffset !== target) {
+    if (!options.allowExceedingIndices && byteOffset !== target) {
       throw new Error('Failed to determine byte offset')
     }
 

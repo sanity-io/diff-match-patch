@@ -130,4 +130,10 @@ describe('apply', () => {
     const results = apply(patches, 'x')
     expect(results).toEqual(['x123', [true]])
   })
+
+  test('Can pass options.', () => {
+    const patches = make('y', 'y123')
+    const results = apply(patches, 'x', {allowExceedingIndices: true})
+    expect(results).toEqual(['x123', [true]])
+  })
 })
