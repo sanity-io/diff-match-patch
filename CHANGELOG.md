@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.0](https://github.com/sanity-io/diff-match-patch/compare/v3.0.1...v3.1.0) (2023-05-11)
+
+### Features
+
+- allow exceeding indices when adjusting ([35dd166](https://github.com/sanity-io/diff-match-patch/commit/35dd1662e24c7a8e163ed4d6af6c56d1d021b320))
+
 ## [3.0.1](https://github.com/sanity-io/diff-match-patch/compare/v3.0.0...v3.0.1) (2023-05-02)
 
 ### Bug Fixes
