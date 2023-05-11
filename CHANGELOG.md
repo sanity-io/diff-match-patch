@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1](https://github.com/sanity-io/diff-match-patch/compare/v3.1.0...v3.1.1) (2023-05-11)
+
+### Bug Fixes
+
+- add release tag for adjustment options interface ([a742cb9](https://github.com/sanity-io/diff-match-patch/commit/a742cb94e467dab6627e97cae40bdd9cf861ba99))
+- export adjustment options ([ca27926](https://github.com/sanity-io/diff-match-patch/commit/ca279263a6876cffb9803dd3ffe11d0cd496684c))
+
 ## [3.1.0](https://github.com/sanity-io/diff-match-patch/compare/v3.0.1...v3.1.0) (2023-05-11)
 
 ### Features
