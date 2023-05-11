@@ -21,6 +21,11 @@ export function countUtf8Bytes(str: string): number {
   return bytes
 }
 
+/**
+ * Options for the index adjustment operations.
+ *
+ * @public
+ */
 export interface AdjustmentOptions {
   /**
    * When converting indices between UTF-8 and UCS-2, certain scenarios can occur
