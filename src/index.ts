@@ -21,4 +21,4 @@ export {stringify as stringifyPatches, stringifyPatch} from './patch/stringify.j
 export {parse as parsePatch} from './patch/parse.js'
 
 // UCS-2 utils (beta)
-export {adjustIndiciesToUcs2} from './utils/utf8Indices.js'
+export {adjustIndiciesToUcs2, type AdjustmentOptions} from './utils/utf8Indices.js'
