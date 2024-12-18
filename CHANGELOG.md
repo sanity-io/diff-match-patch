@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.2](https://github.com/sanity-io/diff-match-patch/compare/v3.1.1...v3.1.2) (2024-12-18)
+
+### Bug Fixes
+
+- upgrade build tooling output for better cjs/esm interop ([2eff007](https://github.com/sanity-io/diff-match-patch/commit/2eff0070a8a242340ce24f266f3a88ece3e09866))
+
 ## [3.1.1](https://github.com/sanity-io/diff-match-patch/compare/v3.1.0...v3.1.1) (2023-05-11)
 
 ### Bug Fixes
