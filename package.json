@@ -6,20 +6,19 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "require": "./dist/index.cjs",
       "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
+  "browserslist": "extends @sanity/browserslist-config",
   "engines": {
-    "node": ">=14.18"
+    "node": ">=18.18"
   },
   "files": [
     "dist",
