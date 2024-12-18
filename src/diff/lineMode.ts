@@ -1,14 +1,14 @@
 import {charsToLines} from './charsToLines.js'
 import {cleanupSemantic} from './cleanup.js'
-import {linesToChars} from './linesToChars.js'
 import {
-  doDiff,
+  type Diff,
   DIFF_DELETE,
   DIFF_EQUAL,
   DIFF_INSERT,
-  type Diff,
+  doDiff,
   type InternalDiffOptions,
 } from './diff.js'
+import {linesToChars} from './linesToChars.js'
 
 /**
  * Do a quick line-level diff on both strings, then rediff the parts for

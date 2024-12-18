@@ -1,4 +1,4 @@
-import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, type Diff} from './diff.js'
+import {type Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from './diff.js'
 
 /**
  * Compute the Levenshtein distance; the number of inserted, deleted or

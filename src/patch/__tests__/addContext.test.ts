@@ -1,4 +1,5 @@
-import {test, expect, describe} from 'vitest'
+import {describe,expect, test} from 'vitest'
+
 import {addContext} from '../make.js'
 import {parse} from '../parse.js'
 import {stringifyPatch} from '../stringify.js'

@@ -1,19 +1,18 @@
-import {test, expect} from 'vitest'
+import {expect,test} from 'vitest'
+
 import {
-  // Diff
-  makeDiff,
-  cleanupSemantic,
-  cleanupEfficiency,
-  DIFF_DELETE,
-  DIFF_INSERT,
-  DIFF_EQUAL,
-
-  // Match
-  match,
-
   // Patch
   applyPatches,
+  cleanupEfficiency,
+  cleanupSemantic,
+  DIFF_DELETE,
+  DIFF_EQUAL,
+  DIFF_INSERT,
+  // Diff
+  makeDiff,
   makePatches,
+  // Match
+  match,
   parsePatch,
   stringifyPatches,
 } from './index'

@@ -1,4 +1,5 @@
-import {describe, test, expect} from 'vitest'
+import {describe, expect,test} from 'vitest'
+
 import {addPadding} from '../addPadding.js'
 import {make} from '../make.js'
 import {stringify} from '../stringify.js'

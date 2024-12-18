@@ -1,4 +1,5 @@
-import {describe, test, expect} from 'vitest'
+import {describe, expect,test} from 'vitest'
+
 import {getCommonSuffix} from '../commonSuffix.js'
 
 // Detect any common suffix.

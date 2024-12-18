@@ -1,4 +1,5 @@
 import {describe, expect, test} from 'vitest'
+
 import {diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../../diff/diff.js'
 import {toDelta} from '../../diff/toDelta.js'
 import {apply} from '../apply.js'

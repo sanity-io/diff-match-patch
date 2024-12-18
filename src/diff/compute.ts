@@ -1,12 +1,12 @@
+import {bisect} from './bisect.js'
 import {
-  doDiff,
+  type Diff,
   DIFF_DELETE,
   DIFF_EQUAL,
   DIFF_INSERT,
-  type Diff,
+  doDiff,
   type InternalDiffOptions,
 } from './diff.js'
-import {bisect} from './bisect.js'
 import {findHalfMatch} from './halfMatch.js'
 import {doLineModeDiff} from './lineMode.js'
 

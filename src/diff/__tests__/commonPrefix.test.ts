@@ -1,4 +1,5 @@
-import {describe, test, expect} from 'vitest'
+import {describe, expect,test} from 'vitest'
+
 import {getCommonPrefix} from '../commonPrefix.js'
 
 // Detect any common prefix.

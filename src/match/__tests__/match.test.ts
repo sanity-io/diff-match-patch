@@ -1,4 +1,5 @@
-import {test, expect, describe} from 'vitest'
+import {describe,expect, test} from 'vitest'
+
 import {match} from '../match.js'
 
 describe('match', () => {
@@ -25,7 +26,7 @@ describe('match', () => {
   })
 
   test('Test null inputs', () => {
-    // @ts-expect-error
+    // @ts-expect-error Incorrect input types, but for JS compatibility
     expect(() => match(null, null, 0)).toThrowError(/null input/i)
   })
 })

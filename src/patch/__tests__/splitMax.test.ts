@@ -1,4 +1,5 @@
-import {test, expect, describe} from 'vitest'
+import {describe,expect, test} from 'vitest'
+
 import {make} from '../make.js'
 import {splitMax} from '../splitMax.js'
 import {stringify} from '../stringify.js'

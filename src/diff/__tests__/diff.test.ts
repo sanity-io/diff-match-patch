@@ -1,5 +1,6 @@
-import {describe, test, expect} from 'vitest'
-import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff, type Diff} from '../diff.js'
+import {describe, expect,test} from 'vitest'
+
+import {type Diff,diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
 
 // Perform a trivial diff.
 describe('diff', () => {

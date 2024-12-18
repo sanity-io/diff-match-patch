@@ -1,6 +1,7 @@
-import {describe, test, expect} from 'vitest'
+import {describe, expect,test} from 'vitest'
+
 import {charsToLines} from '../charsToLines.js'
-import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, Diff} from '../diff.js'
+import {Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
 import {linesToChars} from '../linesToChars.js'
 
 // Convert chars up to lines.

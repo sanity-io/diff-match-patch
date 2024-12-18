@@ -1,5 +1,6 @@
-import {describe, test, expect} from 'vitest'
-import {DIFF_DELETE, DIFF_INSERT, diff} from '../../diff/diff.js'
+import {describe, expect, test} from 'vitest'
+
+import {diff, DIFF_DELETE, DIFF_INSERT} from '../../diff/diff.js'
 import {make} from '../make.js'
 import {parse} from '../parse.js'
 import {stringify} from '../stringify.js'
@@ -88,7 +89,7 @@ describe('make', () => {
   })
 
   test('Test null inputs', () => {
-    // @ts-expect-error
+    // @ts-expect-error Incorrect input types, but for JS compatibility
     expect(() => make(null)).toThrowError(/unknown call format/i)
   })
 })

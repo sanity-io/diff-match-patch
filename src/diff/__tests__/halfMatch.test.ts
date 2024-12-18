@@ -1,4 +1,5 @@
 import {describe, expect, test} from 'vitest'
+
 import {findHalfMatch} from '../halfMatch.js'
 
 // Detect a halfmatch.

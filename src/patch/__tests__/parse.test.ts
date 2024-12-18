@@ -1,6 +1,7 @@
-import {test, expect, describe} from 'vitest'
+import {describe,expect, test} from 'vitest'
+
 import {parse} from '../parse.js'
-import {stringifyPatch, stringify} from '../stringify.js'
+import {stringify,stringifyPatch} from '../stringify.js'
 
 describe('parse', () => {
   test('empty', () => {

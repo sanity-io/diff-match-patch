@@ -1,4 +1,4 @@
-import {DIFF_DELETE, DIFF_INSERT, type Diff} from './diff.js'
+import {type Diff,DIFF_DELETE, DIFF_INSERT} from './diff.js'
 
 /**
  * loc is a location in textA, compute and return the equivalent location in
