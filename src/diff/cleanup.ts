@@ -291,7 +291,7 @@ export function cleanupMerge(rawDiffs: Diff[]): Diff[] {
               ) {
                 diffs[pointer - countDelete - countInsert - 1][1] += textInsert.substring(
                   0,
-                  commonlength
+                  commonlength,
                 )
               } else {
                 diffs.splice(0, 0, [DIFF_EQUAL, textInsert.substring(0, commonlength)])

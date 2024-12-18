@@ -58,7 +58,7 @@ describe('diff', () => {
     expect(
       diff('Apples are a fruit.', 'Bananas are also fruit.', {
         checkLines: false,
-      })
+      }),
     ).toEqual([
       [DIFF_DELETE, 'Apple'],
       [DIFF_INSERT, 'Banana'],
@@ -105,7 +105,7 @@ describe('diff', () => {
     ]).toEqual(
       diff('ABCDa=bcd=efghijklmnopqrsEFGHIJKLMNOefg', 'a-bcd-efghijklmnopqrs', {
         checkLines: false,
-      })
+      }),
     )
   })
 
@@ -113,7 +113,7 @@ describe('diff', () => {
     expect(
       diff('a [[Pennsylvania]] and [[New', ' and [[Pennsylvania]]', {
         checkLines: false,
-      })
+      }),
     ).toEqual([
       [DIFF_INSERT, ' '],
       [DIFF_EQUAL, 'a'],

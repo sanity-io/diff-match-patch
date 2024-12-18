@@ -78,7 +78,7 @@ export interface InternalDiffOptions {
 export function diff(
   textA: null | string,
   textB: null | string,
-  opts?: Partial<DiffOptions>
+  opts?: Partial<DiffOptions>,
 ): Diff[] {
   // Check for null inputs.
   if (textA === null || textB === null) {

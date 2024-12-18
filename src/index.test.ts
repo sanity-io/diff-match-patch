@@ -41,7 +41,7 @@ test('diff api', () => {
       [DIFF_EQUAL, 'xyz'],
       [DIFF_DELETE, 'cd'],
       [DIFF_INSERT, '34'],
-    ])
+    ]),
   ).toEqual([
     [DIFF_DELETE, 'abxyzcd'],
     [DIFF_INSERT, '12xyz34'],
@@ -81,7 +81,7 @@ test('patch api', () => {
 
   const [newValueFromString, stringifiedSuccess] = applyPatches(
     parsePatch(stringified),
-    'from this'
+    'from this',
   )
   expect(newValueFromString).toBe('to this')
   expect(stringifiedSuccess).toEqual([true])

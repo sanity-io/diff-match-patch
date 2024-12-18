@@ -62,7 +62,7 @@ export function make(textA: string, diffs: Diff[], options?: Partial<MakePatchOp
 export function make(
   a: Diff[] | string,
   b?: Partial<MakePatchOptions> | string | Diff[],
-  options?: Partial<MakePatchOptions>
+  options?: Partial<MakePatchOptions>,
 ): Patch[] {
   if (typeof a === 'string' && typeof b === 'string') {
     // Method 1: textA, textB

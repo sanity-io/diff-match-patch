@@ -33,7 +33,7 @@ describe('bitap', () => {
       bitap('abcdefghijklmnopqrstuvwxyz', 'abcdefg', 24, {
         ...options,
         distance: 10, // Strict location.
-      })
+      }),
     ).toEqual(-1)
   })
 
@@ -42,7 +42,7 @@ describe('bitap', () => {
       bitap('abcdefghijklmnopqrstuvwxyz', 'abcdxxefg', 1, {
         ...options,
         distance: 10, // Strict location.
-      })
+      }),
     ).toEqual(0)
   })
 
@@ -51,7 +51,7 @@ describe('bitap', () => {
       bitap('abcdefghijklmnopqrstuvwxyz', 'abcdefg', 24, {
         ...options,
         distance: 1000, // Loose location.
-      })
+      }),
     ).toEqual(0)
   })
 })

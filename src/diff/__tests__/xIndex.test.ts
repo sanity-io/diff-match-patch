@@ -12,8 +12,8 @@ describe('xIndex', () => {
           [DIFF_INSERT, '1234'],
           [DIFF_EQUAL, 'xyz'],
         ],
-        2
-      )
+        2,
+      ),
     ).toEqual(5)
   })
 
@@ -25,8 +25,8 @@ describe('xIndex', () => {
           [DIFF_DELETE, '1234'],
           [DIFF_EQUAL, 'xyz'],
         ],
-        3
-      )
+        3,
+      ),
     ).toEqual(1)
   })
 })

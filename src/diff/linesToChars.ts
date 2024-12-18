@@ -11,7 +11,7 @@
  */
 export function linesToChars(
   textA: string,
-  textB: string
+  textB: string,
 ): {
   chars1: string
   chars2: string

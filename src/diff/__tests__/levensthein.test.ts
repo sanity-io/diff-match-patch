@@ -9,7 +9,7 @@ describe('levenshtein', () => {
         [DIFF_DELETE, 'abc'],
         [DIFF_INSERT, '1234'],
         [DIFF_EQUAL, 'xyz'],
-      ])
+      ]),
     ).toBe(4)
   })
   test('with leading equality', () => {
@@ -18,7 +18,7 @@ describe('levenshtein', () => {
         [DIFF_EQUAL, 'xyz'],
         [DIFF_DELETE, 'abc'],
         [DIFF_INSERT, '1234'],
-      ])
+      ]),
     ).toBe(4)
   })
   test('with middle equality', () => {
@@ -27,7 +27,7 @@ describe('levenshtein', () => {
         [DIFF_DELETE, 'abc'],
         [DIFF_EQUAL, 'xyz'],
         [DIFF_INSERT, '1234'],
-      ])
+      ]),
     ).toBe(7)
   })
 })

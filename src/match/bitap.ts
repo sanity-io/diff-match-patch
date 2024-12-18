@@ -43,7 +43,7 @@ export function bitap(
   text: string,
   pattern: string,
   loc: number,
-  opts: Partial<BitapOptions> = {}
+  opts: Partial<BitapOptions> = {},
 ): number {
   if (pattern.length > MAX_BITS) {
     throw new Error('Pattern too long for this browser.')

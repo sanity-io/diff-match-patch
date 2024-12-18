@@ -62,7 +62,7 @@ export type PatchResult = [string, boolean[]]
 export function apply(
   patches: Patch[],
   originalText: string,
-  opts: Partial<ApplyPatchOptions> = {}
+  opts: Partial<ApplyPatchOptions> = {},
 ): PatchResult {
   if (typeof patches === 'string') {
     throw new Error('Patches must be an array - pass the patch to `parsePatch()` first')
@@ -104,7 +104,7 @@ export function apply(
         endLoc = match(
           text,
           text1.substring(text1.length - MAX_BITS),
-          expectedLoc + text1.length - MAX_BITS
+          expectedLoc + text1.length - MAX_BITS,
         )
         if (endLoc === -1 || startLoc >= endLoc) {
           // Can't find valid trailing context.  Drop this patch.

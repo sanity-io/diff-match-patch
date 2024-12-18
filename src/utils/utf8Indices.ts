@@ -51,7 +51,7 @@ export interface AdjustmentOptions {
 export function adjustIndiciesToUcs2(
   patches: Patch[],
   base: string,
-  options: AdjustmentOptions = {}
+  options: AdjustmentOptions = {},
 ): Patch[] {
   let byteOffset = 0
   let idx = 0 // index into the input.

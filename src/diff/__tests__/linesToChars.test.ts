@@ -21,7 +21,7 @@ describe('linesToChars', () => {
         chars2: '\x02\x01\x02',
         lineArray: ['', 'alpha\n', 'beta\n'],
       },
-      linesToChars('alpha\nbeta\nalpha\n', 'beta\nalpha\nbeta\n')
+      linesToChars('alpha\nbeta\nalpha\n', 'beta\nalpha\nbeta\n'),
     )
 
     assertLinesToCharsResultEquals(
@@ -30,12 +30,12 @@ describe('linesToChars', () => {
         chars2: '\x01\x02\x03\x03',
         lineArray: ['', 'alpha\r\n', 'beta\r\n', '\r\n'],
       },
-      linesToChars('', 'alpha\r\nbeta\r\n\r\n\r\n')
+      linesToChars('', 'alpha\r\nbeta\r\n\r\n\r\n'),
     )
 
     assertLinesToCharsResultEquals(
       {chars1: '\x01', chars2: '\x02', lineArray: ['', 'a', 'b']},
-      linesToChars('a', 'b')
+      linesToChars('a', 'b'),
     )
   })
 
@@ -54,7 +54,7 @@ describe('linesToChars', () => {
     lineList.unshift('')
     assertLinesToCharsResultEquals(
       {chars1: chars, chars2: '', lineArray: lineList},
-      linesToChars(lines, '')
+      linesToChars(lines, ''),
     )
   })
 })
