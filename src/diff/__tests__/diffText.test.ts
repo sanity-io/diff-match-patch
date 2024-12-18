@@ -43,7 +43,7 @@ describe('diffText', () => {
 
     // Generates error (19 !==  20).
     expect(() => fromDelta(`${text1}x`, delta)).toThrowErrorMatchingInlineSnapshot(
-      '"Delta length (19) does not equal source text length (20)"',
+      `[Error: Delta length (19) does not equal source text length (20)]`,
     )
 
     // Generates error (19 !==  18).
