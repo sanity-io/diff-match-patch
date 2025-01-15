@@ -1,6 +1,6 @@
 import {DIFF_EQUAL} from '../diff/diff.js'
 import {DEFAULT_MARGIN} from './constants.js'
-import type {Patch} from './createPatchObject.js'
+import {type Patch} from './createPatchObject.js'
 
 /**
  * Add some padding on text start and end so that edges can match something.

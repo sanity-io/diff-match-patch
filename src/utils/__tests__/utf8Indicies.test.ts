@@ -1,4 +1,4 @@
-import {describe, expect,test} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 import {apply} from '../../patch/apply.js'
 import {make} from '../../patch/make.js'

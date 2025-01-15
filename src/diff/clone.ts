@@ -1,4 +1,4 @@
-import type {Diff} from './diff.js'
+import {type Diff} from './diff.js'
 
 /**
  * Clones a diff tuple.

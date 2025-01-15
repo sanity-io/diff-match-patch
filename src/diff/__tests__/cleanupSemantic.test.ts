@@ -1,7 +1,7 @@
-import {describe,expect, test} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
-import {cleanupSemantic} from '../cleanup'
-import {type Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
+import {cleanupSemantic} from '../cleanup.js'
+import {type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
 
 describe('cleanupSemantic', () => {
   test('Null case', () => {

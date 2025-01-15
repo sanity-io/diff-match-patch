@@ -1,4 +1,4 @@
-import {describe,expect, test} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 import {bisect} from '../bisect.js'
 import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'

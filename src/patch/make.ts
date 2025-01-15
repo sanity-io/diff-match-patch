@@ -1,4 +1,4 @@
-import {cleanupEfficiency,cleanupSemantic} from '../diff/cleanup.js'
+import {cleanupEfficiency, cleanupSemantic} from '../diff/cleanup.js'
 import {type Diff, diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {diffText1} from '../diff/diffText.js'
 import {isLowSurrogate} from '../utils/surrogatePairs.js'

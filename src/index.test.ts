@@ -1,4 +1,4 @@
-import {expect,test} from 'vitest'
+import {expect, test} from 'vitest'
 
 import {
   // Patch
@@ -15,7 +15,7 @@ import {
   match,
   parsePatch,
   stringifyPatches,
-} from './index'
+} from './index.js'
 
 test('diff api', () => {
   const diffs = makeDiff('from this', 'to this')

@@ -1,4 +1,4 @@
-import {expect,test} from 'vitest'
+import {expect, test} from 'vitest'
 
 import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../../diff/diff.js'
 import {createPatchObject} from '../createPatchObject.js'

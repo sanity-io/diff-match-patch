@@ -49,6 +49,7 @@ export function linesToChars(
       }
       let line = text.slice(lineStart, lineEnd + 1)
 
+      // eslint-disable-next-line no-prototype-builtins
       if (lineHash.hasOwnProperty ? lineHash.hasOwnProperty(line) : lineHash[line] !== undefined) {
         chars += String.fromCharCode(lineHash[line])
       } else {

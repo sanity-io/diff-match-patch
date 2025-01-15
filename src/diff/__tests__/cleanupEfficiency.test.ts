@@ -1,7 +1,7 @@
-import {describe,expect, test} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
-import {cleanupEfficiency} from '../cleanup'
-import {type Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
+import {cleanupEfficiency} from '../cleanup.js'
+import {type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
 
 describe('cleanupEfficiency', () => {
   test('Null case', () => {
