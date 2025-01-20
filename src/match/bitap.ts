@@ -35,6 +35,7 @@ const MAX_BITS = 32
  * @param text - The text to search.
  * @param pattern - The pattern to search for.
  * @param loc - The location to search around.
+ * @param options - Options {@link BitapOptions}
  * @returns Best match index or -1.
  * @internal
  */

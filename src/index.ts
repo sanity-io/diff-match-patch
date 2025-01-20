@@ -11,7 +11,7 @@ export {
 } from './diff/diff.js'
 
 // Match
-export {match} from './match/match.js'
+export {match, type MatchOptions} from './match/match.js'
 
 // Patch
 export {apply as applyPatches, type ApplyPatchOptions, type PatchResult} from './patch/apply.js'
@@ -22,3 +22,6 @@ export {stringifyPatch, stringify as stringifyPatches} from './patch/stringify.j
 
 // UCS-2 utils (beta)
 export {adjustIndiciesToUcs2, type AdjustmentOptions} from './utils/utf8Indices.js'
+
+// other utils
+export {xIndex} from './diff/xIndex.js'

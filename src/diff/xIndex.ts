@@ -6,10 +6,11 @@ import {type Diff, DIFF_DELETE, DIFF_INSERT} from './diff.js'
  * e.g. 'The cat' vs 'The big cat', 1->1, 5->8
  *
  * @param diffs - Array of diff tuples.
- * @param loc - Location within textA.
+ * @param location - Location within textA.
  * @returns Location within textB.
+ * @public
  */
-export function xIndex(diffs: Diff[], loc: number): number {
+export function xIndex(diffs: Diff[], location: number): number {
   let chars1 = 0
   let chars2 = 0
   let lastChars1 = 0
@@ -24,7 +25,7 @@ export function xIndex(diffs: Diff[], loc: number): number {
       // Equality or insertion.
       chars2 += diffs[x][1].length
     }
-    if (chars1 > loc) {
+    if (chars1 > location) {
       // Overshot the location.
       break
     }
@@ -36,5 +37,5 @@ export function xIndex(diffs: Diff[], loc: number): number {
     return lastChars2
   }
   // Add the remaining character length.
-  return lastChars2 + (loc - lastChars1)
+  return lastChars2 + (location - lastChars1)
 }
