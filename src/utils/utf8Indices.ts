@@ -1,5 +1,5 @@
 import {cloneDiff} from '../diff/clone.js'
-import type {Patch} from '../index.js'
+import {type Patch} from '../index.js'
 
 /**
  * Counts the number of bytes in a string.

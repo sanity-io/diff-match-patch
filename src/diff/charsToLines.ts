@@ -1,4 +1,4 @@
-import type {Diff} from './diff.js'
+import {type Diff} from './diff.js'
 
 /**
  * Rehydrate the text in a diff from a string of line hashes to real lines of text.

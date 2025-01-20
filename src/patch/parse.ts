@@ -81,6 +81,7 @@ export function parse(textline: string): Patch[] {
       let line: string
       try {
         line = decodeURI(currentLine.slice(1))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (ex) {
         // Malformed URI sequence.
         throw new Error(`Illegal escape in parse: ${currentLine}`)

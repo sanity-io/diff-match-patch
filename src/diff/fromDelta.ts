@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import {type Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from './diff.js'
+import {type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from './diff.js'
 
 /**
  * Given the original text1, and an encoded string which describes the
@@ -24,6 +24,7 @@ export function fromDelta(text1: string, delta: string): Diff[] {
       case '+':
         try {
           diffs[diffsLength++] = [DIFF_INSERT, decodeURI(param)]
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (ex) {
           // Malformed URI sequence.
           throw new Error(`Illegal escape in fromDelta: ${param}`)

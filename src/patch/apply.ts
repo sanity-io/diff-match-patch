@@ -1,7 +1,7 @@
 /* eslint-disable max-depth */
 /* eslint-disable max-statements */
 import {cleanupSemanticLossless} from '../diff/cleanup.js'
-import {diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
+import {diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
 import {diffText1, diffText2} from '../diff/diffText.js'
 import {levenshtein} from '../diff/levenshtein.js'
 import {xIndex} from '../diff/xIndex.js'
@@ -9,7 +9,7 @@ import {match} from '../match/match.js'
 import {adjustIndiciesToUcs2} from '../utils/utf8Indices.js'
 import {addPadding} from './addPadding.js'
 import {DEFAULT_MARGIN, MAX_BITS} from './constants.js'
-import type {Patch} from './createPatchObject.js'
+import {type Patch} from './createPatchObject.js'
 import {splitMax} from './splitMax.js'
 
 /**

@@ -1,4 +1,4 @@
-import {type Diff,DIFF_DELETE, DIFF_INSERT, doDiff} from './diff.js'
+import {type Diff, DIFF_DELETE, DIFF_INSERT, doDiff} from './diff.js'
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two

@@ -1,4 +1,4 @@
-import {type Diff,DIFF_DELETE, DIFF_INSERT} from './diff.js'
+import {type Diff, DIFF_DELETE, DIFF_INSERT} from './diff.js'
 
 /**
  * Compute and return the source text (all equalities and deletions).

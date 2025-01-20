@@ -1,5 +1,5 @@
 import {DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff/diff.js'
-import type {Patch} from './createPatchObject.js'
+import {type Patch} from './createPatchObject.js'
 
 /**
  * Create a textual representation of a patch list.

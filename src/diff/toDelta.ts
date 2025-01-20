@@ -1,4 +1,4 @@
-import {type Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from './diff.js'
+import {type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from './diff.js'
 
 /**
  * Crush the diff into an encoded string which describes the operations

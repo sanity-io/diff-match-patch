@@ -2,7 +2,7 @@ import {cloneDiff} from './clone.js'
 import {getCommonOverlap} from './commonOverlap.js'
 import {getCommonPrefix} from './commonPrefix.js'
 import {getCommonSuffix} from './commonSuffix.js'
-import {type Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from './diff.js'
+import {type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from './diff.js'
 
 /**
  * Reduce the number of edits by eliminating semantically trivial equalities.

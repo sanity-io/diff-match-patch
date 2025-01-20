@@ -1,4 +1,4 @@
-import {describe,expect, test} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 import {bitap} from '../bitap.js'
 

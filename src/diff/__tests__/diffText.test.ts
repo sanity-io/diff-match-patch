@@ -1,6 +1,6 @@
 import {describe, expect, test} from 'vitest'
 
-import {type Diff,DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
+import {type Diff, DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT} from '../diff.js'
 import {diffText1, diffText2} from '../diffText.js'
 import {fromDelta} from '../fromDelta.js'
 import {toDelta} from '../toDelta.js'

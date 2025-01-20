@@ -1,4 +1,3 @@
-/* eslint-disable no-bitwise */
 interface BitapOptions {
   threshold: number
   distance: number

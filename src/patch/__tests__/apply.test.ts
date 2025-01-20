@@ -1,4 +1,4 @@
-import {describe, expect,test} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 import {apply} from '../apply.js'
 import {make} from '../make.js'
