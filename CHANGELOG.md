@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.0](https://github.com/sanity-io/diff-match-patch/compare/v3.1.2...v3.2.0) (2025-01-22)
+
+### Features
+
+- export xIndex, add support for match options ([#6](https://github.com/sanity-io/diff-match-patch/issues/6)) ([91f760a](https://github.com/sanity-io/diff-match-patch/commit/91f760a18043875be2336bcf1ec35a0ef1e99614))
+
 ## [3.1.2](https://github.com/sanity-io/diff-match-patch/compare/v3.1.1...v3.1.2) (2024-12-18)
 
 ### Bug Fixes
