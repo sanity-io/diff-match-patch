@@ -36,6 +36,10 @@
     "posttest": "npm run lint",
     "prepublishOnly": "npm run build"
   },
+  "homepage": "https://github.com/sanity-io/diff-match-patch",
+  "repository": {
+    "url": "https://github.com/sanity-io/diff-match-patch"
+  },
   "keywords": [
     "diff",
     "diff-match-patch",
