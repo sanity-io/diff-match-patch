@@ -4,6 +4,10 @@
   "description": "Robust diff, match and patch algorithms to perform operations required for synchronizing plain text",
   "sideEffects": false,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sanity-io/diff-match-patch.git"
+  },
   "exports": {
     ".": {
       "source": "./src/index.ts",
