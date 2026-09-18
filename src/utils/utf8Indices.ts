@@ -16,6 +16,11 @@ export function countUtf8Bytes(str: string): number {
     if (typeof codePoint === 'undefined') {
       throw new Error('Failed to get codepoint')
     }
+    if (codePoint > 0xffff) {
+      // `codePointAt` on a high surrogate returns the full code point, so the
+      // low surrogate at the next index must not be counted again
+      i++
+    }
     bytes += utf8len(codePoint)
   }
   return bytes

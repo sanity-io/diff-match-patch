@@ -4,11 +4,24 @@ import {apply} from '../../patch/apply.js'
 import {make} from '../../patch/make.js'
 import {parse} from '../../patch/parse.js'
 import {stringify} from '../../patch/stringify.js'
-import {adjustIndiciesToUcs2} from '../../utils/utf8Indices.js'
+import {adjustIndiciesToUcs2, countUtf8Bytes} from '../../utils/utf8Indices.js'
 
 const sourceText = `速ヒマヤレ誌相ルなあね日諸せ変評ホ真攻同潔ク作先た員勝どそ際接レゅ自17浅ッ実情スヤ籍認ス重力務鳥の。8平はートご多乗12青國暮整ル通国うれけこ能新ロコラハ元横ミ休探ミソ梓批ざょにね薬展むい本隣ば禁抗ワアミ部真えくト提知週むすほ。査ル人形ルおじつ政謙減セヲモ読見れレぞえ録精てざ定第ぐゆとス務接産ヤ写馬エモス聞氏サヘマ有午ごね客岡ヘロ修彩枝雨父のけリド。
 
 住ゅなぜ日16語約セヤチ任政崎ソオユ枠体ぞン古91一専泉給12関モリレネ解透ぴゃラぼ転地す球北ドざう記番重投ぼづ。期ゃ更緒リだすし夫内オ代他られくド潤刊本クヘフ伊一ウムニヘ感週け出入ば勇起ょ関図ぜ覧説めわぶ室訪おがト強車傾町コ本喰杜椿榎ほれた。暮る生的更芸窓どさはむ近問ラ入必ラニス療心コウ怒応りめけひ載総ア北吾ヌイヘ主最ニ余記エツヤ州5念稼め化浮ヌリ済毎養ぜぼ。`
+
+describe('countUtf8Bytes', () => {
+  test('counts characters outside the Basic Multilingual Plane as 4 bytes', () => {
+    expect(countUtf8Bytes('🌍')).toBe(4)
+    expect(countUtf8Bytes('a🌍b')).toBe(6)
+    expect(countUtf8Bytes('🌍🌍🌍🌍')).toBe(16)
+  })
+
+  test('counts a lone surrogate as 3 bytes, matching `TextEncoder` output size', () => {
+    expect(countUtf8Bytes('\ud83c')).toBe(3)
+    expect(countUtf8Bytes('a\ud83c')).toBe(4)
+  })
+})
 
 describe('utf8 indicies', () => {
   test('ascii indicies do not need to be adjusted', () => {
@@ -50,6 +63,38 @@ describe('utf8 indicies', () => {
     const before = parse(stringified)
     const after = adjustIndiciesToUcs2(before, source)
     expect(after).toEqual(patch)
+  })
+
+  test('can adjust utf8 indicies to ucs2 correctly on source with surrogate pairs', () => {
+    const source = '🌍🌍🌍🌍 to be or not to be'
+    const target = '🌍🌍🌍🌍 to be or not to bee'
+    const patch = make(source, target)
+    const stringified = stringify(patch)
+    const before = parse(stringified)
+    const after = adjustIndiciesToUcs2(before, source)
+    expect(after).toEqual(patch)
+  })
+
+  test('adjusts indices, applies cleanly, with surrogate pairs inside the diff', () => {
+    const source = '🌍🌍🌍🌍 to be 🌍 or not to be'
+    const target = '🌍🌍🌍🌍 to be 🚀 or not to be'
+    const patch = make(source, target)
+    const stringified = stringify(patch)
+    const before = parse(stringified)
+    expect(adjustIndiciesToUcs2(before, source)).toEqual(patch)
+
+    const [result] = apply(before, source)
+    expect(result).toEqual(target)
+  })
+
+  test('uses utf8 indicies for patch headers on source with surrogate pairs', () => {
+    const source = '🌍🌍🌍🌍 to be or not to be'
+    const target = '🌍🌍🌍🌍 to be or not to bee'
+    const patch = stringify(make(source, target))
+    expect(patch).toBe('@@ -24,12 +24,13 @@\n or not to be\n+e\n')
+
+    const [result] = apply(parse(patch), source)
+    expect(result).toEqual(target)
   })
 
   test('uses utf8 indicies, and applies patches cleanly', () => {
