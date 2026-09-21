@@ -5,8 +5,7 @@
   "sideEffects": false,
   "type": "module",
   "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/sanity-io/diff-match-patch.git"
+    "url": "https://github.com/sanity-io/diff-match-patch"
   },
   "exports": {
     ".": {
@@ -41,9 +40,6 @@
     "prepublishOnly": "npm run build"
   },
   "homepage": "https://github.com/sanity-io/diff-match-patch",
-  "repository": {
-    "url": "https://github.com/sanity-io/diff-match-patch"
-  },
   "keywords": [
     "diff",
     "diff-match-patch",
