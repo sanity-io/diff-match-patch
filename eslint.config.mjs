@@ -12,7 +12,6 @@ export default [
       // ignore hidden files and folders
       '**/.*/**',
       '**/dist/**',
-      '.releaserc.cjs',
       'coverage',
     ],
   },
