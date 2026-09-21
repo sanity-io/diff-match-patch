@@ -1,5 +1,17 @@
 <!-- markdownlint-disable --><!-- textlint-disable -->
 
+## 3.2.1
+
+### Patch Changes
+
+- [#13](https://github.com/sanity-io/diff-match-patch/pull/13) [`1d6c802`](https://github.com/sanity-io/diff-match-patch/commit/1d6c802339308a64bb3eb87d835d4e40a6cf53bf) Thanks [@christianhg](https://github.com/christianhg)! - fix: count astral characters as 4 utf8 bytes, not 7
+
+  Stringified patch headers counted every character outside the Basic
+  Multilingual Plane as 7 utf8 bytes instead of 4, inflating utf8
+  offsets/lengths for byte-oriented consumers.
+
+- [#13](https://github.com/sanity-io/diff-match-patch/pull/13) [`1d6c802`](https://github.com/sanity-io/diff-match-patch/commit/1d6c802339308a64bb3eb87d835d4e40a6cf53bf) Thanks [@christianhg](https://github.com/christianhg)! - fix: add repository and homepage fields to package.json
+
 # 📓 Changelog
 
 All notable changes to this project will be documented in this file. See
